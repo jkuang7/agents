@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Link every canonical skill into the supported runtime homes.
+#
+#   deploy           link current skills and prune removed ones
+#   deploy --check   report drift without changing anything
+set -euo pipefail
+
+agents_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+skills_source="$agents_root/skills"
+check_only=false
+[[ "${1:-}" == "--check" ]] && check_only=true
+problems=0
+
+declare -a runtime_homes=(
+  "${CODEX_HOME:-$HOME/.codex}/skills"
+  "${CLAUDE_HOME:-$HOME/.claude}/skills"
+  "${AGENTS_HOME:-$HOME/.agents}/skills"
+)
+
+say() { printf '  %s\n' "$*"; }
+
+for runtime_home in "${runtime_homes[@]}"; do
+  mkdir -p "$runtime_home"
+
+  for entry in "$runtime_home"/*; do
+    [[ -L "$entry" ]] || continue
+    source="$(readlink "$entry")"
+    [[ "$source" == "$skills_source"/* ]] || continue
+    [[ -d "$source" ]] && continue
+
+    if $check_only; then
+      say "STALE   $entry"
+      problems=$((problems + 1))
+    else
+      rm -- "$entry"
+      say "pruned  $entry"
+    fi
+  done
+
+  for skill in "$skills_source"/*/; do
+    [[ -f "$skill/SKILL.md" ]] || continue
+    target="$runtime_home/$(basename "$skill")"
+    source="${skill%/}"
+
+    if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
+      say "ok      $target"
+    elif [[ -e "$target" || -L "$target" ]]; then
+      say "CONFLICT $target"
+      problems=$((problems + 1))
+    elif $check_only; then
+      say "MISSING $target"
+      problems=$((problems + 1))
+    else
+      ln -s "$source" "$target"
+      say "linked  $target"
+    fi
+  done
+done
+
+if (( problems )); then
+  printf 'deploy: %d issue(s)\n' "$problems" >&2
+  exit 1
+fi
+
+$check_only && echo "deploy: all linked" || echo "deploy: complete"
