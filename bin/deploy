@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
-# Link every canonical skill into the supported runtime homes.
+# Link personal and vendored skills into the supported runtime homes.
 #
 #   deploy           link current skills and prune removed ones
 #   deploy --check   report drift without changing anything
 set -euo pipefail
 
 agents_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-skills_source="$agents_root/skills"
+declare -a skills_sources=(
+  "$agents_root/skills"
+  "$agents_root/vendor/matt-pocock-skills"
+)
 check_only=false
 [[ "${1:-}" == "--check" ]] && check_only=true
 problems=0
+
+declare -a skill_names=()
+declare -a skill_paths=()
+skill_count=0
 
 declare -a runtime_homes=(
   "${CODEX_HOME:-$HOME/.codex}/skills"
@@ -19,13 +26,60 @@ declare -a runtime_homes=(
 
 say() { printf '  %s\n' "$*"; }
 
+is_managed_source() {
+  local candidate="$1"
+  local skills_source
+  for skills_source in "${skills_sources[@]}"; do
+    [[ "$candidate" == "$skills_source"/* ]] && return 0
+  done
+  return 1
+}
+
+for skills_source in "${skills_sources[@]}"; do
+  [[ -d "$skills_source" ]] || continue
+  for skill in "$skills_source"/*/; do
+    [[ -f "$skill/SKILL.md" ]] || continue
+    name="$(basename "$skill")"
+    metadata_name="$(sed -n 's/^name:[[:space:]]*//p' "$skill/SKILL.md" | head -n 1)"
+    metadata_name="${metadata_name%\"}"
+    metadata_name="${metadata_name#\"}"
+    metadata_name="${metadata_name%\'}"
+    metadata_name="${metadata_name#\'}"
+
+    if [[ -z "$metadata_name" ]]; then
+      say "INVALID $skill/SKILL.md has no readable name"
+      problems=$((problems + 1))
+      continue
+    fi
+    if [[ "$metadata_name" != "$name" ]]; then
+      say "INVALID $skill directory name must match skill name '$metadata_name'"
+      problems=$((problems + 1))
+      continue
+    fi
+
+    for ((index = 0; index < skill_count; index++)); do
+      existing_name="${skill_names[$index]}"
+      if [[ "$existing_name" == "$name" ]]; then
+        say "DUPLICATE skill name '$name'"
+        problems=$((problems + 1))
+        continue 2
+      fi
+    done
+    skill_names[$skill_count]="$name"
+    skill_paths[$skill_count]="${skill%/}"
+    skill_count=$((skill_count + 1))
+  done
+done
+
+(( problems == 0 )) || exit 1
+
 for runtime_home in "${runtime_homes[@]}"; do
   mkdir -p "$runtime_home"
 
   for entry in "$runtime_home"/*; do
     [[ -L "$entry" ]] || continue
     source="$(readlink "$entry")"
-    [[ "$source" == "$skills_source"/* ]] || continue
+    is_managed_source "$source" || continue
     [[ -d "$source" ]] && continue
 
     if $check_only; then
@@ -37,10 +91,9 @@ for runtime_home in "${runtime_homes[@]}"; do
     fi
   done
 
-  for skill in "$skills_source"/*/; do
-    [[ -f "$skill/SKILL.md" ]] || continue
-    target="$runtime_home/$(basename "$skill")"
-    source="${skill%/}"
+  for ((index = 0; index < skill_count; index++)); do
+    target="$runtime_home/${skill_names[$index]}"
+    source="${skill_paths[$index]}"
 
     if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
       say "ok      $target"

@@ -17,6 +17,4 @@ bin/deploy --check
 ```
 
 The Matt Pocock skills in this repository originate from
-[`mattpocock/skills`](https://github.com/mattpocock/skills). See
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for licensing.
-
+[`mattpocock/skills`](https://github.com/mattpocock/skills).
