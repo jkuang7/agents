@@ -12,7 +12,7 @@ Both axes run as **parallel sub-agents** so they don't pollute each other's cont
 
 If delegation is unavailable, perform both passes directly and disclose the reduced independence. Preserve the same candidate and evidence requirements; do not claim a separate reviewer ran.
 
-Resolve the target repository and its instructions. Under `/Volumes/T9/Dev`, follow [the shared tracker convention](/Volumes/T9/Dev/docs/agents/issue-tracker.md) before reading issues. Elsewhere, use the project's tracker policy. Shared skill installation does not require per-repository setup.
+Resolve the target repository and its instructions. Before reading issues, follow the [issue tracker contract](../../../references/issue-tracker.md).
 
 ## Process
 

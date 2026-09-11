@@ -1,4 +1,4 @@
-Use /Users/jian/.codex/skills/to-spec/SKILL.md to respond to each independent scenario. This is an offline evaluation: return proposed spec content or the appropriate next response only. Do not publish, access external services, or edit skills. Treat supplied codebase facts as established.
+Use the repository's `vendor/matt-pocock-skills/to-spec/SKILL.md` to respond to each independent scenario. This is an offline evaluation: return proposed spec content or the appropriate next response only. Do not publish, access external services, or edit skills. Treat supplied codebase facts as established.
 
 A. I want a small feature so an operator can export the currently filtered orders to CSV and try it. Existing code provides authorized filtered queries, CSV escaping, and streaming export with cancellation and error handling. Existing service rate limits apply. Background exports and emailed links might be useful eventually, but for now I want to try the direct export. Draft the spec.
 

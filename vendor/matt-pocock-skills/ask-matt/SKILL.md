@@ -48,4 +48,4 @@ Read [PHASE-BOUNDARIES.md](PHASE-BOUNDARIES.md) when choosing whether to continu
 
 ## Workspace conventions
 
-Read the target repository's instructions. Under `/Volumes/T9/Dev`, shared skills are installed once and tracker conventions live in `/Volumes/T9/Dev/docs/agents/`. Use `setup-matt-pocock-skills` only when the environment actually needs that setup or the user requests it; do not make it a recurring prerequisite.
+Read the target repository's instructions. Use `setup-matt-pocock-skills` only when the environment needs initial skill or tracker setup, or when the user requests it.

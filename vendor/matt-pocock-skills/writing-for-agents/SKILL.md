@@ -7,7 +7,7 @@ Reference for writing any document an agent consumes: a skill, an `AGENTS.md` / 
 
 When the document you're writing is a skill, read [`SKILL-MECHANICS.md`](SKILL-MECHANICS.md) for frontmatter, invocation choice, and router skills.
 
-When a skill change addresses a demonstrated failure or alters a consequential workflow, read [MAINTENANCE.md](MAINTENANCE.md) to retain a behavioral case, verify the correction, and assign its review or retirement condition. Small wording edits need only proportionate validation.
+When a skill change addresses a demonstrated failure or alters a consequential workflow, read [MAINTENANCE.md](MAINTENANCE.md) to decide whether one small regression case is justified and to verify the correction. Small wording edits need only proportionate validation.
 
 ## Context pointers
 

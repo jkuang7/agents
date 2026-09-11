@@ -1,6 +1,6 @@
 # Decision brief and handoff
 
-Temporary storage is sufficient during a disposable comparison. Before transferring ongoing work or ending with unresolved work, use [continuation records](/Users/jian/.codex/skills/handoff/CONTINUATION.md) to retain the decision brief and evidence at a discoverable location. Reuse the existing plan or task record. Preserve an accepted choice in the authoritative plan or specification when that update is authorized, and link the supporting brief. Return its absolute path.
+Temporary storage is sufficient during a disposable comparison. Before transferring ongoing work or ending with unresolved work, use the [continuation record](../../../vendor/matt-pocock-skills/handoff/CONTINUATION.md) to retain the decision brief and evidence at a discoverable location. Reuse the existing plan or task record. Preserve an accepted choice in the authoritative plan or specification when that update is authorized, and link the supporting brief. Return its absolute path.
 
 ## Brief
 

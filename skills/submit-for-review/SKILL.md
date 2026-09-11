@@ -11,15 +11,13 @@ The PR or MR should reduce the human's work of understanding. Write connected, e
 
 Make the explanation understandable without opening the spec, diff, or linked sources. Use links to support claims and help the reader inspect evidence. Use diagrams to clarify relationships, with prose that explains the causal connections. State assumptions, tradeoffs, and unresolved gaps where they affect the conclusion so the reader can assess the reasoning independently.
 
-Before drafting or revising a proposal, preparation note, PR or MR body, or handoff, read [unslop](/Users/jian/.codex/skills/unslop/SKILL.md) as the shared editing reference. Apply its scan, rewrite, and self-audit process before presenting or publishing each artifact. Preserve technical meaning, evidence links, uncertainty, and authorization boundaries.
-
-Use prose, short lists, and diagrams in all human-facing output, including notes and handoffs. Do not use tables.
+Use plain prose and short lists in proposals, review bodies, and handoffs. Preserve technical meaning, evidence links, uncertainty, and authorization boundaries. Use a diagram only when it makes a relationship easier to understand. Do not use tables.
 
 ## 1. Ground the submission
 
 For a Sandcastle controller-assigned submission worker, read [SANDCASTLE.md](references/SANDCASTLE.md) first and act as the persistent history-shaper directly. Otherwise, use one persistent history-shaper subagent for investigation, history preparation, verification, and publication. Give it the repository, this skill's path, scope, history policy, user reasoning, and existing authorization. Keep detailed notes with that agent; the parent presents the proposal and final handoff. If delegation is unavailable, report the missing capability.
 
-Resolve the repository that owns the changes and read its instructions. Before reading or publishing issues, follow its tracker policy; under `/Volumes/T9/Dev`, read `/Volumes/T9/Dev/docs/agents/issue-tracker.md`. Use named issues as scope, otherwise derive scope from branch evidence and relevant conversation. Live code determines what was delivered; paraphrase intent without publishing private transcripts.
+Resolve the repository that owns the changes and read its instructions. Before reading or publishing issues, follow the [issue tracker contract](../../references/issue-tracker.md). Use named issues as scope, otherwise derive scope from branch evidence and relevant conversation. Live code determines what was delivered; paraphrase intent without publishing private transcripts.
 
 Record the starting branch, HEAD and tree, staged and unstaged changes, source commits, remotes, and existing review. Select the existing review's base, otherwise the user-named base or remote default. Fetch and record exact base and remote head SHAs, the original merge base, and whether human review has started. Inspect both the complete feature diff and upstream changes. Stop if there is nothing to submit.
 
@@ -53,7 +51,7 @@ Refresh the base and remote head before pushing. Compare the remote head with th
 
 Push new or fast-forward branches normally. For an authorized rewrite, use `--force-with-lease=<ref>:<inspected-sha>` with the reconciled remote head. On lease failure, reassess remote changes rather than refreshing and retrying blindly. Verify that the remote head matches the verified candidate.
 
-Before drafting or revising the PR or MR body, read [REVIEW-GUIDE.md](references/REVIEW-GUIDE.md) for its structure, implementation links, commit review order, and evidence requirements. Apply the unslop process above to the finished draft. The body is ready when it states the prior problem and delivered change, and every main review risk has an implementation link and test evidence or an explicit evidence gap.
+Before drafting or revising the PR or MR body, read [REVIEW-GUIDE.md](references/REVIEW-GUIDE.md) for its structure, implementation links, commit review order, and evidence requirements. The body is ready when it states the prior problem and delivered change, and every main review risk has an implementation link and test evidence or an explicit evidence gap.
 
 Link delivered issues, using confirmed close-on-merge references for ordinary submissions; leave remote parent specs open. Apply the Sandcastle issue rules when applicable. Update the existing open PR or MR, or create one if absent. Read back the published body and verify its links and candidate revision. Publication is complete when the forge returns a canonical URL and the published body matches the checked draft. Do not merge, release, deploy, or message others without separate authorization.
 

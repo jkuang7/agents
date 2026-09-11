@@ -1,6 +1,6 @@
-# Personal skills
+# Local skills
 
-This directory is the canonical home for personally authored skills.
+This directory contains skills authored in this repository.
 
 Each skill lives at `skills/<name>/SKILL.md`. Keep the directory name equal to
 the `name` in the skill frontmatter, then run `bin/deploy` from the repository

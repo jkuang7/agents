@@ -5,7 +5,7 @@ description: "Implement a piece of work based on a spec or set of tickets."
 
 Implement the work described by the user in the spec or tickets.
 
-For work under `/Volumes/T9/Dev/repos`, resolve the target repository and read [the shared issue-tracker convention](/Volumes/T9/Dev/docs/agents/issue-tracker.md) and [triage label mappings](/Volumes/T9/Dev/docs/agents/triage-labels.md) before tracker operations. Apply any target repository overrides from its `AGENTS.md` or `CLAUDE.md`. Elsewhere, use the project's configured tracker and labels; if missing, establish them before publishing.
+Before tracker operations, follow the [issue tracker contract](../../../references/issue-tracker.md).
 
 When the source is an issue, read its full body and comments before implementation. Reuse settled requirements and test seams. Resolve factual gaps from the repository; identify only consequential choices that existing intent cannot settle.
 

@@ -5,7 +5,7 @@ description: Move issues and external PRs through a state machine of triage role
 
 # Triage
 
-For work under `/Volumes/T9/Dev/repos`, resolve the target repository and read [the shared issue-tracker convention](/Volumes/T9/Dev/docs/agents/issue-tracker.md) and [triage label mappings](/Volumes/T9/Dev/docs/agents/triage-labels.md) before tracker operations. Apply any target repository overrides from its `AGENTS.md` or `CLAUDE.md`. Elsewhere, use the project's configured tracker and labels; if missing, establish them before publishing.
+Before tracker operations, follow the [issue tracker contract](../../../references/issue-tracker.md).
 
 Move issues on the project issue tracker through a small state machine of triage roles.
 
