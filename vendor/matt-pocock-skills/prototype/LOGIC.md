@@ -57,6 +57,8 @@ Send them the file, or open it for them. They'll click through the walkthroughs 
 
 Once the prototype has answered its question, capture the answer, then capture the prototype the way the [SKILL](SKILL.md) describes. The logic-specific mapping: the validated reducer / machine / function set lifts into the real module (the decision, absorbed); the HTML shell rides along to the throwaway branch that keeps the prototype as a primary source, and being one self-contained file, it stays trivially re-runnable there.
 
+Treat adoption into the real module as implementation under the accepted contract. Carry the prototype's conclusion and limits into the normal testing and review workflow. A successful walkthrough settles the explored design question; it does not establish production correctness or replace regression evidence. Keep the throwaway demonstration itself lightweight.
+
 ## Anti-patterns
 
 - **Don't add tests.** A prototype that needs tests is no longer a prototype.

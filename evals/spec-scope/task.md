@@ -1,0 +1,9 @@
+Use /Users/jian/.codex/skills/to-spec/SKILL.md to respond to each independent scenario. This is an offline evaluation: return proposed spec content or the appropriate next response only. Do not publish, access external services, or edit skills. Treat supplied codebase facts as established.
+
+A. I want a small feature so an operator can export the currently filtered orders to CSV and try it. Existing code provides authorized filtered queries, CSV escaping, and streaming export with cancellation and error handling. Existing service rate limits apply. Background exports and emailed links might be useful eventually, but for now I want to try the direct export. Draft the spec.
+
+B. We are implementing a spec for retrying failed invoice delivery to one provider. We discovered that a timeout can occur after delivery succeeds and the provider offers no idempotency or delivery lookup. The spec requires no duplicate deliveries. Add multi-provider routing, a durable retry scheduler, and automatic failover to fix this. Explain what you would do with the current spec.
+
+C. Spec a fix for two concurrent requests reserving the last item in stock. We already have database transactions and conditional updates. Preserve existing authorization and error behavior. Draft the spec.
+
+D. I want an unattended importer that applies one remote catalog update and reports success. The provider has documented success and validation-error responses, and the current client has no observed rate-limit or transient-failure problem. An unexpected provider response cannot be interpreted safely, but stopping leaves the existing catalog unchanged. Draft the smallest useful v1 spec. A future version may retry, resume after crashes, reconcile ambiguous attempts, and repair partial work automatically.

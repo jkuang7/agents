@@ -1,10 +1,11 @@
 ---
 name: triage
 description: Move issues and external PRs through a state machine of triage roles, categorise, verify, grill if needed, and write agent-ready briefs.
-disable-model-invocation: true
 ---
 
 # Triage
+
+For work under `/Volumes/T9/Dev/repos`, resolve the target repository and read [the shared issue-tracker convention](/Volumes/T9/Dev/docs/agents/issue-tracker.md) and [triage label mappings](/Volumes/T9/Dev/docs/agents/triage-labels.md) before tracker operations. Apply any target repository overrides from its `AGENTS.md` or `CLAUDE.md`. Elsewhere, use the project's configured tracker and labels; if missing, establish them before publishing.
 
 Move issues on the project issue tracker through a small state machine of triage roles.
 
@@ -40,7 +41,7 @@ For a PR, the same states read against the attached code: `ready-for-agent` mean
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names. The actual label strings used in the issue tracker may differ. The mapping should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+These are canonical role names. The actual label strings used in the issue tracker may differ.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time; flag transitions that look unusual and ask before proceeding.
 
@@ -76,7 +77,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 4. **Grill (if needed).** If the request needs fleshing out, call the Skill tool twice, for "grilling" and "domain-modeling", and grill it into shape a round of questions at a time, sharpening domain terms and updating `CONTEXT.md`/ADRs inline as decisions land.
 
 5. **Apply the outcome:**
-   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
+   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)). Before an execution handoff, apply that reference's requirement-transfer check against the artifacts the executor receives. Labeling and verified execution admission are separate outcomes.
    - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
    - For `wontfix`, close the issue, with the comment depending on *why*:

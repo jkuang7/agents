@@ -24,6 +24,8 @@ Then show the user the ordered list of stages and the values each produces, and 
 
 **Done when:** every stage is named in order, and for each captured value you know (a) where the human gets it, (b) where it's written (`.env`, a GitHub secret, both, or nowhere; some stages are pure actions), and (c) whether it's secret (hidden entry) or public.
 
+Classify each stage as required or optional from the requested outcome, and define its observable completion condition. For migrations or irreversible steps, identify how to inspect the current outcome before retrying after interruption. Saved input values alone do not establish that an action completed.
+
 ### 2. Map each stage's journey
 
 For each stage, write the precise path a human follows: which URL to open, what to do there, where a value is shown, which variable it fills: e.g. "Dashboard → Developers → API keys → Reveal test key → copy". Where you don't actually know the current UI or the exact command, say so and ask the user or check the docs: never invent steps that may not exist.
@@ -33,6 +35,8 @@ For each stage, write the precise path a human follows: which URL to open, what 
 ### 3. Author the wizard
 
 Copy `template.sh` to the target path. Replace the example stage with one `stage` per step, in dependency order. Use the library helpers: `stage`, `say`/`step`, `open_url`, `ask`/`ask_secret`, `write_env`, `set_secret`/`set_var`, `pause`/`confirm`. Set `TOTAL_STAGES` to the number of stages you wrote.
+
+`set_secret` and `set_var` treat their writes as required by default; pass `optional` as the third argument only for an optional result. Use `record_skip "remaining action"` for any other unmet required stage, or its second argument `optional` for an optional stage. Skip dependent actions while a prerequisite remains unmet. Keep `finish` as the final command so its nonzero result reports incomplete required work. Optional omissions remain visible without blocking completion.
 
 Hold the bar the template sets: open the URL before asking for its value, use `ask_secret` for anything secret, `write_env` every persisted value, `set_secret` only the values CI actually needs, and `confirm` before any irreversible action. Each `stage` clears the screen so only the current step is visible: keep a stage to one focused task so nothing the human needs scrolls away. Don't touch the library above the marker.
 

@@ -26,7 +26,8 @@ _STAGE_INDEX=0
 ENV_FILE="${ENV_FILE:-.env}"
 WRITTEN_ENV=()    # KEYs written to ENV_FILE this run
 WRITTEN_SECRET=() # secret NAMEs set this run
-SKIPPED=()        # things we couldn't do (e.g. gh missing)
+SKIPPED=()        # required work still incomplete
+OPTIONAL_SKIPPED=()
 
 # _clear wipes the terminal so only the current step is on screen. No-op when
 # output isn't a terminal, so piped logs stay readable.
@@ -138,10 +139,31 @@ write_env() {
   printf '  %s✓ wrote%s %s → %s\n' "$GREEN" "$RESET" "$key" "$ENV_FILE"
 }
 
-# set_secret NAME VALUE sets a GitHub Actions repo secret via gh. Falls back
-# to a warning (and records it) if gh is unavailable or unauthenticated.
+# Validate classification before any action. Existing two-argument calls are required.
+_check_requirement() {
+  case "$1" in
+    required|optional) return 0 ;;
+    *) printf 'Unknown requirement: %s (use required or optional)\n' "$1" >&2; return 2 ;;
+  esac
+}
+
+# record_skip DESCRIPTION [required|optional] retains unmet work for finish.
+# It returns success so independent stages can continue; finish owns the verdict.
+record_skip() {
+  local description="$1" requirement="${2:-required}"
+  _check_requirement "$requirement" || return 2
+  if [[ "$requirement" == required ]]; then
+    SKIPPED+=("$description")
+  else
+    OPTIONAL_SKIPPED+=("$description")
+  fi
+  warn "incomplete $requirement step: $description"
+}
+
+# set_secret NAME VALUE [required|optional] sets a GitHub Actions repo secret.
 set_secret() {
-  local name="$1" value="$2"
+  local name="$1" value="$2" requirement="${3:-required}"
+  _check_requirement "$requirement" || return 2
   if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
     if printf '%s' "$value" | gh secret set "$name" >/dev/null 2>&1; then
       WRITTEN_SECRET+=("$name")
@@ -149,34 +171,44 @@ set_secret() {
       return
     fi
   fi
-  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name)")
-  warn "skipped GitHub secret $name: gh not ready; set it later"
+  record_skip "GitHub secret $name (retry or set it manually: gh secret set $name)" "$requirement"
 }
 
-# set_var NAME VALUE sets a GitHub Actions repo variable (non-secret).
+# set_var NAME VALUE [required|optional] sets a GitHub Actions repo variable.
 set_var() {
-  local name="$1" value="$2"
+  local name="$1" value="$2" requirement="${3:-required}"
+  _check_requirement "$requirement" || return 2
   if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
     if gh variable set "$name" --body "$value" >/dev/null 2>&1; then
       printf '  %s✓ set%s GitHub variable %s\n' "$GREEN" "$RESET" "$name"
       return
     fi
   fi
-  SKIPPED+=("GitHub variable $name")
-  warn "skipped GitHub variable $name, gh not ready; set it later"
+  record_skip "GitHub variable $name" "$requirement"
 }
 
-# finish clears, then shows a closing summary of everything configured.
+# finish reports all remaining work and returns nonzero for unmet required steps.
 finish() {
+  local result=0 s
   _clear
-  printf '\n%s%s  ✓ Setup complete%s\n' "$BOLD" "$GREEN" "$RESET"
+  if (( ${#SKIPPED[@]} )); then
+    result=1
+    printf '\n%s%s  Setup incomplete%s\n' "$BOLD" "$YELLOW" "$RESET"
+  else
+    printf '\n%s%s  ✓ Setup complete%s\n' "$BOLD" "$GREEN" "$RESET"
+  fi
   (( ${#WRITTEN_ENV[@]} ))    && note "wrote ${#WRITTEN_ENV[@]} value(s) to $ENV_FILE: ${WRITTEN_ENV[*]}"
   (( ${#WRITTEN_SECRET[@]} )) && note "set ${#WRITTEN_SECRET[@]} GitHub secret(s): ${WRITTEN_SECRET[*]}"
   if (( ${#SKIPPED[@]} )); then
-    printf '\n'; warn "still to do by hand:"
+    printf '\n'; warn "Required steps still to do:"
     for s in "${SKIPPED[@]}"; do note "  - $s"; done
   fi
+  if (( ${#OPTIONAL_SKIPPED[@]} )); then
+    printf '\n'; note "Optional steps skipped:"
+    for s in "${OPTIONAL_SKIPPED[@]}"; do note "  - $s"; done
+  fi
   printf '\n'
+  return "$result"
 }
 
 # ──────────────────────────────────────────────────────────────────────────
