@@ -16,7 +16,6 @@ problems=0
 
 declare -a skill_names=()
 declare -a skill_paths=()
-declare -a skill_layers=()
 skill_count=0
 
 declare -a runtime_homes=(
@@ -36,8 +35,7 @@ is_managed_source() {
   return 1
 }
 
-for source_index in "${!skills_sources[@]}"; do
-  skills_source="${skills_sources[$source_index]}"
+for skills_source in "${skills_sources[@]}"; do
   [[ -d "$skills_source" ]] || continue
   for skill in "$skills_source"/*/; do
     [[ -f "$skill/SKILL.md" ]] || continue
@@ -62,16 +60,13 @@ for source_index in "${!skills_sources[@]}"; do
     for ((index = 0; index < skill_count; index++)); do
       existing_name="${skill_names[$index]}"
       if [[ "$existing_name" == "$name" ]]; then
-        if [[ "${skill_layers[$index]}" == "$source_index" ]]; then
-          say "DUPLICATE skill name '$name' in $skills_source"
-          problems=$((problems + 1))
-        fi
+        say "DUPLICATE skill name '$name'"
+        problems=$((problems + 1))
         continue 2
       fi
     done
     skill_names[$skill_count]="$name"
     skill_paths[$skill_count]="${skill%/}"
-    skill_layers[$skill_count]="$source_index"
     skill_count=$((skill_count + 1))
   done
 done
@@ -102,15 +97,6 @@ for runtime_home in "${runtime_homes[@]}"; do
 
     if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
       say "ok      $target"
-    elif [[ -L "$target" ]] && is_managed_source "$(readlink "$target")"; then
-      if $check_only; then
-        say "WRONG   $target -> $(readlink "$target")"
-        problems=$((problems + 1))
-      else
-        rm -- "$target"
-        ln -s "$source" "$target"
-        say "updated $target"
-      fi
     elif [[ -e "$target" || -L "$target" ]]; then
       say "CONFLICT $target"
       problems=$((problems + 1))

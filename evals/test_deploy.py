@@ -1,4 +1,4 @@
-"""Verify skill deployment precedence and managed-link cleanup."""
+"""Verify single-source skill deployment and managed-link cleanup."""
 
 from pathlib import Path
 import os
@@ -50,13 +50,11 @@ class DeployTests(unittest.TestCase):
     def deployed_source(self, runtime, name):
         return (self.runtime_roots[runtime] / "skills" / name).readlink()
 
-    def test_local_skills_override_vendor_skills(self):
+    def test_local_and_vendor_skills_deploy_from_their_sources(self):
         local_implement = self.add_skill("skills", "implement")
         local_tdd = self.add_skill("skills", "tdd")
         local_review = self.add_skill("skills", "review-approach")
         local_submit = self.add_skill("skills", "submit-for-review")
-        self.add_skill("vendor/matt-pocock-skills", "implement")
-        self.add_skill("vendor/matt-pocock-skills", "tdd")
         vendor_wizard = self.add_skill("vendor/matt-pocock-skills", "wizard")
 
         result = self.run_deploy()
@@ -72,17 +70,14 @@ class DeployTests(unittest.TestCase):
         check = self.run_deploy("--check")
         self.assertEqual(check.returncode, 0, check.stdout + check.stderr)
 
-    def test_deploy_replaces_an_old_managed_vendor_link(self):
-        local_implement = self.add_skill("skills", "implement")
-        vendor_implement = self.add_skill("vendor/matt-pocock-skills", "implement")
-        codex_skills = self.runtime_roots["CODEX_HOME"] / "skills"
-        codex_skills.mkdir(parents=True)
-        (codex_skills / "implement").symlink_to(vendor_implement)
+    def test_duplicate_skill_names_are_rejected(self):
+        self.add_skill("skills", "implement")
+        self.add_skill("vendor/matt-pocock-skills", "implement")
 
         result = self.run_deploy()
 
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertEqual(self.deployed_source("CODEX_HOME", "implement"), local_implement)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("DUPLICATE skill name 'implement'", result.stdout)
 
     def test_deploy_prunes_stale_managed_links(self):
         self.add_skill("vendor/matt-pocock-skills", "wizard")
