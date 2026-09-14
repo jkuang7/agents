@@ -1,89 +1,126 @@
 ---
 name: to-spec
-description: "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed."
+description: "Turn the current conversation into a lean, workflow-first spec and publish it to the project issue tracker."
+disable-model-invocation: true
 ---
+Turn the current conversation, codebase context, or existing issue into the **smallest complete specification of what must become true**.
 
-# To spec
+The spec should be easy for a technically capable human to understand, review, and judge for correctness.
 
-Write the smallest useful outcome that satisfies the user's intent and can be
-verified. Base the contract on the conversation, repository evidence, and clear
-correctness requirements. Reuse settled decisions instead of starting a design
-interview.
+Do not turn implementation choices into product requirements.
 
-Before tracker operations, follow the [issue tracker contract](../../../references/issue-tracker.md).
+Use judgment. Do not perform every check mechanically.
 
-## Define the contract
+## Process
 
-Inspect the relevant code, domain terms, and architecture decisions. State the
-user-visible problem and one complete outcome that addresses it.
+1. Identify the user's governing outcome, then understand the current behavior, important invariants, and how success will be verified.
 
-Require only behavior justified by current evidence or the promised outcome.
-Protect clear hazards such as concurrent writes, duplicate irreversible
-actions, unsafe permissions, accepting the wrong revision, or reporting success
-without complete evidence.
+   Inspect code only if the existing conversation or issue does not already establish the relevant behavior.
 
-Prefer mechanical rules and observable states. Use fail-closed behavior when
-stopping is safe and automatic recovery is not required. Leave retries, crash
-recovery, reconciliation, scaling, and similar machinery out until evidence or
-an explicit requirement calls for them.
+   Let the governing outcome set the contract's emphasis. For example, an unattended workflow needs a complete path to success or a useful human handoff, while an operator-driven workflow may stop safely between steps.
+2. Converge on the smallest sufficient contract.
 
-Include an architecture constraint only when responsibility, ownership, or
-dependency direction is part of the contract. Leave file layout, module shape,
-and refactoring choices to implementation.
+   Ask:
 
-When revising a spec, use implementation or acceptance evidence to identify the
-missing contract. Add the smallest requirement that closes the demonstrated
-gap. Return a material change in scope, guarantees, or design to the user when
-existing intent does not settle it.
+   > Could a reasonable implementer build the right thing without inventing important product behavior?
+   >
 
-## Define acceptance evidence
+   If yes, stop looking for gaps.
 
-Name a realistic verification seam that proves the complete outcome. Prefer an
-existing public or end-to-end seam when it is practical. A lower seam is enough
-when it exercises the whole contract and would fail for a broken implementation.
-Add focused cases for the correctness hazards and compatibility guarantees in
-scope. Do not require an artificial end-to-end exercise that adds no proof.
+   If no, surface only the ambiguity that prevents convergence.
 
-## Write and publish
+   Prefer one workflow-level rule that covers a class of cases over separate requirements for each possible event.
+3. Consider only failure behavior that poses a high risk to the governing outcome.
 
-Use only the sections that add information:
+   A failure concern earns a place when it could prevent required progress, corrupt accepted work, or report success without sufficient evidence, and the existing contract does not already determine the outcome.
 
-<spec-template>
+   For unattended orchestration, first define when work continues, when it stops for a person, what failed work must not advance, and the safe restart boundary. Use those general rules to cover retry and recovery concerns. Add a specific failure case only when those rules do not settle it.
 
-## Problem statement
+   Stay at the behavioral level. Specify retry systems, persistence schemes, recovery protocols, reconciliation logic, state machines, or other implementation machinery only when the mechanism itself is required.
+4.  When a consequential decision is needed, ask it simply:
 
-Describe the problem from the user's perspective.
+   **Question:** what behavior is unclear?
+   **Recommendation:** the simplest behavior that preserves the goal.
+   **Why:** one short sentence.
 
-## Solution
+   When resolving a gap, describe the behavior that must be true, not the mechanism used to implement it.
 
-Describe the smallest complete outcome and how the user can verify it.
+   Prefer:
 
-## Acceptance requirements
+   > Sandcastle must not declare the Epic complete if it cannot safely account for changes to the child set.
+   >
 
-Give observable requirements stable identifiers. Include required safeguards,
-preserved behavior, and fail-closed outcomes.
+   over:
 
-## Implementation decisions
+   > Reload the child set before publication and compare it with persisted membership.
+   >
 
-Record only binding mechanisms or architecture constraints. Include a compact
-prototype-derived state machine, schema, or type shape when it states an
-accepted decision more precisely than prose.
+   Only specify the mechanism when the mechanism itself is part of the requirement.
 
-## Testing decisions
+   Prefer an existing invariant or general workflow rule if it already determines the outcome. Add a new rule only if the contract would otherwise remain ambiguous.
 
-Name the verification seam and the cases that prove the contract.
+   Do not manufacture additional questions once the contract is sufficient.
+5. Write or revise the spec only after consequential decisions are resolved.
 
-## Unresolved decisions
+   Keep it lean, clear, and implementation-agnostic wherever possible.
+6. Define testing decisions only if they add useful guidance.
 
-State each consequential choice, the missing evidence or decision, and the work
-it blocks. Omit this section when empty.
+   Prefer observable behavior at stable system boundaries over tests coupled to internal representation.
+7. If reviewing an existing issue, show suggested changes first.
 
-## Out of scope
+   Do not edit, replace, or create issues unless the user explicitly asks.
+8. If creating a new spec, show the draft before publishing.
 
-List adjacent capabilities that the spec does not promise.
+## Spec
 
-</spec-template>
+Use only sections that earn their place.
 
-Publish the spec to the configured tracker. Mark it `ready-for-agent` when its
-requirements are settled. Otherwise use the configured pending-information
-status and name the blocked work. Return the link and any unresolved decisions.
+### Problem
+
+What happens today and why it is insufficient.
+
+### Desired Outcome
+
+What must become true.
+
+### User Stories
+
+Why important guarantees matter.
+
+### Core Invariants
+
+What must never be violated.
+
+### Testing Decisions
+
+How required behavior will be proven through observable behavior.
+
+### Review / Verification
+
+Any additional trust or whole-system verification boundary beyond normal testing.
+
+### Acceptance Criteria
+
+Observable evidence that proves completion.
+
+### Constraints
+
+Existing behavior or boundaries that must be preserved.
+
+### Out of Scope
+
+Plausible adjacent work that is not part of the change.
+
+Do not repeat the same requirement across sections.
+
+Before presenting the spec, ask:
+
+> Is the contract sufficient to guide implementation correctly?
+
+If yes, stop adding detail.
+
+Then ask:
+
+> What can be removed without weakening the required outcome?
+
+Remove it.

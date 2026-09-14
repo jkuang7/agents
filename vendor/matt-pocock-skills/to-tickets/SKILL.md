@@ -1,117 +1,150 @@
 ---
 name: to-tickets
-description: Break a plan, spec, or the current conversation into tracer-bullet tickets, published to the configured tracker with blocking dependencies and native sub-issue links to an existing parent spec.
+description: "Break an accepted parent spec into small, independently provable behavioral subissues that accumulate toward the parent outcome."
+disable-model-invocation: true
 ---
+Turn an accepted parent spec into a sequence of **small behavioral slices that each prove useful progress toward the parent outcome**.
 
-# To tickets
+Each ticket should be simple enough for a fresh implementer to understand, implement with red → green → refactor, verify, and review independently.
 
-Turn an accepted contract into the fewest coherent tracer-bullet tickets. Each
-ticket must make a new part of the parent workflow work and name what blocks it.
+Accepted slices accumulate into the same parent delivery candidate and final PR.
 
-Before tracker operations, follow the [issue tracker contract](../../../references/issue-tracker.md).
-Write ticket bodies in plain prose and short lists. Do not use tables.
+The parent spec remains the source of truth. Do not redesign or restate it.
 
-## Gather the contract
+## Process
 
-Read the supplied spec, plan, or issue, including comments. For an existing
-parent issue, refresh it before drafting children. Inspect the relevant code,
-domain terms, architecture decisions, and tests unless current evidence already
-establishes them.
+1. Read the accepted parent spec.
 
-Treat the accepted spec as authoritative. Reconcile later human decisions into
-it when existing authorization permits. Ask only about a consequential choice
-that changes observable behavior, scope, safety, or an accepted constraint.
-Resolve factual questions from code or service contracts. Leave internal design
-choices to implementation when the contract already defines correctness.
+   Inspect code only as needed to identify clean behavioral boundaries. Do not perform implementation-level discovery before proposing slices.
+2. Choose the smallest useful behavioral slices.
 
-## Choose slices
+   For each slice, ask:
 
-For every proposed ticket, answer both questions:
+   > What is the smallest meaningful behavior we can make true and prove here?
+   >
 
-- What new part of the parent workflow works after this ticket?
-- Is this one coherent behavioral step for a fresh implementation context?
+   Prefer several simple, independently provable slices over one deeper, more complex ticket.
+3. Keep slices vertical.
 
-Fold an internal prerequisite into the first slice that uses it. Separate it
-only when it is independently useful, several approved slices need it, or it
-cannot fit safely in the consuming slice. Split a ticket when it combines
-independent workflow milestones with different failure modes, external
-boundaries, or verification stories.
+   Do not split by module, layer, abstraction, or implementation step.
 
-Use behavioral milestones instead of modules or acceptance-criterion counts.
-A backend-only slice is valid when it delivers observable behavior. Context size
-matters after the behavioral boundary is clear; it does not justify horizontal
-foundation tickets.
+   Fold incidental implementation work into the behavioral slice that needs it.
 
-If a shared interface cannot migrate through independently passing slices, read
-[wide refactors](references/WIDE-REFACTORS.md) before choosing the sequence.
+   Keep each slice focused on one behavioral concern. If two proposed tickets carry the same rule, assign it to the ticket that owns that behavior. Leave the other ticket with only the context needed to implement or prove its slice.
 
-## Keep implementation separate from gated proof
+   A ticket may reference a parent invariant when that invariant determines the correct behavior or proof. Do not restate adjacent behavior owned by another slice. Combine concerns only when they cannot be implemented or proven independently.
+4. Do not assume the final architecture.
 
-Distinguish code needed to build the behavior from external conditions needed
-only to prove it in a live environment. If local tests or fixtures can verify
-the implementation, keep that ticket executable. Put an authorized live trial
-in a later validation ticket and name its required credential, environment, or
-test target as an external prerequisite.
+   Let each slice and its evidence shape what comes next.
 
-Keep live proof in the implementation ticket only when the real environment is
-necessary to build or meaningfully verify the behavior.
+   If later slices depend on learning that does not yet exist, stop decomposition there rather than inventing downstream tickets.
+5. Keep each ticket easy to understand.
 
-## Preserve the parent contract
+   A technically capable human should be able to understand the ticket on first read.
 
-Carry every parent requirement, invariant, safeguard, and proof obligation into
-the slice that implements or verifies it. Do not add retries, recovery,
-reconciliation, architecture constraints, or project-management checkpoints
-that the parent does not require.
+   Use concrete behavior and plain language. Include enough parent context to explain the goal without forcing the reader to reconstruct the whole Epic.
 
-Use intentional fixtures or known cases for required failure paths. State an
-uncontrollable verification gap instead of treating an accidental occurrence as
-proof.
+   Include a parent rule in a child ticket only if the implementer needs it to choose the correct behavior or prove the slice.
 
-For each ticket, record its blocking ticket edges. Keep external prerequisites
-separate. Do not mark implementation ready while a human decision or factual
-investigation still defines what correct behavior means.
+   Use only behavior, constraints, dependencies, and context established by the parent spec or current evidence. Leave absent details absent.
 
-## Review and publish
+   Keep ticket titles, outcomes, context, and acceptance criteria at the parent contract's level of abstraction. Describe what must survive, continue, or be delivered. Mention commits, checkpoints, branches, or reuse of an existing pull request only when the parent makes that detail part of the contract.
 
-Before publication, account for every parent requirement and apply all slice,
-proof-gating, and dependency rules above. Fix any mismatch in the proposed
-graph.
+   Avoid orchestration jargon, compressed state-machine language, and speculative implementation detail.
+6. Make each slice easy to prove.
 
-Create children in dependency order and add native sub-issue links when the
-tracker supports them. Use canonical issue references for dependencies. After
-publication, read the parent and children back, verify links and labels, and fix
-any mismatch. Return the parent link, child links in execution order, blocking
-edges, external prerequisites, and deferred work.
+   Acceptance criteria should describe observable behavior at the highest appropriate stable system boundary and be concrete enough to drive red → green → refactor.
 
-Use this ticket shape, omitting sections that add nothing:
+   Prefer tests of observable contracts over tests coupled to internal representation.
+7. Prefer low complexity per slice.
 
-<ticket-template>
+   Split a ticket when doing so makes implementation or proof materially simpler while still producing meaningful behavioral progress.
 
-## Parent
+   Use one fresh implementation session as a practical size limit. A fresh implementer should be able to understand the behavior, drive it through red → green → refactor, verify it, and review the resulting diff without holding several independent proof boundaries in context.
 
-Link the existing parent spec.
+   Treat each distinct verification boundary as a reason to consider a split, especially when one role changes a candidate and another role must verify that exact result. Split only when the smaller ticket still delivers useful behavior or materially reduces reasoning complexity. If the additional boundary is a small extension of the existing path, keep it in the same slice.
 
-## Context and current behavior
+   Do not create foundation, abstraction, infrastructure, or cleanup tickets unless they independently make required behavior work.
+8. Before publishing anything, show the proposed ticket sequence to the user as a simple story.
 
-Describe one concrete action, what happens now, and the relevant cause.
+   Each item should say, in plain language, what the system will be able to do after that slice:
 
-## Intended change
+   1. **Ticket title** — a short explanation of the behavior this adds.
+   2. **Ticket title** — what this adds on top of the previous slice.
+   3. **Ticket title** — what becomes possible next.
 
-Describe what will work after this ticket and what behavior remains unchanged.
+   The sequence should make the parent workflow easy to understand from top to bottom.
 
-## Acceptance criteria
+   Include only slices justified by current evidence.
 
-- [ ] State observable success and the evidence that distinguishes it from failure.
-- [ ] Include applicable failure behavior and safeguards.
+   If later slices depend on what earlier work teaches us, stop there and state:
 
-## Implementation discovery
+   **Stop point:** what must be learned or proven before planning further work.
+9. Wait for the user to approve the proposed sequence.
+10. After approval, publish only the approved tickets as native subissues of the parent Epic, in the agreed order.
 
-Record open internal choices and the contract they must preserve. For an
-investigation, state the question, evidence to gather, and completion condition.
+   Add blocking relationships only where one ticket genuinely cannot proceed before another.
 
-## Blocked by
+   Apply the implementation-ready label where appropriate.
 
-List prerequisite tickets or state that there are none. Name external
-prerequisites separately.
+## Ticket
 
-</ticket-template>
+Use only sections that earn their place.
+
+### Parent
+
+Link the parent Epic.
+
+### Outcome
+
+Describe the single new behavior this slice makes possible and how it moves the parent forward.
+
+### Context
+
+Explain why this slice exists and what currently happens.
+
+Give a fresh implementer only the parent context needed to understand the goal.
+
+### Acceptance Criteria
+
+Describe observable evidence that proves the slice works, including relevant failure behavior.
+
+Criteria should be concrete enough to drive red → green → refactor without prescribing the internal implementation.
+
+### Constraints
+
+Include only parent constraints or existing behavior that materially constrain this slice.
+
+### Blocked By
+
+Include only genuine prerequisites, if any.
+
+Before proposing or publishing a slice, ask:
+
+> Is this the smallest useful behavior that can be implemented and proven independently?
+
+If not, split or simplify it.
+
+Then ask:
+
+> Can one fresh implementer complete red → green → refactor, verification, and diff review without crossing several distinct verification boundaries?
+
+If not, split at a meaningful proof boundary. Keep the behavior together when a split would only create preparatory machinery.
+
+Then ask:
+
+> Does each ticket have one clear behavioral reason to exist?
+
+If a ticket contains concerns that can be proven separately, split it. If the same concern appears in multiple tickets, assign it to one and remove the duplication.
+
+Then ask:
+
+> Does this make real progress toward the parent contract, or is it merely preparing machinery?
+
+Prefer real behavior.
+
+Finally ask:
+
+> Am I deciding something the implementer should be free to discover through red → green → refactor?
+
+Remove it.
