@@ -31,13 +31,11 @@ When the internal design is uncertain, use the smallest useful tracer bullet to 
 
 ## Boundary check
 
-Check the important boundaries and guarantees of the current slice before handoff.
+Check the important boundaries and guarantees of the current slice before handoff. When correctness depends on a meaningful state boundary, ask:
 
-Ask:
+> What event makes the new state true, and can downstream mutation happen before it?
 
-> Is unaccepted, unverified, or unapproved work already affecting state that should contain accepted work only?
-
-And:
+Also ask:
 
 > Could this implementation satisfy the visible tests or state while violating the underlying guarantee?
 

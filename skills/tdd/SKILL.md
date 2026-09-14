@@ -15,6 +15,8 @@ A cycle should be small enough that a failure teaches something clear. Write one
 
 Test required behavior at the highest appropriate stable seam. Prefer observable contracts over internal representation, and reuse an existing seam when it gives strong evidence.
 
+When the contract includes a meaningful state boundary, test the event that makes the new state true and prove that downstream mutation does not precede it. Assert observable behavior, not the implementation's call sequence.
+
 Lower-level tests can add confidence without making private implementation part of the contract. Add a new seam for testing only when it reduces total complexity rather than moving complexity into test infrastructure.
 
 Keep slices vertical. Each cycle should prove a usable part of the behavior through its implementation boundary.

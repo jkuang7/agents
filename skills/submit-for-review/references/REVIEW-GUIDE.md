@@ -14,6 +14,7 @@ Organize review points around important behavior or risk, not a list of every ch
 
 - Link the code that enforces the behavior, using precise diff or source locations when possible.
 - State the contract or decision the reviewer should inspect.
+- When the contract has a meaningful state boundary, confirm that the implementation's mutation order matches its logical state order.
 - Link the test or check that provides evidence and explain what it proves.
 - Disclose a material evidence gap when no suitable proof exists.
 
