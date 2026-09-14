@@ -47,7 +47,7 @@ Use judgment. Do not perform every check mechanically.
 
    Prefer:
 
-   > Sandcastle must not declare the Epic complete if it cannot safely account for changes to the child set.
+   > The runner must not declare the project complete if it cannot safely account for changes to the task set.
    >
 
    over:
