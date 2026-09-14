@@ -21,7 +21,6 @@ import in repository commit `49ff916`:
 - `research`
 - `resolving-merge-conflicts`
 - `tdd`
-- `to-spec`
 - `to-tickets`
 - `triage`
 - `wayfinder`

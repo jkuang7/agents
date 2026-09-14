@@ -56,6 +56,7 @@ class DeployTests(unittest.TestCase):
         local_tdd = self.add_skill("skills", "tdd")
         local_review = self.add_skill("skills", "review-approach")
         local_submit = self.add_skill("skills", "submit-for-review")
+        local_to_spec = self.add_skill("skills", "to-spec")
         vendor_wizard = self.add_skill("vendor/matt-pocock-skills", "wizard")
 
         result = self.run_deploy()
@@ -67,6 +68,7 @@ class DeployTests(unittest.TestCase):
             self.assertEqual(self.deployed_source(runtime, "tdd"), local_tdd)
             self.assertEqual(self.deployed_source(runtime, "review-approach"), local_review)
             self.assertEqual(self.deployed_source(runtime, "submit-for-review"), local_submit)
+            self.assertEqual(self.deployed_source(runtime, "to-spec"), local_to_spec)
             self.assertEqual(self.deployed_source(runtime, "wizard"), vendor_wizard)
 
         check = self.run_deploy("--check")
