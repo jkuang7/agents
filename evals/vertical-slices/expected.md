@@ -4,9 +4,9 @@ The breakdown uses the fewest tickets that each deliver a coherent workflow
 milestone. It folds inventory, initial state, required persistence, and child
 acceptance into the first slice that accepts a child. It separates later
 milestones when they have distinct failure modes and verification stories, such
-as preserving accepted work across restart, processing the current required
-child set, publishing one draft pull request, repairing concrete controller or
-CI failures, and auditing the exact candidate for readiness.
+as preserving accepted work across restart, processing the current required job
+set, publishing one draft pull request, repairing concrete orchestration or CI
+failures, and auditing the exact candidate for readiness.
 
 It creates no preparation, persistence, API, recovery, or adapter ticket whose
 only result is a prerequisite for later work. It also avoids one ticket that
