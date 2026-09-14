@@ -24,11 +24,11 @@ python3 evals/make_fixture.py continuation
 python3 evals/make_fixture.py routing
 ```
 
-`test_wizard.py` is a normal unit test for executable shell behavior. Run it
-with:
+`test_wizard.py` and `test_deploy.py` are normal unit tests for executable shell
+behavior. Run them with:
 
 ```sh
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest evals/test_wizard.py
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest evals/test_wizard.py evals/test_deploy.py
 ```
 
 Add a behavioral case only after an observed failure could cause meaningful
