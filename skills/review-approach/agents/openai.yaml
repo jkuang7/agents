@@ -1,6 +1,6 @@
 interface:
   display_name: "Review Approach"
-  short_description: "Compare strategies before detailed design"
-  default_prompt: "Use $review-approach to compare high-level solution strategies and help me choose one."
+  short_description: "Decide whether strategy comparison is needed"
+  default_prompt: "Use $review-approach to decide whether this choice needs comparison, direct implementation, or a small tracer bullet."
 policy:
   allow_implicit_invocation: false
