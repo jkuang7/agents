@@ -51,6 +51,7 @@ class DeployTests(unittest.TestCase):
         return (self.runtime_roots[runtime] / "skills" / name).readlink()
 
     def test_local_and_vendor_skills_deploy_from_their_sources(self):
+        local_accept = self.add_skill("skills", "accept-pr")
         local_implement = self.add_skill("skills", "implement")
         local_tdd = self.add_skill("skills", "tdd")
         local_review = self.add_skill("skills", "review-approach")
@@ -62,6 +63,7 @@ class DeployTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         for runtime in self.runtime_roots:
+            self.assertEqual(self.deployed_source(runtime, "accept-pr"), local_accept)
             self.assertEqual(self.deployed_source(runtime, "implement"), local_implement)
             self.assertEqual(self.deployed_source(runtime, "tdd"), local_tdd)
             self.assertEqual(self.deployed_source(runtime, "review-approach"), local_review)
