@@ -24,7 +24,7 @@ Evaluate every instruction as:
 
 Keep the first three. Keep mechanics only when they materially reduce work, search, tool calls, ambiguity, or failure probability. Ask whether removing a "how" could yield an apparently correct solution that violates the intended philosophy, tradeoff, or boundary. If so, preserve it.
 
-When an instruction is a true no-op, delete it rather than polishing it. Preserve non-obvious constraints and demonstrated fixes; cut generic advice, stale branches, speculative guidance, and ceremony. Do not redesign a skill just to shorten it or flatten distinctions between roles.
+When an instruction is a true no-op, delete it rather than polishing it. Preserve non-obvious constraints and demonstrated fixes. Remove generic advice, stale branches, speculative guidance, or ceremony when they do not earn their load. Do not redesign a skill just to shorten it or flatten distinctions between roles.
 
 ## Context pointers
 
