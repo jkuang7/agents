@@ -18,9 +18,11 @@ issues or specifications. An acceptance or merge request authorizes this
 workflow. Reviewing, preparing, or submitting a PR does not.
 
 Fetch current remote refs needed for acceptance checks. Inspect the PR's state,
-head SHA, target branch, mergeability, required checks, and reviews. Record the exact head SHA. Stop if
-the target is ambiguous, the PR changed after inspection, required checks have
-not passed, or repository policy blocks the merge.
+head SHA, and target branch. Check mergeability, required checks, and reviews.
+Record the exact head SHA.
+
+Stop if the target is ambiguous, the PR changed after inspection, required checks
+have not passed, or repository policy blocks the merge.
 
 ## Merge and confirm
 
@@ -78,10 +80,10 @@ For each related worktree:
 
 - confirm no live process owns it;
 - inspect its branch or detached HEAD;
-- inspect tracked, untracked, and ignored contents, preserving unique source,
-  user data, and anything whose disposability is uncertain;
+- inspect tracked, untracked, and ignored contents;
 - confirm its tracked work is contained in the confirmed merged target;
-- preserve unique commits or unfinished source;
+- preserve unique commits, unique or unfinished source, user data, and anything
+  whose disposability is uncertain;
 - remove it with `git worktree remove`;
 - use force only when remaining files are proven disposable and no retention
   requirement applies.
