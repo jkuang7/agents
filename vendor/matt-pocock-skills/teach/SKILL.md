@@ -24,6 +24,8 @@ Reach each format when creating or updating its record:
 
 ## Select and teach
 
+Teaching develops three different things: **knowledge** from trustworthy sources, **skills** through practice and feedback, and **wisdom** through real-world interaction with practitioners. Match the lesson strategy to what the learner actually needs.
+
 Establish the mission before teaching if it is missing or unclear. Confirm changes to the mission and record their implications for future learning. Use learning records to infer the zone of proximal development when the user has not named a lesson.
 
 Ground knowledge in high-trust resources rather than parametric guesses. Populate missing sources first and cite claims in lessons. Teach only the knowledge needed for the chosen skill, then give practice with a tight, preferably automatic feedback loop.

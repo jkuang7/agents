@@ -13,6 +13,12 @@ For skill frontmatter, invocation, and routing, read [SKILL-MECHANICS.md](SKILL-
 
 Optimize total cost to a correct outcome, not minimum prompt length. Optimization does not imply deletion. Preserve a document unchanged when its instructions already earn their load. Expand or clarify it when added guidance materially improves the outcome, encodes an important preference, or reduces total work or error risk.
 
+Preserve the document's purpose, distinctive philosophy, decision model, and role boundaries unless changing them is itself the intended task. Wording, structure, and level of detail may change, but compare the decisions and behavior the original and revised instructions would produce. Reject an edit that makes the document shorter or cheaper by weakening its characteristic method, tradeoffs, or intended behavior. Do not silently change what the skill is for or how it differs from adjacent skills.
+
+Preserve conceptual cohesion. A skill's outcome, philosophy, decision rules, examples, references, and completion criteria should reinforce the same intended shape of behavior. Do not optimize sections independently in ways that leave the document locally concise but globally inconsistent or directionless.
+
+For consequential skill rewrites or broad optimization passes, use a separate subagent with a fresh review context to compare the original and revised behavior. Give the reviewer both versions and the intended task without the optimizer's rationale. The reviewer should assess semantic loss, philosophy and role-boundary drift, over-compression, broken delegation, and global cohesion. Evaluate and resolve review findings before completing the rewrite; do not adopt a finding unless it improves preservation of intent, correctness, or instruction ROI. Small wording edits need only proportionate review.
+
 Prefer the smallest genuine improvement, including no change. For each instruction, ask whether keeping, changing, adding, or removing it materially improves total cost to a correct outcome. Leave it alone when none of those changes earns its cost.
 
 Evaluate every instruction as:
@@ -24,7 +30,7 @@ Evaluate every instruction as:
 
 Keep the first three. Keep mechanics only when they materially reduce work, search, tool calls, ambiguity, or failure probability. Ask whether removing a "how" could yield an apparently correct solution that violates the intended philosophy, tradeoff, or boundary. If so, preserve it.
 
-When an instruction is a true no-op, delete it rather than polishing it. Preserve non-obvious constraints and demonstrated fixes. Remove generic advice, stale branches, speculative guidance, or ceremony when they do not earn their load. Do not redesign a skill just to shorten it or flatten distinctions between roles.
+When an instruction is a true no-op, delete it rather than polishing it. Preserve non-obvious constraints and demonstrated fixes. Remove generic advice, stale branches, speculative guidance, or ceremony when they do not earn their load. Do not redesign a skill merely to reduce load.
 
 ## Context pointers
 
