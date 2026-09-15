@@ -9,6 +9,6 @@ description: "Use when you need to resolve an in-progress git merge/rebase confl
 
 3. **Resolve each hunk.** Preserve both intents where possible. Resolve routine choices from the accepted requirements and merge goal, recording material tradeoffs. When incompatible observable behavior cannot be settled from existing intent, preserve the in-progress operation and identify the precise decision needed. Continue independent resolutions; do not invent behavior or abort the operation without authorization.
 
-4. Discover the project's **automated checks** and run them, typically typecheck, then tests, then format. Fix anything the merge broke.
+4. Discover and run the project's required **automated checks** in its supported order. Fix anything the merge broke.
 
 5. **Finish the merge/rebase.** Stage resolved in-scope files explicitly and inspect the staged diff before committing. Include pre-existing staged work only when its ownership and authorization belong to this operation. If mixed changes cannot be separated reliably, preserve them and resolve ownership first. Continue an authorized rebase through its remaining commits. Reverify the final combined candidate after any later resolution or hook changes its contents; report incomplete while a conflict or required check remains unresolved.

@@ -1,48 +1,26 @@
 ---
 name: wizard
-description: Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover. Don't invoke this for steps the agent can perform itself.
+description: Create an interactive wizard for setup, credentials, or transitions requiring human-only steps.
 ---
 
 # Wizard
 
-A **wizard** is a bash script that walks a human, step by step, through a manual procedure that's tedious to do by hand and tedious to re-explain to an AI every time. It opens each URL, says exactly what to click and copy, captures the values, writes them where they belong (`.env`, GitHub secrets), confirms at every stage, and shows how many stages are left. It might configure third-party services, run a one-off migration, or move the project from one state to another.
+Generate an interactive bash script for steps only a human can perform. Use [template.sh](template.sh) as the authoritative helper library; copy it and author only the stages below its marker. Preserve its consistent interaction and completion reporting.
 
-The delightful UX is already solved by [template.sh](template.sh): stage-by-stage progress, confirmation gates, cross-platform URL opening (including WSL), hidden secret entry, idempotent `.env` upserts, `gh secret`/`gh variable` writes, and a closing summary. **Your job is only to scope the procedure and author its stages.** The library above the `STAGES` marker is identical in every wizard; that consistency is the point: never hand-edit it.
+## Scope and author
 
-A wizard is ephemeral by default: built for one run, saved to a scratch or `scripts/` path, deleted when the job's done. Commit it only when the user wants a repeatable setup path that should live in the repo.
+Discover the requested setup or transition from repository configuration, documentation, and CI requirements. Show the ordered stages and captured values for the user's review, resolving only choices not already authorized.
 
-## Process
+Before authoring, account for every stage's source, destination, secret/public classification, required/optional status, and observable completion condition. For interrupted or irreversible operations, define how to inspect the actual outcome before retrying; saved inputs alone are not completion evidence.
 
-### 1. Scope the procedure
+Give each stage a precise, current journey a stranger can follow. Check authoritative UI or command documentation when uncertain. Keep one focused task per stage and dependency order explicit.
 
-Work out every manual step the human must take and every value that gets captured along the way. Read the repo first, don't ask cold:
+Use template helpers for URL opening, hidden secret entry, persistence, CI writes, and confirmation before irreversible actions. Persist each intended value to its specified destination; write only values CI actually needs. Set the stage count correctly. Discover helper signatures in the template instead of recreating its internals.
 
-- For setup: `.env`, `.env.example`, `.env.*`, `README`, `docker-compose*`, framework config, and `.github/workflows/*` (every `secrets.*` / `vars.*` reference is a value the wizard must produce).
-- For a migration or transition: the current state, the target state, and the irreversible actions between them.
+Classify helper writes as optional only when the requested result permits omission. Record other unmet actions with `record_skip`, skip dependent actions while prerequisites are unmet, and retain `finish` as the final command. Required omissions must yield an incomplete result; optional omissions remain visible.
 
-Then show the user the ordered list of stages and the values each produces, and confirm: they may add, drop, or reorder.
+## Verify and hand off
 
-**Done when:** every stage is named in order, and for each captured value you know (a) where the human gets it, (b) where it's written (`.env`, a GitHub secret, both, or nowhere; some stages are pure actions), and (c) whether it's secret (hidden entry) or public.
+Check shell syntax and use shellcheck when available. Trace every captured value to its destination and compare CI names with actual configuration. Make the script executable and return its path and run instructions. Leave end-to-end execution to the human because it blocks on their input and browser actions.
 
-Classify each stage as required or optional from the requested outcome, and define its observable completion condition. For migrations or irreversible steps, identify how to inspect the current outcome before retrying after interruption. Saved input values alone do not establish that an action completed.
-
-### 2. Map each stage's journey
-
-For each stage, write the precise path a human follows: which URL to open, what to do there, where a value is shown, which variable it fills: e.g. "Dashboard → Developers → API keys → Reveal test key → copy". Where you don't actually know the current UI or the exact command, say so and ask the user or check the docs: never invent steps that may not exist.
-
-**Done when:** every stage traces to concrete instructions a stranger could follow.
-
-### 3. Author the wizard
-
-Copy `template.sh` to the target path. Replace the example stage with one `stage` per step, in dependency order. Use the library helpers: `stage`, `say`/`step`, `open_url`, `ask`/`ask_secret`, `write_env`, `set_secret`/`set_var`, `pause`/`confirm`. Set `TOTAL_STAGES` to the number of stages you wrote.
-
-`set_secret` and `set_var` treat their writes as required by default; pass `optional` as the third argument only for an optional result. Use `record_skip "remaining action"` for any other unmet required stage, or its second argument `optional` for an optional stage. Skip dependent actions while a prerequisite remains unmet. Keep `finish` as the final command so its nonzero result reports incomplete required work. Optional omissions remain visible without blocking completion.
-
-Hold the bar the template sets: open the URL before asking for its value, use `ask_secret` for anything secret, `write_env` every persisted value, `set_secret` only the values CI actually needs, and `confirm` before any irreversible action. Each `stage` clears the screen so only the current step is visible: keep a stage to one focused task so nothing the human needs scrolls away. Don't touch the library above the marker.
-
-### 4. Verify and hand off
-
-- `bash -n <script>`; run `shellcheck` if available.
-- `chmod +x <script>`.
-- Don't run it end-to-end yourself: it opens browsers and blocks on human input. Trace it statically instead: every value from step 1 is captured and lands where step 1 said, and every `set_secret` name exactly matches a `secrets.*` reference in CI.
-- Tell the user how to run it. If it's a repeatable setup path, commit it and link it from the README so the next person runs the script instead of asking an AI.
+Use a scratch or scripts path for one-run wizards and remove them when done. Commit and link a repeatable setup path only when the user wants one.

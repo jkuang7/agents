@@ -32,17 +32,6 @@ Run the repository's required checks on the final candidate. Re-run affected che
 
 Read [REVIEW-GUIDE.md](references/REVIEW-GUIDE.md) before drafting the review body.
 
-Scale the body to the change. Give a technically capable reviewer enough information to understand:
-
-- The concrete problem before the change.
-- The delivered behavior and why it solves that problem.
-- Important boundaries or invariants.
-- The most useful code and test locations to inspect.
-- Verification results and material evidence gaps.
-- Commit review order when it helps.
-
-Use concise prose and short lists. Use a diagram only when it makes a relationship easier to understand. Keep preparation history out of the main review narrative unless it affects trust in the candidate.
-
 ## Publish and hand off
 
 Immediately before publishing, fetch the remote branch and compare its head with the inspected SHA. If it changed, reconcile that work and reverify the changed candidate. For an authorized rewrite, use `--force-with-lease` against the exact remote SHA from the final inspection. If the lease fails, stop and reassess instead of refreshing it and retrying blindly.

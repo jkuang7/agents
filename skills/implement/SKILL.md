@@ -5,54 +5,28 @@ description: Implement one assigned task as a verified candidate, without expand
 
 # Implement
 
-Implement one assigned piece of work and return a verified candidate.
+Return a verified candidate for one assigned task.
 
 ## Scope
 
-The assigned ticket or task defines implementation scope. Read its parent spec or Epic for context, invariants, and constraints. Parent requirements constrain the current slice; they do not add work to it.
+The assigned task defines scope. Read its parent spec or Epic for context, invariants, and constraints. Parent requirements constrain this slice; add parent behavior only when the slice would otherwise be incorrect. Before handoff, remove or defer behavior added mainly for later parent work.
 
-Build behavior from the parent only when a parent invariant requires that behavior for the current slice to be correct. Add the minimum needed now.
+## Method
 
-Before handoff, ask:
+Use `tdd` for red, green, and refactor cycles, one small behavioral capability at a time.
 
-> Did I add behavior mainly because the parent will need it later?
+Prefer the simplest correct design that fits the architecture and reduces total cognitive load, coupling, implementation risk, and testing and review cost. Introduce abstractions only when they reduce that complexity for the current task.
 
-If yes, remove or defer it unless the current task would otherwise be incorrect.
-
-## Implementation
-
-Use red → green → refactor, one small behavioral capability at a time.
-
-Prefer the simplest correct design that fits the existing architecture. Keep cognitive load, coupling, implementation risk, and the cost of testing and review low.
-
-Reuse existing seams and abstractions when they help. Introduce an abstraction only when it reduces total complexity for the current task by hiding a real boundary, removing meaningful duplication, reducing coupling, or improving testability.
-
-When the internal design is uncertain, use the smallest useful tracer bullet to obtain evidence before choosing a broader structure. Implement directly when the design is clear and low-risk.
+When design is uncertain, use the smallest useful tracer bullet to obtain evidence before committing to broader structure. Implement directly when the design is clear and low risk.
 
 ## Boundary check
 
-Check the important boundaries and guarantees of the current slice before handoff. When correctness depends on a meaningful state boundary, ask:
-
-> What event makes the new state true, and can downstream mutation happen before it?
-
-Also ask:
-
-> Could this implementation satisfy the visible tests or state while violating the underlying guarantee?
-
-Address boundary problems supported by the current task and evidence. Do not expand the work around hypothetical failures.
-
-## Commits
-
-Use one or more commits. Group them by logical purpose. Keep commits small when that makes the change easier to review.
-
-Before handoff, ask:
-
-> Can a reviewer understand how the solution comes together by reading the commits in order?
-
-Reorganize or squash only when it improves that review story.
+Verify the slice's important guarantees. For a meaningful state boundary, identify the event that makes the state true and ensure downstream mutation cannot precede it. Check whether visible tests or state could pass while the underlying guarantee fails. Address problems supported by requirements and evidence, without expanding scope around hypothetical failures.
 
 ## Finish
 
-Run the repository's required checks on the final candidate. Report the delivered behavior, candidate revision or working-tree state, verification results, and any evidence gap.
+Group commits by logical purpose so a reviewer can understand how the solution comes together. Reorganize or squash only when it improves that story within existing authorization.
 
-Stop with the verified candidate. Publish, merge, close issues, or start another ticket only when the user requests it. Independent review remains a separate phase.
+Run required repository checks on the final candidate. Report delivered behavior, candidate revision or working-tree state, verification, and evidence gaps.
+
+Stop with the verified candidate. Independent review is a separate phase. Publish, merge, close issues, or start another ticket only when requested.

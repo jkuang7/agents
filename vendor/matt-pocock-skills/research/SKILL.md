@@ -1,11 +1,11 @@
 ---
 name: research
-description: Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.
+description: Research questions, documentation, or API facts against primary sources, with cited findings.
 ---
 
 Handle a small lookup directly. Delegate substantial, separable reading when the parent has useful independent work. Give each investigator a concrete question, source scope, evidence expectations, and its own output path. A delegated investigator owns that question directly; delegate further only for a distinct independent question whose benefit justifies the coordination.
 
-Its job:
+The investigator owns:
 
 1. Investigate the question against **primary sources** (official docs, source code, specs, first-party APIs), not a secondary write-up of them. Follow every claim back to the source that owns it.
 2. Write the findings to a single Markdown file, citing each claim's source.
