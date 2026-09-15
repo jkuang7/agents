@@ -17,6 +17,8 @@ Give each stage a precise, current journey a stranger can follow. Check authorit
 
 Use template helpers for URL opening, hidden secret entry, persistence, CI writes, and confirmation before irreversible actions. Persist each intended value to its specified destination; write only values CI actually needs. Set the stage count correctly. Discover helper signatures in the template instead of recreating its internals.
 
+Open each stage's URL before asking for the value found there.
+
 Classify helper writes as optional only when the requested result permits omission. Record other unmet actions with `record_skip`, skip dependent actions while prerequisites are unmet, and retain `finish` as the final command. Required omissions must yield an incomplete result; optional omissions remain visible.
 
 ## Verify and hand off

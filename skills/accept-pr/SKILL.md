@@ -78,6 +78,8 @@ For each related worktree:
 
 - confirm no live process owns it;
 - inspect its branch or detached HEAD;
+- inspect tracked, untracked, and ignored contents, preserving unique source,
+  user data, and anything whose disposability is uncertain;
 - confirm its tracked work is contained in the confirmed merged target;
 - preserve unique commits or unfinished source;
 - remove it with `git worktree remove`;

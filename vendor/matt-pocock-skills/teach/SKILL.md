@@ -15,7 +15,7 @@ Reach each format when creating or updating its record:
 
 - `MISSION.md`: concrete purpose, success, and constraints. Use [MISSION-FORMAT.md](MISSION-FORMAT.md).
 - `RESOURCES.md`: trusted knowledge sources and practitioner communities. Use [RESOURCES-FORMAT.md](RESOURCES-FORMAT.md).
-- `learning-records/`: demonstrated insights, prior knowledge, and corrections. Use [LEARNING-RECORD-FORMAT.md](LEARNING-RECORD-FORMAT.md).
+- `learning-records/`: demonstrated insights, prior knowledge, and corrections. Read [LEARNING-RECORD-FORMAT.md](LEARNING-RECORD-FORMAT.md) when understanding is demonstrated, prior knowledge is disclosed, a misconception is corrected, or learning changes the mission; record qualifying insights then.
 - `GLOSSARY.md`: understood terminology used consistently throughout the workspace. Use [GLOSSARY-FORMAT.md](GLOSSARY-FORMAT.md).
 - `NOTES.md`: user preferences and working notes.
 - `lessons/`: numbered HTML lessons.
