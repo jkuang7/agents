@@ -11,7 +11,11 @@ For skill frontmatter, invocation, and routing, read [SKILL-MECHANICS.md](SKILL-
 
 ## Instruction ROI
 
-Optimize total cost to a correct outcome, not minimum prompt length. Evaluate every instruction as:
+Optimize total cost to a correct outcome, not minimum prompt length. Optimization does not imply deletion. Preserve a document unchanged when its instructions already earn their load. Expand or clarify it when added guidance materially improves the outcome, encodes an important preference, or reduces total work or error risk.
+
+Prefer the smallest genuine improvement, including no change. For each instruction, ask whether keeping, changing, adding, or removing it materially improves total cost to a correct outcome. Leave it alone when none of those changes earns its cost.
+
+Evaluate every instruction as:
 
 - **Outcome**: the state the agent must reach.
 - **Opinionated method**: a preference, philosophy, or tradeoff that materially shapes a valid solution.
@@ -20,7 +24,7 @@ Optimize total cost to a correct outcome, not minimum prompt length. Evaluate ev
 
 Keep the first three. Keep mechanics only when they materially reduce work, search, tool calls, ambiguity, or failure probability. Ask whether removing a "how" could yield an apparently correct solution that violates the intended philosophy, tradeoff, or boundary. If so, preserve it.
 
-Prefer deletion over polishing a no-op. Preserve non-obvious constraints and demonstrated fixes; cut generic advice, stale branches, speculative guidance, and ceremony. Do not redesign a skill just to shorten it or flatten distinctions between roles.
+When an instruction is a true no-op, delete it rather than polishing it. Preserve non-obvious constraints and demonstrated fixes; cut generic advice, stale branches, speculative guidance, and ceremony. Do not redesign a skill just to shorten it or flatten distinctions between roles.
 
 ## Context pointers
 
