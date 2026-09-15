@@ -6,6 +6,8 @@ This directory keeps compact cases for observed, consequential skill failures:
   without weakening correctness or inventing recovery machinery.
 - `vertical-slices/` checks that `to-tickets` produces coherent workflow slices
   and keeps proof-only external gates out of implementation tickets.
+- `acceptance-ignored-files/` checks that acceptance cleanup preserves unique
+  ignored user data even when normal Git worktree removal would succeed.
 - `make_fixture.py` generates four disposable repository cases for working-tree
   review, regression-test retirement, stale continuation evidence, and routing.
   Their expected behavior is in `generated-expected.md`.

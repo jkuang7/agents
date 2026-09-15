@@ -15,17 +15,20 @@ import in repository commit `49ff916`:
 - `code-review`
 - `codebase-design`
 - `handoff`
-- `implement`
 - `improve-codebase-architecture`
 - `prototype`
 - `research`
 - `resolving-merge-conflicts`
-- `tdd`
 - `to-tickets`
 - `triage`
 - `wayfinder`
 - `wizard`
 - `writing-for-agents`
+- `domain-modeling`
+- `grilling`
+- `setup-matt-pocock-skills`
+- `teach`
+- `to-questionnaire`
 
 When importing an upstream update, compare it with the current vendored copy
 and reconcile these local changes. Do not replace a locally modified skill

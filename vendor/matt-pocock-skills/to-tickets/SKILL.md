@@ -3,148 +3,38 @@ name: to-tickets
 description: "Break an accepted parent spec into small, independently provable behavioral subissues that accumulate toward the parent outcome."
 disable-model-invocation: true
 ---
-Turn an accepted parent spec into a sequence of **small behavioral slices that each prove useful progress toward the parent outcome**.
 
-Each ticket should be simple enough for a fresh implementer to understand, implement with red → green → refactor, verify, and review independently.
+# To tickets
 
-Accepted slices accumulate into the same parent delivery candidate and final PR.
+Turn an accepted parent spec into small behavioral slices that each prove useful progress. Accepted slices accumulate into the same parent delivery candidate and final PR. The parent remains authoritative; decomposition does not redesign it.
 
-The parent spec remains the source of truth. Do not redesign or restate it.
+## Choose slices
 
-## Process
+Read the parent and inspect code only enough to identify behavioral boundaries. Prefer several simple slices over one complex ticket. Each slice owns one behavioral concern, includes the incidental implementation it needs, and can be implemented through red, green, and refactor, verified, and reviewed in one fresh session.
 
-1. Read the accepted parent spec.
+Keep slices vertical. Foundation, abstraction, infrastructure, or cleanup work earns a ticket only when it independently makes required behavior work. Combine concerns only when they cannot be implemented or proven independently.
 
-   Inspect code only as needed to identify clean behavioral boundaries. Do not perform implementation-level discovery before proposing slices.
-2. Choose the smallest useful behavioral slices.
+Consider splitting at a distinct verification boundary, especially when one role changes a candidate and another verifies that exact result. Split when it produces useful behavior or materially reduces reasoning complexity; keep small extensions of the same proof path together.
 
-   For each slice, ask:
+When a shared schema or interface migration cannot pass in independent behavioral slices, read [WIDE-REFACTORS.md](references/WIDE-REFACTORS.md) for the compatibility and integration exception. A large file count alone does not trigger it.
 
-   > What is the smallest meaningful behavior we can make true and prove here?
-   >
+Let implementation evidence shape architecture. Stop decomposition where downstream choices depend on facts earlier work has not yet established; state what must be learned before planning further.
 
-   Prefer several simple, independently provable slices over one deeper, more complex ticket.
-3. Keep slices vertical.
+## Write each ticket
 
-   Do not split by module, layer, abstraction, or implementation step.
+Use concrete behavior and plain language at the parent contract's abstraction level. Include only established requirements and the parent context needed to choose or prove this slice. Assign duplicated concerns to one owner; other tickets carry only necessary context. Mention orchestration mechanics such as commits, checkpoints, branches, or PR reuse only when the parent requires them.
 
-   Fold incidental implementation work into the behavioral slice that needs it.
+Use sections that earn their place:
 
-   Keep each slice focused on one behavioral concern. If two proposed tickets carry the same rule, assign it to the ticket that owns that behavior. Leave the other ticket with only the context needed to implement or prove its slice.
+- Parent link.
+- Outcome and how it advances the parent.
+- Current behavior and necessary context.
+- Observable acceptance criteria at the highest appropriate stable system boundary, including relevant failure behavior.
+- Governing constraints.
+- Genuine prerequisites.
 
-   A ticket may reference a parent invariant when that invariant determines the correct behavior or proof. Do not restate adjacent behavior owned by another slice. Combine concerns only when they cannot be implemented or proven independently.
-4. Do not assume the final architecture.
+The sequence is ready when every slice has one required behavioral reason to exist, is as small as useful independent proof permits, and leaves implementers free to discover internal mechanics. A split that merely prepares machinery is insufficient.
 
-   Let each slice and its evidence shape what comes next.
+## Publish
 
-   If later slices depend on learning that does not yet exist, stop decomposition there rather than inventing downstream tickets.
-5. Keep each ticket easy to understand.
-
-   A technically capable human should be able to understand the ticket on first read.
-
-   Use concrete behavior and plain language. Include enough parent context to explain the goal without forcing the reader to reconstruct the whole Epic.
-
-   Include a parent rule in a child ticket only if the implementer needs it to choose the correct behavior or prove the slice.
-
-   Use only behavior, constraints, dependencies, and context established by the parent spec or current evidence. Leave absent details absent.
-
-   Keep ticket titles, outcomes, context, and acceptance criteria at the parent contract's level of abstraction. Describe what must survive, continue, or be delivered. Mention commits, checkpoints, branches, or reuse of an existing pull request only when the parent makes that detail part of the contract.
-
-   Avoid orchestration jargon, compressed state-machine language, and speculative implementation detail.
-6. Make each slice easy to prove.
-
-   Acceptance criteria should describe observable behavior at the highest appropriate stable system boundary and be concrete enough to drive red → green → refactor.
-
-   Prefer tests of observable contracts over tests coupled to internal representation.
-7. Prefer low complexity per slice.
-
-   Split a ticket when doing so makes implementation or proof materially simpler while still producing meaningful behavioral progress.
-
-   Use one fresh implementation session as a practical size limit. A fresh implementer should be able to understand the behavior, drive it through red → green → refactor, verify it, and review the resulting diff without holding several independent proof boundaries in context.
-
-   Treat each distinct verification boundary as a reason to consider a split, especially when one role changes a candidate and another role must verify that exact result. Split only when the smaller ticket still delivers useful behavior or materially reduces reasoning complexity. If the additional boundary is a small extension of the existing path, keep it in the same slice.
-
-   Do not create foundation, abstraction, infrastructure, or cleanup tickets unless they independently make required behavior work.
-8. Before publishing anything, show the proposed ticket sequence to the user as a simple story.
-
-   Each item should say, in plain language, what the system will be able to do after that slice:
-
-   1. **Ticket title** — a short explanation of the behavior this adds.
-   2. **Ticket title** — what this adds on top of the previous slice.
-   3. **Ticket title** — what becomes possible next.
-
-   The sequence should make the parent workflow easy to understand from top to bottom.
-
-   Include only slices justified by current evidence.
-
-   If later slices depend on what earlier work teaches us, stop there and state:
-
-   **Stop point:** what must be learned or proven before planning further work.
-9. Wait for the user to approve the proposed sequence.
-10. After approval, publish only the approved tickets as native subissues of the parent Epic, in the agreed order.
-
-   Add blocking relationships only where one ticket genuinely cannot proceed before another.
-
-   Apply the implementation-ready label where appropriate.
-
-## Ticket
-
-Use only sections that earn their place.
-
-### Parent
-
-Link the parent Epic.
-
-### Outcome
-
-Describe the single new behavior this slice makes possible and how it moves the parent forward.
-
-### Context
-
-Explain why this slice exists and what currently happens.
-
-Give a fresh implementer only the parent context needed to understand the goal.
-
-### Acceptance Criteria
-
-Describe observable evidence that proves the slice works, including relevant failure behavior.
-
-Criteria should be concrete enough to drive red → green → refactor without prescribing the internal implementation.
-
-### Constraints
-
-Include only parent constraints or existing behavior that materially constrain this slice.
-
-### Blocked By
-
-Include only genuine prerequisites, if any.
-
-Before proposing or publishing a slice, ask:
-
-> Is this the smallest useful behavior that can be implemented and proven independently?
-
-If not, split or simplify it.
-
-Then ask:
-
-> Can one fresh implementer complete red → green → refactor, verification, and diff review without crossing several distinct verification boundaries?
-
-If not, split at a meaningful proof boundary. Keep the behavior together when a split would only create preparatory machinery.
-
-Then ask:
-
-> Does each ticket have one clear behavioral reason to exist?
-
-If a ticket contains concerns that can be proven separately, split it. If the same concern appears in multiple tickets, assign it to one and remove the duplication.
-
-Then ask:
-
-> Does this make real progress toward the parent contract, or is it merely preparing machinery?
-
-Prefer real behavior.
-
-Finally ask:
-
-> Am I deciding something the implementer should be free to discover through red → green → refactor?
-
-Remove it.
+Show the proposed sequence as a simple story of what becomes possible after each slice, with any stop point. Wait for approval unless the sequence is already approved. Then publish only those tickets as native subissues in agreed order, following the resolved tracker policy. Add blocking relationships only for genuine prerequisites and apply the implementation-ready label where appropriate. Publication does not start execution.
