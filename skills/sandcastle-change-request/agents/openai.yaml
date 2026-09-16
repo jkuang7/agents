@@ -1,4 +1,4 @@
 interface:
   display_name: "Sandcastle change request"
-  short_description: "Route Epic changes or check standalone Sandcastle support"
-  default_prompt: "Use $sandcastle-change-request to route this change to a relevant Epic or check standalone execution support, preparing a durable assignment and stopping if support is absent."
+  short_description: "Hand an already-selected assignment to Sandcastle"
+  default_prompt: "Use $sandcastle-change-request to validate and update this already-selected Epic child or standalone PR, start or resume its matching trusted controller, confirm ownership, and return control to me."
