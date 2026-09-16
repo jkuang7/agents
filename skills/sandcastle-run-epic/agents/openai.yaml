@@ -1,0 +1,3 @@
+interface:
+  display_name: "Sandcastle run Epic"
+  short_description: "Start or resume an Epic AFK or one child at a time"
