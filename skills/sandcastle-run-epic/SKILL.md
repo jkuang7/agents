@@ -17,9 +17,9 @@ Otherwise use `afk`: normal controller execution without a run limit.
 
 Resolve one repository, follow workspace/repository instructions and the issue-tracker convention before tracker reads, and confirm the Epic exists and is open. Ask only if ownership remains ambiguous.
 
-Establish the trusted operator revision, routing, delivery/worktree identity, durable accepted state, starting accepted HEAD, and controller ownership using [runtime.md](references/runtime.md). Unresolved identity, state, or ownership stops execution.
+Establish the trusted operator revision, routing, delivery/worktree identity, durable accepted state, starting accepted HEAD, and controller ownership using [runtime.md](references/runtime.md). For an already-live controller, also establish compatibility with the requested execution mode. Unresolved identity, state, or ownership stops execution; unresolved live-controller mode compatibility prevents a successful handoff.
 
-If the selected delivery already has a live controller, do not launch another. Confirm and report its ownership as the successful handoff unless the user explicitly asks to change or stop it through a supported controller interface.
+If the selected delivery already has a live controller, do not launch another. Confirm through supported runtime evidence both its ownership and whether its configured run limit matches the requested `one-child` or `afk` mode. Treat it as a successful handoff only when both are established and compatible. If the mode conflicts or cannot be established, report the active controller and the mismatch or inability to establish compatibility without claiming the requested handoff succeeded; do not stop, reconfigure, or restart it unless the user explicitly authorizes that through a supported controller interface.
 
 Resolve and reuse the runtime-established cumulative PR, leaving creation to normal publication when accepted progress becomes publishable.
 
@@ -37,7 +37,7 @@ After ownership is confirmed, return control to the user. Sandcastle owns implem
 
 ## 4. Report the handoff
 
-Report the Epic/repository, execution mode, trusted operator revision, starting accepted HEAD, and the supported evidence that the controller owns the selected delivery. If handoff failed, report the startup or ownership evidence that prevented it without claiming execution started.
+Report the Epic/repository, requested execution mode, trusted operator revision, starting accepted HEAD, and the supported evidence that the controller owns the selected delivery with a compatible mode. If handoff failed, report the startup, ownership, or mode-compatibility evidence that prevented it without claiming the requested execution started.
 
 Observation is a separate, explicit user-requested path. When asked to wait, watch, or attach, use only the current runtime's read-only Epic `--attach` or `--attach-worker` interface described in [runtime.md](references/runtime.md). Stopping an observer must not stop the controller or transfer execution ownership back to this agent.
 

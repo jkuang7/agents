@@ -16,6 +16,8 @@ Account for all durable accepted advances, including corrections or reconciliati
 
 Inspect current locking, process handling, and observation interfaces. Correlate lock/process/log evidence with the selected delivery and active run. A PID, lock, or historical log alone does not establish live ownership. Retain ownership protection while writers or identity remain uncertain.
 
+For an already-live controller, use supported current-run evidence to establish its configured run limit as well as ownership. Compare that evidence with the requested mode, preserving an explicit evidence gap when the active configuration cannot be established.
+
 For a new launch, discover the supported startup and ownership signals from the trusted operator's README, CLI/help, source, capability/state interfaces, and durable state. Start the documented controller in an execution surface that remains alive after this agent returns. Handoff succeeds only after the controller passes preflight and current runtime evidence corroborates that it accepted ownership of the selected Epic delivery. If the controller exits during startup or ownership remains unproven, report a failed handoff.
 
 After confirmed ownership, return without following the run to readiness. Use the documented `--attach` or `--attach-worker` watcher only for an explicit observation request; these are read-only interfaces, and stopping one leaves the controller running.
