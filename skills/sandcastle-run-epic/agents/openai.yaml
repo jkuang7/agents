@@ -1,3 +1,4 @@
 interface:
   display_name: "Sandcastle run Epic"
-  short_description: "Start or resume an Epic AFK or one child at a time"
+  short_description: "Hand an Epic to its trusted controller"
+  default_prompt: "Use $sandcastle-run-epic to start or resume this Epic with its trusted Sandcastle controller, confirm controller ownership, and return control to me."

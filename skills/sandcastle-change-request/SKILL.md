@@ -28,7 +28,7 @@ Before editing an assignment owned by a live controller, use [controller stop an
 
 Apply the requested change to the selected authority only when needed. Record the complete scoped requirement, acceptance criteria, exclusions, and superseded requirements without rewriting an already-correct contract. Any parent constraint intended to bind an Epic child must be copied or restated in that child. Preserve other parent material separately as non-binding context; never enlarge the child's contract by inference.
 
-- Epic mode: the selected unaccepted child issue is the complete binding contract. The parent supplies only non-binding context, rationale, and broader intent. Preserve accepted history and native child ordering.
+- Epic mode: the selected unaccepted child issue's contract-bearing title and body are the complete binding contract; comments and workflow metadata are non-binding. The parent supplies only non-binding context, rationale, and broader intent. Preserve accepted history and Sandcastle's native child ordering. The Epic controller owns the queue: determine and report whether the selected child is currently the next executable assignment when that affects the handoff, and do not promise immediate execution when earlier unaccepted children precede it.
 - Standalone mode: the focused PR is the live specification authority. Runtime/bootstrap records may identify and observe it, but never copy or replace it as a second specification.
 
 Read the authoritative specification back from the tracker or PR and confirm the selected child/PR and the runtime's actual canonical authority observation before invocation. Verify that the observation respects the selected binding-source boundary; do not prescribe an Epic projection the trusted runtime does not implement. A running worker is bound to the observed authority; later authoritative edits are handled by the runtime's fail-closed change detection.
@@ -37,7 +37,7 @@ If the runtime cannot consume the selected authoritative source, preserve the sp
 
 ## Invoke the trusted flow
 
-Invoke the trusted controller that matches the selected child or PR using [runtime.md](references/runtime.md). Do not switch modes when invocation fails. Confirm through the runtime's supported evidence that the controller accepted and acquired ownership of this delivery. Starting a process without establishing ownership is not a successful handoff.
+Invoke the trusted controller that matches the selected child or PR using [runtime.md](references/runtime.md). For an Epic child, hand off the Epic queue in its native order; do not reorder, bypass, or manually target a later child unless the trusted runtime explicitly supports that operation. Do not switch modes when invocation fails. Confirm through the runtime's supported evidence that the controller accepted and acquired ownership of this delivery. Starting a process without establishing ownership is not a successful handoff.
 
 After that confirmation, return control to the user. Do not supervise workers, reconstruct runtime state from the conversation, or wait for readiness. If the user explicitly asks to wait, watch, or attach, use [supported observation](references/runtime.md#controller-ownership-handoff-and-observation); observation does not transfer ownership back to this agent.
 

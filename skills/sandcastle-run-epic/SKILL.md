@@ -5,21 +5,21 @@ description: Start or resume an existing Sandcastle Epic through its trusted con
 
 # Sandcastle run Epic
 
-Execute an existing Epic through its trusted controller. Determine start or resume from durable state.
+Hand an existing Epic to its trusted controller. Determine start or resume from durable state, confirm that Sandcastle acquired ownership, then return control to the user.
 
 ## 1. Select execution mode
 
 Use `one-child` only for an explicit request for one child/subissue/slice/iteration, one issue at a time, or stopping after the next accepted child. Limit acceptance to at most one child.
 
-Otherwise use `afk`: normal controller execution without a run limit, through its terminal condition.
+Otherwise use `afk`: normal controller execution without a run limit.
 
 ## 2. Resolve the Epic and trusted runtime
 
 Resolve one repository, follow workspace/repository instructions and the issue-tracker convention before tracker reads, and confirm the Epic exists and is open. Ask only if ownership remains ambiguous.
 
-Establish the trusted operator revision, routing, delivery/worktree identity, durable accepted state, starting accepted HEAD, and controller ownership using [runtime.md](references/runtime.md). Unresolved identity, state, or ownership stops execution.
+Establish the trusted operator revision, routing, delivery/worktree identity, durable accepted state, starting accepted HEAD, and controller ownership using [runtime.md](references/runtime.md). For an already-live controller, also establish compatibility with the requested execution mode. Unresolved identity, state, or ownership stops execution; unresolved live-controller mode compatibility prevents a successful handoff.
 
-If the selected delivery already has a live controller, do not launch another. Report the active run and stop unless the user explicitly asks to change or stop it through a supported controller interface.
+If the selected delivery already has a live controller, do not launch another. Confirm through supported runtime evidence both its ownership and whether its configured run limit matches the requested `one-child` or `afk` mode. Treat it as a successful handoff only when both are established and compatible. If the mode conflicts or cannot be established, report the active controller and the mismatch or inability to establish compatibility without claiming the requested handoff succeeded; do not stop, reconfigure, or restart it unless the user explicitly authorizes that through a supported controller interface.
 
 Resolve and reuse the runtime-established cumulative PR, leaving creation to normal publication when accepted progress becomes publishable.
 
@@ -31,21 +31,15 @@ Plain `resume` does not authorize retrying a durable block. Report it unless ret
 
 Invoke the current documented command once with limit `1` for `one-child`, or no limit for `afk`. Use the trusted operator even when the Epic changes Sandcastle itself. Candidate runtime code cannot activate itself.
 
-Observe through read-only interfaces until the terminal condition; stopping an observer does not stop the controller. Leave implementation, review, acceptance, publication, and readiness to Sandcastle. Honor terminal stops without manual integration, recreated controller logic, an outer loop, or automatic relaunch.
+Confirm through the runtime's supported evidence that the controller passed startup and acquired ownership of the selected Epic delivery. A process spawn, PID, lock file, or historical log alone is insufficient. If launch fails, the controller exits during startup, or ownership cannot be corroborated, preserve durable state and report a failed handoff.
 
-## 4. Report fresh results
+After ownership is confirmed, return control to the user. Sandcastle owns implementation, review, verification, acceptance, publication, readiness, retries, recovery, and terminal stopping. The `one-child` limit configures the controller; it does not require this agent to wait for a child acceptance. Do not add an outer polling or relaunch loop, manual integration path, or duplicate controller logic.
 
-At the terminal condition, read fresh evidence using [runtime.md](references/runtime.md) and report:
+## 4. Report the handoff
 
-- Epic/repository and execution mode;
-- starting and final accepted HEAD;
-- children accepted during this invocation;
-- stop/block reason;
-- cumulative PR link and draft/ready state;
-- trusted operator revision;
-- whether work remains, including pending final approval.
+Report the Epic/repository, requested execution mode, trusted operator revision, starting accepted HEAD, and the supported evidence that the controller owns the selected delivery with a compatible mode. If handoff failed, report the startup, ownership, or mode-compatibility evidence that prevented it without claiming the requested execution started.
 
-State unavailable evidence explicitly; process exit alone proves no success. A block before acceptance is not a successful one-child run; report an intentional limit stop only when reached. For AFK, distinguish completed/ready, blocked, cancelled, retry/no-progress, and other fail-closed stops.
+Observation is a separate, explicit user-requested path. When asked to wait, watch, or attach, use only the current runtime's read-only Epic `--attach` or `--attach-worker` interface described in [runtime.md](references/runtime.md). Stopping an observer must not stop the controller or transfer execution ownership back to this agent.
 
 ## Scope boundary
 

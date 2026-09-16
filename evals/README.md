@@ -8,6 +8,9 @@ This directory keeps compact cases for observed, consequential skill failures:
   and keeps proof-only external gates out of implementation tickets.
 - `acceptance-ignored-files/` checks that acceptance cleanup preserves unique
   ignored user data even when normal Git worktree removal would succeed.
+- `sandcastle-handoff/` checks that Sandcastle-facing skills hand execution to
+  the trusted controller, preserve native Epic ordering, and keep observation
+  read-only.
 - `make_fixture.py` generates four disposable repository cases for working-tree
   review, regression-test retirement, stale continuation evidence, and routing.
   Their expected behavior is in `generated-expected.md`.
