@@ -11,10 +11,11 @@ Confirm from the trusted operator source, README, and command help:
 - the concrete standalone entry point and bootstrap/input shape;
 - the operator revision;
 - that the selected PR is the live specification authority;
-- that the runtime records and checks the PR's observed identity/revision/hash;
+- the runtime's actual canonical authority observation and change check: for the current design, the PR identity plus one canonical content digest;
+- any separate revision only when the source exposes an independent, stable, body-specific revision signal;
 - that implementation, fresh review, exact correction verification, publication, and readiness use that authority;
 - the target/base/branch prerequisites and any blocking reasons;
-- the durable standalone state location and supported resume/retry interface.
+- the durable standalone state location and supported launch, resume, retry, and observation interfaces.
 
 Use the runtime's capability command when available and record its actual result. Do not infer support merely from source files or an Epic command.
 
@@ -27,8 +28,8 @@ These are discovery hints; confirm them against the current operator:
 - Identify the focused PR from the supported standalone bootstrap/input.
 - Read the PR body as the live assignment authority; controller-owned status/evidence is not assignment scope.
 - For standalone work, keep the PR human-reviewable: use a clear title and concise body that states the requested behavior, acceptance criteria, exclusions, and relevant constraints; controller-owned status/evidence must remain separate from the human specification.
-- Inspect `.sandcastle/standalone/` only for durable execution/recovery state, not as a competing specification source.
-- Confirm the saved authority identity and observed revision/hash still match the live PR before resume.
+- Inspect `.sandcastle/standalone/` only for durable execution/recovery state, not as a competing or copied specification source.
+- Through the runtime's supported interface, confirm that its canonical observation still matches the live PR before resume. Discover the observation the runtime actually implements instead of requiring a cached field layout. For the current design, this is the PR identity and one content digest; do not persist or require a second representation of the PR specification.
 - Confirm the saved branch/worktree, accepted candidate, publication state, operator revision, and bootstrap ownership through the runtime's supported interfaces.
 - Resume through the documented standalone entry point; do not reconstruct the workflow manually.
 
@@ -40,11 +41,22 @@ These are discovery hints; confirm them against the current operator:
 - Delivery `.sandcastle/epics/epic-<number>.json` records the base, required-child order, receipts, reconciliations, and corrections. Corroborate the recorded accepted chain with receipts and actual HEAD; the last child receipt alone may omit later accepted corrections.
 - Operator `.sandcastle/logs/epic-<number>/current` identifies the run logs and stop history.
 - `src/cli/main.ts` builds assignment snapshots and trusted prompts. `src/epic/epic.ts` defines consumed tracker fields. GitHub native sub-issues determine the required set, including closed children; read back order after assignment changes.
+- The selected child identity plus its normalized contract-bearing title and body form the binding authority observation. Parent Epic material remains separate non-binding context; do not infer inherited constraints or include parent edits in the child's authority observation.
 - `src/epic/workflow.ts` contains acceptance, correction verification, blocking, final review, and readiness controls.
 - `npm start -- <epic-number> --attach` and `--attach-worker <iteration>` are read-only watchers. Stopping a watcher leaves the controller running.
 - `npm start -- <epic-number> --retry-blocked` requests explicit retry. `--reconcile-delivery <source-commit>` validates provenance, not approval.
 
 Check the operator's selected repository, including `gh repo view` where used, against the durable target before launch. `origin` may point upstream while delivery targets a fork; `-R` on issue edits does not change controller routing. Resolve mismatches through authorized configuration or stop.
+
+## Controller ownership handoff and observation
+
+Discover the supported controller launch and ownership signals from the trusted operator's README, command help, source, and capability/state interface. Launch the documented controller command in an execution surface that can remain alive after this agent returns.
+
+A handoff succeeds only after the controller passes preflight and the runtime's supported output or state confirms that it acquired and accepted ownership of the selected delivery. A spawned process, PID, or lock file alone is not enough. If the controller exits during launch, rejects the assignment, or ownership cannot be corroborated, preserve the authoritative assignment and report that handoff failed.
+
+Once ownership is confirmed, return control to the user. Sandcastle remains responsible for its workers and lifecycle; do not poll it to readiness or reconstruct its state in the originating conversation.
+
+If the user explicitly requests observation, use only the interface the current runtime documents. Epic attach commands are controller-independent watchers, and stopping a watcher must leave the controller running. The current standalone interface may expose state through capability discovery without providing an attach command; do not invent one. Use a documented snapshot or watcher only when it satisfies the request, and report when no supported observation mode exists.
 
 ## Controller stop and snapshot
 

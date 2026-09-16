@@ -5,7 +5,7 @@ description: Record a focused Sandcastle requirement in the correct Epic child o
 
 # Sandcastle change request
 
-Kickstart or resume one focused assignment through the existing trusted Sandcastle runtime. The runtime owns implementation, review, verification, acceptance, retries, recovery, and readiness; keep their procedures in [runtime.md](references/runtime.md).
+Kickstart or resume one focused assignment through the existing trusted Sandcastle runtime. After a successful handoff, the runtime owns implementation, review, verification, acceptance, publication, retries, recovery, and readiness; keep its procedures in [runtime.md](references/runtime.md).
 
 Apply-and-resume requests authorize the tracker/PR updates and invocation below. Preparation-only requests stop before tracker, PR, controller, or delivery mutations.
 
@@ -24,19 +24,21 @@ If standalone execution is absent or unproven, prepare the smallest durable spec
 
 Before editing an assignment owned by a live controller, use [controller stop and snapshot](references/runtime.md#controller-stop-and-snapshot) and wait for ownership release.
 
-Record the complete scoped requirement, acceptance criteria, exclusions, and superseded requirements in the authoritative assignment source. Identify applicable parent constraints without duplicating them unless the child must explicitly specialize or supersede them.
+Record the complete scoped requirement, acceptance criteria, exclusions, and superseded requirements in the authoritative assignment source. Any parent constraint intended to bind an Epic child must be copied or restated in that child. Preserve other parent material separately as non-binding context; never enlarge the child's contract by inference.
 
-- Epic mode: the selected unaccepted child issue. The parent supplies context and applicable constraints, not additional assignment scope. Preserve accepted history and native child ordering.
-- Standalone mode: the focused PR specification. Runtime/bootstrap records may snapshot or reference it, but never replace it as authority.
+- Epic mode: the selected unaccepted child issue is the complete binding contract. The parent supplies only non-binding context, rationale, and broader intent. Preserve accepted history and native child ordering.
+- Standalone mode: the focused PR is the live specification authority. Runtime/bootstrap records may identify and observe it, but never copy or replace it as a second specification.
 
-Read the authoritative specification back from the tracker or PR and confirm the selected child/PR, current revision, and execution support before invocation. A running worker is bound to the observed authoritative revision; later edits are handled by the runtime's fail-closed revision-change behavior.
+Read the authoritative specification back from the tracker or PR and confirm the selected child/PR, the runtime's current canonical authority observation, and execution support before invocation. A running worker is bound to that observation; later authoritative edits are handled by the runtime's fail-closed change detection.
 
 If the runtime cannot consume the selected authoritative source, preserve the specification, report the unsupported handoff, and stop.
 
 ## Invoke the trusted flow
 
-Invoke the existing Epic resume entry point or established standalone entry point from [runtime.md](references/runtime.md). Do not reproduce controller, review, verification, retry, recovery, acceptance, or readiness procedures in this skill.
+Invoke the existing Epic resume entry point or established standalone entry point from [runtime.md](references/runtime.md). Confirm through the runtime's supported evidence that the controller accepted and acquired ownership of this delivery. Starting a process without establishing ownership is not a successful handoff.
 
-If execution becomes unsupported, stop the selected controller safely, preserve the assignment, and report the handoff. If an independently authorized runtime change must be activated first, use [operator activation and recovery](references/runtime.md#operator-activation-and-recovery); never activate an unverified candidate runtime.
+After that confirmation, return control to the user. Do not supervise workers, reconstruct runtime state from the conversation, or wait for readiness. If the user explicitly asks to wait, watch, or attach, use [supported observation](references/runtime.md#controller-ownership-handoff-and-observation); observation does not transfer ownership back to this agent.
 
-Stop when the runtime reports readiness or a durable stop. Never merge the PR, advance `main`, close the Epic, or create another delivery path. Report the authoritative assignment, ownership rationale, operator revision, and resulting runtime state.
+If launch fails or ownership cannot be established, preserve the authoritative assignment and report the failed handoff. If execution becomes unsupported after launch, use only the runtime's supported stop/recovery boundary. If an independently authorized runtime change must be activated first, use [operator activation and recovery](references/runtime.md#operator-activation-and-recovery); never activate an unverified candidate runtime.
+
+Never merge the PR, advance `main`, close the Epic, or create another delivery path. Report the authoritative assignment, operator revision, and the evidence that ownership was accepted, or the evidence that prevented handoff.
