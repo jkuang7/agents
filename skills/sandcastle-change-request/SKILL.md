@@ -5,7 +5,7 @@ description: Record or update a focused requirement in an already-selected Sandc
 
 # Sandcastle change request
 
-Kickstart or resume one already-selected focused assignment through the existing trusted Sandcastle runtime. `to-spec` owns the delivery shape and contract. This skill validates and updates that exact authoritative target, then hands it to Sandcastle. After a successful handoff, the runtime owns implementation, review, verification, acceptance, publication, retries, recovery, and readiness; keep its procedures in [runtime.md](references/runtime.md).
+Kickstart or resume one already-selected focused assignment through the existing trusted Sandcastle runtime. The selected target and contract are upstream decisions; this skill does not choose them. It validates and updates that exact authoritative target, then hands it to Sandcastle. After a successful handoff, the runtime owns implementation, review, verification, acceptance, publication, retries, recovery, and readiness; keep its procedures in [runtime.md](references/runtime.md).
 
 Apply-and-resume requests authorize the tracker/PR updates and invocation below. Preparation-only requests stop before tracker, PR, controller, or delivery mutations.
 
