@@ -16,6 +16,10 @@ Account for all durable accepted advances, including corrections or reconciliati
 
 Inspect current locking, process handling, and observation interfaces. Correlate lock/process/log evidence with the selected delivery and active run. A PID, lock, or historical log alone does not establish live ownership. Retain ownership protection while writers or identity remain uncertain.
 
+For a new launch, discover the supported startup and ownership signals from the trusted operator's README, CLI/help, source, capability/state interfaces, and durable state. Start the documented controller in an execution surface that remains alive after this agent returns. Handoff succeeds only after the controller passes preflight and current runtime evidence corroborates that it accepted ownership of the selected Epic delivery. If the controller exits during startup or ownership remains unproven, report a failed handoff.
+
+After confirmed ownership, return without following the run to readiness. Use the documented `--attach` or `--attach-worker` watcher only for an explicit observation request; these are read-only interfaces, and stopping one leaves the controller running.
+
 For an explicitly requested stop/change, use the supported controller interface. Wait for the controller and its writers to exit and ownership to release before a replacement launch. Re-read accepted HEAD after shutdown because acceptance may finish during interruption. Recover stale ownership only through the documented procedure after proving its writers have exited. Stopping a read-only observer does not stop the controller.
 
 ## Cumulative PR
@@ -28,6 +32,6 @@ Discover current command forms and run-limit semantics from CLI/help and the ent
 
 For authorized retry or recovery, establish the supported control and its prerequisites from current runtime documentation and validation code. Durable blocks remain binding without explicit retry authorization. Provenance reconciliation alone does not establish approval. Unsupported controls require a reported stop; preserve state rather than substituting manual integration or an outer retry loop.
 
-## Fresh results
+## Fresh state
 
-Read fresh durable accepted state, invocation receipts/logs, and cumulative PR metadata together. Compare with the starting snapshot to distinguish accepted children from other HEAD advances. Establish the terminal reason, remaining work, and readiness of the current accepted/published HEAD from the runtime's approval evidence. Process exit, observer exit, or a ready flag alone does not prove completion.
+Read durable accepted state, invocation receipts/logs, and cumulative PR metadata together when establishing starting state, ownership, or an explicitly requested observation result. Process exit, observer exit, or a ready flag alone does not prove ownership or completion.
