@@ -2,11 +2,20 @@
 
 Consult the current trusted operator source, README, command help, and repository instructions before acting. Discover paths, revisions, and supported interfaces each time. This reference locates the existing runtime; the controller owns its state machine.
 
-## Standalone capability discovery
+## Selected target capability discovery
 
-Determine whether the current trusted operator supports standalone execution against an existing focused PR as the authoritative assignment.
+Validate only the assignment target already selected by the request or approved context. Do not use runtime capability to choose between Epic and standalone delivery.
 
-Confirm from the trusted operator source, README, and command help:
+For a selected Epic child, confirm from the trusted operator source, README, and command help:
+
+- the concrete Epic entry point and target repository;
+- the operator revision;
+- that the selected child is the complete binding contract and parent Epic material is separate non-binding context unless copied or restated in the child;
+- the runtime's actual canonical authority observation and fail-closed change check;
+- that the observation respects the binding-source boundary without assuming a field layout or authority projection the trusted runtime does not implement; and
+- the target, delivery, resume, retry, and observation prerequisites and any blocking reasons.
+
+For a selected focused standalone PR, confirm:
 
 - the concrete standalone entry point and bootstrap/input shape;
 - the operator revision;
@@ -17,15 +26,15 @@ Confirm from the trusted operator source, README, and command help:
 - the target/base/branch prerequisites and any blocking reasons;
 - the durable standalone state location and supported launch, resume, retry, and observation interfaces.
 
-Use the runtime's capability command when available and record its actual result. Do not infer support merely from source files or an Epic command.
+For standalone, use the runtime's capability command when available and record its actual result. Do not infer standalone support merely from source files or an Epic command.
 
-If support is absent or cannot be established, follow the skill's unsupported-execution preparation and stop. Do not invent commands, create an artificial Epic, or substitute an ad hoc loop and call it Sandcastle. Adding runtime capability requires separate authorization.
+If support is absent or cannot be established for the selected target, follow the skill's unsupported-execution preparation and stop. Do not switch modes, invent commands, create an artificial Epic, or substitute an ad hoc loop and call it Sandcastle. Adding runtime capability requires separate authorization.
 
 ## Existing standalone discovery and handoff
 
 These are discovery hints; confirm them against the current operator:
 
-- Identify the focused PR from the supported standalone bootstrap/input.
+- Confirm that the supported standalone bootstrap/input identifies the already-selected focused PR.
 - Read the PR body as the live assignment authority; controller-owned status/evidence is not assignment scope.
 - For standalone work, keep the PR human-reviewable: use a clear title and concise body that states the requested behavior, acceptance criteria, exclusions, and relevant constraints; controller-owned status/evidence must remain separate from the human specification.
 - Inspect `.sandcastle/standalone/` only for durable execution/recovery state, not as a competing or copied specification source.
@@ -41,7 +50,7 @@ These are discovery hints; confirm them against the current operator:
 - Delivery `.sandcastle/epics/epic-<number>.json` records the base, required-child order, receipts, reconciliations, and corrections. Corroborate the recorded accepted chain with receipts and actual HEAD; the last child receipt alone may omit later accepted corrections.
 - Operator `.sandcastle/logs/epic-<number>/current` identifies the run logs and stop history.
 - `src/cli/main.ts` builds assignment snapshots and trusted prompts. `src/epic/epic.ts` defines consumed tracker fields. GitHub native sub-issues determine the required set, including closed children; read back order after assignment changes.
-- The selected child identity plus its normalized contract-bearing title and body form the binding authority observation. Parent Epic material remains separate non-binding context; do not infer inherited constraints or include parent edits in the child's authority observation.
+- Discover the trusted runtime's actual canonical observation of the selected child. Verify that it treats the child as the complete binding contract and parent Epic material as separate non-binding context; do not infer inherited constraints or prescribe an unimplemented authority projection.
 - `src/epic/workflow.ts` contains acceptance, correction verification, blocking, final review, and readiness controls.
 - `npm start -- <epic-number> --attach` and `--attach-worker <iteration>` are read-only watchers. Stopping a watcher leaves the controller running.
 - `npm start -- <epic-number> --retry-blocked` requests explicit retry. `--reconcile-delivery <source-commit>` validates provenance, not approval.
