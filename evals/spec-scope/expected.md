@@ -7,4 +7,6 @@ D: Specify one complete import verified at the existing importer or provider-cli
 
 E: Produce one compact unattended-execution contract. It should say that the agent continues until the Epic is complete and verified, human action is required, the operator cancels, or an explicit limit is reached. Failed child work must not advance execution or alter accepted work. Safe failures may be retried; unsafe or unproductive progress must stop with a reason. Restart should continue from the last safely established accepted point, ambiguous state should stop, and a blocked run should not loop automatically across restarts. Express these as general workflow rules and a small set of observable acceptance criteria. Do not enumerate worker error types, prescribe retry counts, or design persistence and recovery machinery.
 
+F: Require the final Epic PR—not every child—to be production-mergeable. Each child should remain a coherent, reviewable, independently provable implementation slice that composes safely into the cumulative candidate without regressions or an invalid accepted state. Do not force compatibility layers, feature flags, or artificial vertical slices solely to make an unshipped child independently deployable.
+
 Judge scope, correctness, and user decision boundaries rather than headings or wording.

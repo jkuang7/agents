@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # To spec
 
-Turn accepted conversation, codebase context, or an existing issue into the smallest set of meaningful, production-safe delivery units. Each completed contract must leave its delivery production-mergeable. Optimize for coherent human review, not the fewest PRs, issues, or Epics.
+Turn accepted conversation, codebase context, or an existing issue into the smallest set of meaningful, production-safe delivery units. Each final delivery unit must be production-mergeable. Epic child contracts must be coherent, reviewable implementation slices that accumulate safely into that delivery. Optimize for coherent human review, not the fewest PRs, issues, or Epics.
 
 ## Choose the delivery shape
 
@@ -36,16 +36,16 @@ Each contract is complete when a reasonable implementer can build the right beha
 
 ## Converge through independent review
 
-For every review pass, start a new review subagent with a fresh context window. Do not continue or reuse a prior reviewer thread. Give it only the original intent, confirmed route, and complete current spec or specs. The reviewer does not implement the task or redesign the product. It checks that:
+For every review pass, start an independent reviewer in a new context window. Do not continue or reuse a prior reviewer context. Give it only the original intent, confirmed route, and complete current spec or specs. The reviewer does not implement the task or redesign the product. It checks that:
 
 - the route and contracts are correct, preserve the original intent, and do not expand scope;
 - each delivery unit is as small as reasonably possible and practical for a human to review;
 - independently reviewable concerns are not combined and tightly coupled behavior is not split artificially;
-- completing each contract produces a robust, production-mergeable result, and every related Epic is independently production-safe;
+- each final delivery unit is robust and production-mergeable, and child contracts compose safely without regressions or an invalid intermediate accepted state;
 - reachable consequential failures are covered without speculative recovery or machinery;
 - acceptance criteria are observable, sufficient, and unambiguous.
 
-When review finds a material problem, it returns one concrete finding. Revise only what resolves that finding, then start a new fresh-context reviewer on the complete corrected spec. Continue until a full pass finds no material issue: the specs are correct, lean, robust, easy for a human to review, and production-mergeable when completed. Return to the human when convergence requires a new product or architecture decision; do not let the loop reopen unrelated questions or accumulate speculative detail.
+When review finds a material problem, it returns one concrete finding. Revise only what resolves that finding, then start an independent reviewer in a new context window on the complete corrected spec. Continue until a full pass finds no material issue: the specs are correct, lean, robust, easy for a human to review, and each final delivery is production-mergeable when completed. Return to the human when convergence requires a new product or architecture decision; do not let the loop reopen unrelated questions or accumulate speculative detail.
 
 After review succeeds, show the final proposed spec or specs and wait for final human approval before changing GitHub.
 
