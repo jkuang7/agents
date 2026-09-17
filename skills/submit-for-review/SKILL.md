@@ -60,4 +60,6 @@ Confirm that the remote revision matches the verified candidate and read back th
 
 If publication includes authorized cleanup for a local Markdown tracker, follow [LOCAL-CLEANUP.md](references/LOCAL-CLEANUP.md).
 
-Lead the handoff with a clickable canonical PR or MR link whose remote head contains the reported candidate revision. Then give the candidate revision, concise commit order, verification results, and material caveats.
+Lead the handoff with a clickable canonical PR or MR link whose remote head
+equals the reported candidate revision. Then give the candidate revision,
+concise commit order, verification results, and material caveats.

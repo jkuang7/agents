@@ -54,8 +54,11 @@ have not passed, or repository policy blocks the merge.
 
 ## Merge and confirm
 
-Immediately before merging, read the PR head again and require it to equal the
-recorded SHA. Use the host's expected-head option when available. Then use the
+Immediately before merging, read fresh forge state for the PR head SHA,
+mergeability, required checks, and required reviews. Require the head to equal
+the recorded SHA and require mergeability, checks, and reviews still to permit
+the merge. Stop if any gate is unavailable, pending, failing, or no longer
+satisfied. Use the host's expected-head option when available. Then use the
 repository's supported merge path and strategy without bypassing branch
 protection. Preserve unrelated local work. If the PR needs conflict resolution
 or another material change, prepare and verify that change separately, then
