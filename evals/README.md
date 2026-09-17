@@ -8,6 +8,9 @@ This directory keeps compact cases for observed, consequential skill failures:
   and keeps proof-only external gates out of implementation tickets.
 - `acceptance-ignored-files/` checks that acceptance cleanup preserves unique
   ignored user data even when normal Git worktree removal would succeed.
+- `acceptance-conversation-target/` checks that a bare acceptance invocation can
+  use an unambiguous submission handoff without treating skill-edit requests or
+  unsubmitted local changes as merge authorization.
 - `sandcastle-handoff/` checks that Sandcastle-facing skills hand execution to
   the trusted controller, preserve native Epic ordering, and keep observation
   read-only.

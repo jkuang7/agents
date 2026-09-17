@@ -22,7 +22,17 @@ Inspect the candidate's status, commits, and complete diff. Preserve unrelated w
 
 Preserve commit boundaries that already tell a coherent story. Each commit should represent one understandable part of the delivered change, grouped by purpose rather than file type.
 
-When history obscures the change, reorganize it only if current authorization permits the rewrite and the result will reduce review work. Do not rewrite good history for appearance. Do not rewrite a published branch after human review has started without explicit authorization.
+When history obscures the change, a submission request implicitly authorizes
+rewriting only unpublished local candidate commits that are proven to belong to
+the current task. Treat commits as unpublished only when they are not reachable
+from any remote ref, have never been pushed or shared for review, and are not
+known to be based on another contributor's work. Preserve the candidate's content
+and unrelated history. If any condition is uncertain, preserve the history.
+
+Rewriting published history requires explicit authorization for the rewrite,
+such as a request to rebase, squash, amend, or force-update that branch. A request
+to submit, push, create a PR, or update an existing PR does not provide that
+authorization. Do not rewrite good history for appearance.
 
 ## Verify the candidate
 
@@ -34,9 +44,17 @@ Read [REVIEW-GUIDE.md](references/REVIEW-GUIDE.md) before drafting the review bo
 
 ## Publish and hand off
 
+Read [the shared issue and Epic lifecycle contract](../../references/ISSUE-LIFECYCLE.md)
+before choosing closing references.
+
 Immediately before publishing, fetch the remote branch and compare its head with the inspected SHA. If it changed, reconcile that work and reverify the changed candidate. For an authorized rewrite, use `--force-with-lease` against the exact remote SHA from the final inspection. If the lease fails, stop and reassess instead of refreshing it and retrying blindly.
 
-Push the candidate and create or update its review request against the selected base. Use a close-on-merge reference only for an issue this candidate delivers and is intended to close. Link parent specs or Epics without closing them unless the requested submission includes closure. Submission otherwise leaves issue state unchanged.
+Push the candidate and create or update its review request against the selected
+base. Use a close-on-merge reference only for a delivery issue this candidate
+fully delivers and intends to close. Link parent specs or Epics without closing
+them. Submission otherwise leaves issue state unchanged; a request to close a
+parent Epic after merge is separate lifecycle authorization, not a reason to put
+a closing keyword for that Epic in the PR.
 
 Confirm that the remote revision matches the verified candidate and read back the published title, body, and canonical review URL. Submission is complete only when the verified candidate commits are the head of that exact PR or MR; do not present a local-only commit or a branch link as submitted. Do not merge or release without separate authorization.
 
