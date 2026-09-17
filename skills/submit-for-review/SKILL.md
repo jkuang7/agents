@@ -38,8 +38,8 @@ Immediately before publishing, fetch the remote branch and compare its head with
 
 Push the candidate and create or update its review request against the selected base. Use a close-on-merge reference only for an issue this candidate delivers and is intended to close. Link parent specs or Epics without closing them unless the requested submission includes closure. Submission otherwise leaves issue state unchanged.
 
-Confirm that the remote revision matches the verified candidate and read back the published title and body. Do not merge or release without separate authorization.
+Confirm that the remote revision matches the verified candidate and read back the published title, body, and canonical review URL. Submission is complete only when the verified candidate commits are the head of that exact PR or MR; do not present a local-only commit or a branch link as submitted. Do not merge or release without separate authorization.
 
 If publication includes authorized cleanup for a local Markdown tracker, follow [LOCAL-CLEANUP.md](references/LOCAL-CLEANUP.md).
 
-Return the canonical review link, candidate revision, concise commit order, verification results, and material caveats.
+Lead the handoff with a clickable canonical PR or MR link whose remote head contains the reported candidate revision. Then give the candidate revision, concise commit order, verification results, and material caveats.
