@@ -1,61 +1,56 @@
 ---
 name: to-spec
-description: "Understand the problem behind accepted intent, find the simplest change that resolves its root cause, route it to a reviewable single PR or Epic plan, and publish the spec as a draft PR for review, or as Epic issues after approval."
+description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a draft spec PR or Epic issues."
 disable-model-invocation: true
 ---
 
 # To spec
 
-Turn a goal into the smallest change that solves the real problem, written as a contract a Sandcastle worker can implement and a human can review in one pass. Every new requirement is work to build, review, and maintain, so the default is less: validate the simplest fix before graduating to anything larger.
+Write the smallest spec that solves the real problem. Every requirement costs effort to build, review, and maintain, so try the simplest fix before anything bigger.
 
 ## 1. Understand the problem
 
-State the human's goal in their terms, including its tradeoffs, such as cost against result quality. When the request names a solution, mechanism, or measurement, identify the problem it serves; a suggested mechanism is a hypothesis, not a requirement, unless the human confirms it.
+- **Goal:** State what the human is trying to achieve, including tradeoffs such as cost against quality. If they asked for a specific solution or measurement, find the problem behind it. A suggested mechanism is a hypothesis, not a requirement, unless they confirm it.
+- **Root cause:** Before designing anything, work out the bottleneck, the constraints, and what makes this hard. Base it on evidence: logs, data, prior runs, code, and tracker history, read from the original source rather than a wrapper. Theory without evidence is not understanding. For new features with no observed problem, understand the goal, constraints, and existing capabilities to build on.
+- **Investigate now:** If existing evidence can answer a question, analyze it yourself now, or ask to. Never spec an analysis tool, report, or telemetry to find a cause. Propose new recording only when existing evidence cannot reveal the problem, and keep it minimal. Say what you could not establish instead of adding speculative requirements.
+- **Simplest fix:** Prefer an existing capability, an established practice, or a small direct change. Build more only when the problem needs it, not for hypothetical futures. Name the evidence that will show whether the fix worked.
 
-Understand the problem before designing a solution. Work from first principles: what is the bottleneck, what are the constraints, and what makes this hard? Ground the answer in evidence where it exists, such as logs, stored data, prior runs, code, and tracker history, read at its authoritative source rather than through a wrapper's normalization. Numbers help when available; theory without evidence does not count as understanding. For new behavior with no observed problem, understanding means the goal, its constraints, and the existing capabilities it builds on.
+## 2. Choose the route
 
-Then find the cheapest way to resolve that root cause: an existing capability, an established practice for this kind of problem, or a small direct change. Engineer more only when the problem genuinely calls for it, not to hedge against hypothetical needs; a design likely to be thrown away is not cheap. Name the existing evidence that will show whether the change worked.
+- **Single PR:** one focused change that can be reviewed as a whole.
+- **Existing Epic:** fits that Epic's goal without making its final PR much harder to review; otherwise use a separate Epic.
+- **New Epic:** several child issues that add up to one reviewable final PR.
+- **Multiple Epics:** only when no single reviewable PR can deliver the goal. Each Epic must be safe to merge alone, even if no later one happens. Do not nest Epics.
 
-Investigating existing evidence is work you do now, or ask the human to let you do first, never a deliverable to spec: do not spec an analysis tool, report, or telemetry to find a cause. Propose new recording only when existing evidence cannot reveal the problem, and then only the minimum that would. Say what you could not establish instead of filling the gap with speculative requirements.
+Every final PR must be safe to merge: existing behavior preserved, touched behavior complete, no half-finished user flow. Epic children must be reviewable and provable on their own and combine safely, but they do not need to ship alone, so skip feature flags or compatibility layers added just for a child.
 
-## 2. Choose the delivery shape
+Show the goal, your understanding of the problem, the proposed fix, and the route. Wait for the human to confirm before drafting.
 
-- **Single PR:** one focused change can be implemented, tested, and reviewed as a whole.
-- **Existing Epic:** the work serves that Epic's goal and original intent without making its final PR materially harder to review. Otherwise recommend a separate related Epic.
-- **New Epic:** several coherent child assignments help implementation, while their result is still one reviewable final PR.
-- **Multiple related Epics:** no single reviewable PR can deliver the goal. Split only at boundaries where each Epic is safe to merge alone even if no later Epic happens, with migrations, schemas, and APIs kept compatible where required. Do not nest Epics.
+## 3. Write the spec
 
-Each final PR must be production-mergeable: existing behavior preserved, touched behavior complete, no half-finished user flow exposed. Epic children are reviewable, independently provable slices that compose safely into the cumulative candidate; they need not be independently shippable, so do not add feature flags or compatibility layers just for a child.
+Add a requirement only if the fix fails without it. Describe observable outcomes, not implementation, unless the mechanism is the fix. Never trade correctness for brevity.
 
-Show the goal, your understanding of the problem and its root cause when there is one, the recommended change, and the route together. Wait for the human to confirm or change them before drafting.
-
-## 3. Write the contract
-
-Start from nothing and add a requirement only when the change fails without it. Specify observable outcomes; include a mechanism only when the mechanism is the fix. Keep correctness: a smaller contract that allows a wrong result is not simpler.
-
-- Prefer acceptance criteria provable with fast, deterministic evidence at an observable boundary. Test behavior, not internal mechanisms. When the outcome inherently needs a slower or external check, keep it and name its narrowest evidence path.
-- Include failure behavior only when it is reachable and would prevent required progress, corrupt accepted work or persisted state, report a false success or wrong result, break existing behavior, or make a delivery boundary unsafe. For unattended work, state when it continues, when it stops for a human, that failed work cannot advance, and where it safely restarts. Do not design retry, recovery, or persistence machinery the outcome does not demand.
-- Ask the human only about ambiguity that would force an implementer to invent product behavior, with a recommended answer.
-- If you discover that the accepted goal cannot be met as stated, stop and return the decision to the human with a smaller or replacement proposal. Do not add infrastructure or drop an accepted guarantee on your own.
-- When finalizing someone else's draft, list the requirements you dropped and why, so the human can restore any they own.
-
-For an Epic route, draft the parent and every child contract before review; children proposed by `to-tickets` return to review and approval before publication.
-
-Advisory budget: a single PR contract or Epic child usually fits in about 4,000 characters with at most five acceptance criteria. Exceeding it needs a stated reason; often the change should be smaller. If fitting it would change the confirmed route or child structure, return that decision to the human instead of changing it. Each requirement appears once.
+- **Acceptance criteria:** Prove behavior with fast, deterministic tests. If the outcome truly needs a slow or external check, keep it and keep it narrow.
+- **Failures:** Cover a failure only if it can actually happen and would block progress, corrupt data, report a false or wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Do not design retry or recovery machinery the goal does not need.
+- **Questions:** Ask only when an implementer would otherwise have to invent product behavior, and give a recommended answer.
+- **Blockers:** If the confirmed goal cannot be met as stated, stop and bring the human a smaller or alternative proposal. Do not add infrastructure or drop a confirmed guarantee yourself.
+- **Someone else's draft:** List what you removed and why, so the human can restore anything they need.
+- **Epics:** Draft the parent and every child before review. Children proposed by `to-tickets` go through review too.
+- **Size:** Aim for under about 4,000 characters and five acceptance criteria per spec. Explain if you go over. If staying under would change the confirmed route or child split, ask the human first. State each requirement once.
 
 ## 4. Review
 
-Start an independent reviewer in a new context window. Give it only the goal, the constraints and guarantees the human explicitly accepted, the confirmed understanding of the problem and route, and the complete spec; it may read minimal authoritative sources to verify stated facts. A mechanism the human suggested is non-binding unless the human separately confirmed it. Its first question is: **is there a materially simpler change that resolves the same root cause?** Then it checks that scope matches the intent, the route and any child split are sound, every requirement is needed, acceptance criteria are observable and sufficient, children compose safely into the cumulative candidate, and each final PR is safe to merge.
+Start a fresh reviewer in a new context. Give it the goal, the guarantees the human confirmed, the agreed understanding and route, and the full spec. Mechanisms the human only suggested are not binding. The reviewer may check stated facts against their sources.
 
-The reviewer returns at most one material finding. Prefer resolving a finding by removing or narrowing a requirement over adding one. If resolving it would change the confirmed understanding, change, or route, or drop an accepted guarantee, return it to the human instead of revising. Otherwise revise, then start a fresh reviewer on the complete revised spec. Stop when a pass finds nothing material. After three passes with findings, return to the human with the spec, the revisions made, and the open finding, and ask how to resolve it; resumed review starts a new count, and approval requires a clean pass.
+Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope, route, and child split; that every requirement is needed; that acceptance criteria are clear and sufficient; and that every final PR is safe to merge.
+
+The reviewer returns at most one important finding. Prefer fixing it by removing or narrowing a requirement. If the fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead. Otherwise revise and start a new reviewer on the full spec. Stop after a clean pass. After three passes with findings, show the human the spec, your revisions, and the open finding, and ask how to proceed. Resumed review restarts the count and still needs a clean pass.
 
 ## 5. Publish
 
-Resolve repository instructions and tracker policy first.
+Follow the repository's instructions and tracker policy.
 
-- **Single PR:** once review converges, publish without waiting for approval. Create a `spec/<short-name>` branch from the latest target `main` with one empty commit, open a **draft** PR against `main` whose body is the complete spec, and finish with its link. The draft PR is the human's review surface: they approve, edit the body, or ask for changes there. Opening it does not start Sandcastle; its body becomes the binding contract for standalone execution only when the human runs it.
-- **Epics:** show the final specs and wait for human approval before changing GitHub. Then:
-  - **Existing Epic:** create or update the appropriate child issue as the binding contract.
-  - **New or related Epics:** create the approved Epics and only their approved child issues. Each child is the binding contract; the parent carries non-binding context.
+- **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR with the spec as its body, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
+- **Epics:** Show the final specs and wait for approval. Then create or update the child issue in an existing Epic, or create the approved Epics and child issues. Each child issue is the binding spec; the parent is context.
 
-Do not modify Sandcastle or add an execution model under this skill.
+Do not modify Sandcastle under this skill.
