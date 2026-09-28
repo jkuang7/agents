@@ -8,6 +8,8 @@ This directory keeps compact cases for observed, consequential skill failures:
   cannot demonstrate the human's actual objective. It also checks that
   `to-spec` looks for the cause in existing evidence before specifying new
   measurement.
+- `epic-spec-review/` checks that a new Epic's spec lives in a GitHub issue
+  with a linked draft PR for human review before native subissues are published.
 - `vertical-slices/` checks that `to-tickets` produces coherent workflow slices
   and keeps proof-only external gates out of implementation tickets.
 - `acceptance-ignored-files/` checks that acceptance cleanup preserves unique
