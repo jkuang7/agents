@@ -42,6 +42,7 @@ A single-PR spec and an Epic parent use these sections in this order, so reviewe
 8. `## Out of scope`: what a reasonable implementer might otherwise do.
 9. `## Evidence of effect` (optional): how the human will know the goal was met, when passing acceptance does not show it.
 
+- **Wording:** When the reason for a requirement isn't obvious, state it, so the implementer can handle cases the wording doesn't cover. Use absolute words (always, never, only) only when any exception would be a defect. If a spec's wording turns out wrong for the task, the implementer stops and reports it rather than overriding the spec, so the reasons must be in the spec.
 - **Acceptance criteria:** Prove behavior with fast, deterministic tests. If the outcome truly needs a slow or external check, keep it and keep it narrow.
 - **Failures:** Cover a failure only if it can actually happen and would block progress, corrupt data, report a false or wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Do not design retry or recovery machinery the goal does not need.
 - **Questions:** Ask only when an implementer would otherwise have to invent product behavior, and give a recommended answer.
@@ -62,7 +63,7 @@ The reviewer returns at most one important finding. Prefer fixing it by removing
 
 Follow the repository's instructions and tracker policy.
 
-- **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR with the spec as its body, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
+- **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR whose body starts with a one-line note that it was written as a spec before implementation, followed by the spec, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
 - **Epics:** Show the final specs and wait for approval. Then create or update the child issue in an existing Epic, or create the approved Epics and child issues. Each child issue is the binding spec; the parent is context.
 
 Do not modify Sandcastle under this skill.
