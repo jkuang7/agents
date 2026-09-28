@@ -10,9 +10,9 @@ Turn an accepted parent spec into small behavioral slices that each prove useful
 
 ## Choose slices
 
-Read the parent and inspect code only enough to identify behavioral boundaries. Prefer several simple slices over one complex ticket. Each slice is a bounded piece of the parent: every parent behavior belongs to exactly one slice, so slices never overlap in the work they pick up. Each slice owns one behavioral concern, includes the incidental implementation it needs, and can be implemented through red, green, and refactor, verified, and reviewed in one fresh session.
+Read the parent and inspect code only enough to identify behavioral boundaries. Prefer several simple slices over one complex ticket. Each slice is a bounded piece of the parent: every parent behavior has exactly one owning slice. Other slices may depend on or exercise that behavior but must not duplicate its acceptance responsibility. Each slice owns one behavioral concern, includes the incidental implementation it needs, and can be implemented through red, green, and refactor, verified, and reviewed in one fresh session.
 
-Prefer slices whose acceptance can be proven by fast deterministic tests at a stable boundary, such as fixtures rather than live services or paid runs. Short feedback loops keep each red-green-refactor cycle cheap. When a slice can only be proven slowly or through live systems, reshape it around a seam that is easy to test.
+Prefer slices whose acceptance can be proven by fast deterministic tests at a stable boundary, such as fixtures rather than live services or paid runs. Short feedback loops keep each red-green-refactor cycle cheap. When the behavior inherently needs a slower or external check, keep it and confine that proof to the narrowest boundary, with the rest of the slice proven through a seam that is easy to test.
 
 Keep slices vertical. Foundation, abstraction, infrastructure, or cleanup work earns a ticket only when it independently makes required behavior work. Combine concerns only when they cannot be implemented or proven independently.
 
