@@ -5,7 +5,9 @@ This directory keeps compact cases for observed, consequential skill failures:
 - `spec-scope/` checks that `to-spec` selects the smallest complete outcome
   without weakening correctness, inventing recovery machinery, adding new
   state that existing evidence already covers, or specifying evidence that
-  cannot demonstrate the human's actual objective.
+  cannot demonstrate the human's actual objective. It also checks that
+  `to-spec` looks for the cause in existing evidence before specifying new
+  measurement.
 - `vertical-slices/` checks that `to-tickets` produces coherent workflow slices
   and keeps proof-only external gates out of implementation tickets.
 - `acceptance-ignored-files/` checks that acceptance cleanup preserves unique
