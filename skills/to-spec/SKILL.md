@@ -26,9 +26,10 @@ Show the recommended route and a short reviewability and production-safety ratio
 ## Converge on the contract
 
 1. Establish the governing outcome, current behavior, important invariants, exclusions, and observable success. Inspect code only where existing context is insufficient. Let the outcome set emphasis: unattended work needs a complete path to success or a useful human handoff; operator-driven work may stop safely between steps.
-2. Resolve only consequential ambiguity that would force an implementer to invent product behavior. Ask for the unclear behavior with a simple recommendation and short reason. Prefer an existing invariant or one workflow rule covering a class of cases.
-3. Include failure behavior only when it is reachable from the proposed design and could prevent required progress, corrupt accepted work or persisted state, falsely report success, break existing behavior, or make a delivery boundary unsafe. For unattended orchestration, define continuation, human stopping conditions, what failed work cannot advance, and the safe restart boundary before adding specific recovery cases.
-4. Write once consequential decisions are resolved. Preserve opinionated requirements; leave implementation mechanisms open unless the mechanism itself is required. Specify testing decisions only when they add useful guidance, favoring observable behavior at stable system boundaries.
+2. Build on existing evidence. Before requiring new persistent state, stores, identities, write paths, or protocols, find what the system already records or can derive, such as logs, state files, generated identifiers, and provider artifacts. Require new machinery only when the outcome cannot be met from that evidence plus a small extension. Each guarantee, such as durability after its source is deleted, tolerance of concurrent writers, snapshots, or atomic lifecycle records, must be demanded by the outcome or by a reachable consequential failure under step 4; otherwise it is speculative hardening. When the contract relies on a code or data-format fact taken from derived or indirect evidence, such as a wrapper's normalization, verify it at the authoritative source; treat facts the human established as given.
+3. Resolve only consequential ambiguity that would force an implementer to invent product behavior. Ask for the unclear behavior with a simple recommendation and short reason. Prefer an existing invariant or one workflow rule covering a class of cases.
+4. Include failure behavior only when it is reachable from the proposed design and could prevent required progress, corrupt accepted work or persisted state, falsely report success, break existing behavior, or make a delivery boundary unsafe. For unattended orchestration, define continuation, human stopping conditions, what failed work cannot advance, and the safe restart boundary before adding specific recovery cases.
+5. Write once consequential decisions are resolved. Preserve opinionated requirements; leave implementation mechanisms open unless the mechanism itself is required. Specify testing decisions only when they add useful guidance, favoring observable behavior at stable system boundaries.
 
 Use only sections that improve understanding: problem, desired outcome, user stories, core invariants, testing decisions, additional review or verification boundaries, acceptance criteria, constraints, and out of scope. Each requirement has one home. A competent engineer should understand and judge each concise contract in one pass. Do not add future work, speculative hardening, or generalized infrastructure.
 
@@ -36,13 +37,14 @@ Each contract is complete when a reasonable implementer can build the right beha
 
 ## Converge through independent review
 
-For every review pass, start an independent reviewer in a new context window. Do not continue or reuse a prior reviewer context. Give it only the original intent, confirmed route, and complete current spec or specs. The reviewer does not implement the task or redesign the product. It checks that:
+For every review pass, start an independent reviewer in a new context window. Do not continue or reuse a prior reviewer context. Give it only the original intent, confirmed route, and complete current spec or specs; it may inspect minimal authoritative sources only to check stated facts and whether required new state duplicates existing evidence. The reviewer does not implement the task or redesign the product. It checks that:
 
 - the route and contracts are correct, preserve the original intent, and do not expand scope;
 - each delivery unit is as small as reasonably possible and practical for a human to review;
 - independently reviewable concerns are not combined and tightly coupled behavior is not split artificially;
 - each final delivery unit is robust and production-mergeable, and child contracts compose safely without regressions or an invalid intermediate accepted state;
 - reachable consequential failures are covered without speculative recovery or machinery;
+- every required new state, store, write path, or guarantee is needed for the outcome or a reachable consequential failure rather than satisfiable from existing evidence, and stated facts drawn from derived evidence match their authoritative source;
 - acceptance criteria are observable, sufficient, and unambiguous.
 
 When review finds a material problem, it returns one concrete finding. Revise only what resolves that finding, then start an independent reviewer in a new context window on the complete corrected spec. Continue until a full pass finds no material issue: the specs are correct, lean, robust, easy for a human to review, and each final delivery is production-mergeable when completed. Return to the human when convergence requires a new product or architecture decision; do not let the loop reopen unrelated questions or accumulate speculative detail.
