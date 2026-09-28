@@ -12,7 +12,7 @@ Route from the user's outcome and current evidence. Reuse sufficient existing de
 
 - Clear small work or an accepted spec: `implement`.
 - Consequential competing strategies: `review-approach`.
-- Requested stress test or unresolved design interview: `grilling`; `grill-me` is its stateless shortcut, and `grill-with-docs` adds domain recording. A repository alone does not require an interview.
+- Requested stress test or unresolved design interview: `grilling`, which records resolved domain terms through `domain-modeling` when documentation is wanted. A repository alone does not require an interview.
 - Factual gap: `research`; handle cheap lookups directly.
 - Runnable evidence for a design question: `prototype`.
 - Large effort whose decisions cannot yet be specified: `wayfinder`.
