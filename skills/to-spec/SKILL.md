@@ -28,13 +28,25 @@ Show the goal, your understanding of the problem, the proposed fix, and the rout
 
 ## 3. Write the spec
 
-Add a requirement only if the fix fails without it. Describe observable outcomes, not implementation, unless the mechanism is the fix. Never trade correctness for brevity.
+Add a requirement only if the fix fails without it. Describe observable outcomes, not implementation, unless the mechanism is the fix. Leave modules, interfaces, and design direction to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
+
+A single-PR spec and an Epic parent use these sections in this order, so reviewers and `to-tickets` always find the same parts in the same place. Epic children use the `to-tickets` ticket format. Omit an optional section when it would be empty; do not add other sections.
+
+1. `## Goal`: the outcome and its tradeoffs, and whether this delivery achieves it or only enables a later step.
+2. `## Problem`: current behavior, the root cause, and the evidence with its source. Say what you could not establish.
+3. `## Requirements`: numbered `R1`, `R2`, and so on. Each one is a single observable outcome, stated once. The numbers let `to-tickets` and reviewers refer to each requirement.
+4. `## Acceptance`: numbered `A1`, `A2`, and so on. Each one names the requirements it proves, such as `(R1)`. Every requirement has at least one.
+5. `## Constraints` (optional): existing behavior or invariants that must not change.
+6. `## Failures` (optional): see Failures below.
+7. `## Open questions` (optional): each with a recommended answer.
+8. `## Out of scope`: what a reasonable implementer might otherwise do.
+9. `## Evidence of effect` (optional): how the human will know the goal was met, when passing acceptance does not show it.
 
 - **Acceptance criteria:** Prove behavior with fast, deterministic tests. If the outcome truly needs a slow or external check, keep it and keep it narrow.
 - **Failures:** Cover a failure only if it can actually happen and would block progress, corrupt data, report a false or wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Do not design retry or recovery machinery the goal does not need.
 - **Questions:** Ask only when an implementer would otherwise have to invent product behavior, and give a recommended answer.
 - **Blockers:** If the confirmed goal cannot be met as stated, stop and bring the human a smaller or alternative proposal. Do not add infrastructure or drop a confirmed guarantee yourself.
-- **Someone else's draft:** List what you removed and why, so the human can restore anything they need.
+- **Someone else's draft:** Tell the human what you removed and why, so they can restore anything they need. Put this in your reply or a PR comment, not in the spec, because workers read the spec as binding.
 - **Epics:** Draft the parent and every child before review. Children proposed by `to-tickets` go through review too.
 - **Size:** Aim for under about 4,000 characters and five acceptance criteria per spec. Explain if you go over. If staying under would change the confirmed route or child split, ask the human first. State each requirement once.
 
@@ -42,7 +54,7 @@ Add a requirement only if the fix fails without it. Describe observable outcomes
 
 Start a fresh reviewer in a new context. Give it the goal, the guarantees the human confirmed, the agreed understanding and route, and the full spec. Mechanisms the human only suggested are not binding. The reviewer may check stated facts against their sources.
 
-Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope, route, and child split; that every requirement is needed; that acceptance criteria are clear and sufficient; and that every final PR is safe to merge.
+Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope, route, and child split; that every requirement is needed; that acceptance criteria are clear and sufficient and cover every requirement; that single-PR specs and Epic parents follow the section format; and that every final PR is safe to merge.
 
 The reviewer returns at most one important finding. Prefer fixing it by removing or narrowing a requirement. If the fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead. Otherwise revise and start a new reviewer on the full spec. Stop after a clean pass. After three passes with findings, show the human the spec, your revisions, and the open finding, and ask how to proceed. Resumed review restarts the count and still needs a clean pass.
 
