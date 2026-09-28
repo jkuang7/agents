@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: "Understand the problem behind accepted intent, find the simplest change that resolves its root cause, route it to a reviewable single PR or Epic plan, and publish the spec after approval."
+description: "Understand the problem behind accepted intent, find the simplest change that resolves its root cause, route it to a reviewable single PR or Epic plan, and publish the spec as a draft PR for review, or as Epic issues after approval."
 disable-model-invocation: true
 ---
 
@@ -49,14 +49,13 @@ Start an independent reviewer in a new context window. Give it only the goal, th
 
 The reviewer returns at most one material finding. Prefer resolving a finding by removing or narrowing a requirement over adding one. If resolving it would change the confirmed understanding, change, or route, or drop an accepted guarantee, return it to the human instead of revising. Otherwise revise, then start a fresh reviewer on the complete revised spec. Stop when a pass finds nothing material. After three passes with findings, return to the human with the spec, the revisions made, and the open finding, and ask how to resolve it; resumed review starts a new count, and approval requires a clean pass.
 
-Show the final spec and wait for human approval before changing GitHub.
-
 ## 5. Publish
 
-Resolve repository instructions and tracker policy first, then publish only the approved contracts:
+Resolve repository instructions and tracker policy first.
 
-- **Single PR:** create the focused PR; its body is the complete binding contract for standalone Sandcastle execution.
-- **Existing Epic:** create or update the appropriate child issue as the binding contract.
-- **New or related Epics:** create the approved Epics and only their approved child issues. Each child is the binding contract; the parent carries non-binding context.
+- **Single PR:** once review converges, publish without waiting for approval. Create a `spec/<short-name>` branch from the latest target `main` with one empty commit, open a **draft** PR against `main` whose body is the complete spec, and finish with its link. The draft PR is the human's review surface: they approve, edit the body, or ask for changes there. Opening it does not start Sandcastle; its body becomes the binding contract for standalone execution only when the human runs it.
+- **Epics:** show the final specs and wait for human approval before changing GitHub. Then:
+  - **Existing Epic:** create or update the appropriate child issue as the binding contract.
+  - **New or related Epics:** create the approved Epics and only their approved child issues. Each child is the binding contract; the parent carries non-binding context.
 
 Do not modify Sandcastle or add an execution model under this skill.
