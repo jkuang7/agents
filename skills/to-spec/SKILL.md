@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a draft spec PR or Epic issues."
+description: "Understand the problem, find the simplest change that fixes its root cause, and publish a draft spec PR or an Epic issue with a linked review PR."
 disable-model-invocation: true
 ---
 
@@ -19,7 +19,7 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 
 - **Single PR:** one focused change that can be reviewed as a whole.
 - **Existing Epic:** fits that Epic's goal without making its final PR much harder to review; otherwise use a separate Epic.
-- **New Epic:** several child issues that add up to one reviewable final PR.
+- **New Epic:** several child issues that add up to one reviewable final PR. The parent spec lives in a GitHub Epic issue, with a linked draft PR for human review.
 - **Multiple Epics:** only when no single reviewable PR can deliver the goal. Each Epic must be safe to merge alone, even if no later one happens. Do not nest Epics.
 
 Every final PR must be safe to merge: existing behavior preserved, touched behavior complete, no half-finished user flow. Epic children must be reviewable and provable on their own and combine safely, but they do not need to ship alone, so skip feature flags or compatibility layers added just for a child.
@@ -47,7 +47,7 @@ A single-PR spec and an Epic parent use these sections in this order, so reviewe
 - **Questions:** Ask only when an implementer would otherwise have to invent product behavior, and give a recommended answer.
 - **Blockers:** If the confirmed goal cannot be met as stated, stop and bring the human a smaller or alternative proposal. Do not add infrastructure or drop a confirmed guarantee yourself.
 - **Someone else's draft:** Tell the human what you removed and why, so they can restore anything they need. Put this in your reply or a PR comment, not in the spec, because workers read the spec as binding.
-- **Epics:** Draft the parent and every child before review. Children proposed by `to-tickets` go through review too.
+- **Epics:** Draft and review the parent spec before publication. `to-tickets` proposes children after the human reviews the Epic; review their contracts before publishing them as subissues.
 - **Size:** Aim for under about 4,000 characters and five acceptance criteria per spec. Explain if you go over. If staying under would change the confirmed route or child split, ask the human first. State each requirement once.
 
 ## 4. Review
@@ -63,6 +63,7 @@ The reviewer returns at most one important finding. Prefer fixing it by removing
 Follow the repository's instructions and tracker policy.
 
 - **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR with the spec as its body, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
-- **Epics:** Show the final specs and wait for approval. Then create or update the child issue in an existing Epic, or create the approved Epics and child issues. Each child issue is the binding spec; the parent is context.
+- **New Epic:** Do not wait for another approval after the review pass. Create the GitHub Epic issue with the parent spec as its body. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** containing the same spec; link the PR and Epic issue. End with both links so the human can review and edit the spec in the PR. The Epic issue is the parent for native subissues; the draft PR is its review surface, not Sandcastle's later implementation PR. After the human approves the PR's spec, apply any approved edits to the Epic issue before handing it to `to-tickets` to propose and publish native subissues through its approval flow. Do not publish children or start Sandcastle before that approval.
+- **Existing Epic:** Show the proposed addition and wait for approval before updating its issues. Keep the existing Epic as the parent; each approved child issue is a binding spec.
 
 Do not modify Sandcastle under this skill.
