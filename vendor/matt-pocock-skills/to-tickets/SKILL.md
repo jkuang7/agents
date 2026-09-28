@@ -10,7 +10,9 @@ Turn an accepted parent spec into small behavioral slices that each prove useful
 
 ## Choose slices
 
-Read the parent and inspect code only enough to identify behavioral boundaries. Prefer several simple slices over one complex ticket. Each slice owns one behavioral concern, includes the incidental implementation it needs, and can be implemented through red, green, and refactor, verified, and reviewed in one fresh session.
+Read the parent and inspect code only enough to identify behavioral boundaries. Prefer several simple slices over one complex ticket. Each slice is a bounded piece of the parent: every parent behavior has exactly one owning slice. Other slices may depend on or exercise that behavior but must not duplicate its acceptance responsibility. Each slice owns one behavioral concern, includes the incidental implementation it needs, and can be implemented through red, green, and refactor, verified, and reviewed in one fresh session.
+
+Prefer slices whose acceptance can be proven by fast deterministic tests at a stable boundary, such as fixtures rather than live services or paid runs. Short feedback loops keep each red-green-refactor cycle cheap. When the behavior inherently needs a slower or external check, keep it and confine that proof to the narrowest boundary, with the rest of the slice proven through a seam that is easy to test.
 
 Keep slices vertical. Foundation, abstraction, infrastructure, or cleanup work earns a ticket only when it independently makes required behavior work. Combine concerns only when they cannot be implemented or proven independently.
 
@@ -32,8 +34,11 @@ Use sections that earn their place:
 - Observable acceptance criteria at the highest appropriate stable system boundary, including relevant failure behavior.
 - Governing constraints.
 - Genuine prerequisites.
+- Design direction, when warranted.
 
-The sequence is ready when every slice has one required behavioral reason to exist, is as small as useful independent proof permits, and leaves implementers free to discover internal mechanics. A split that merely prepares machinery is insufficient.
+Add design direction only when the existing code suggests one that would make the slice easier to test, maintain, or reason about: a seam to test through, a deep module that hides complexity behind a small interface, an adapter at a boundary the slice must fake in tests, or a pattern the codebase already uses. Include a structure only when it earns its place in this slice. Use `codebase-design` vocabulary. State it as a recommendation with its reason; the implementer may depart from it when implementation evidence supports a better approach. Acceptance stays behavioral: never make a recommended structure an acceptance criterion.
+
+The sequence is ready when every slice has one required behavioral reason to exist, is as small as useful independent proof permits, carries no requirement beyond what its behavior needs, and leaves implementers free to discover internal mechanics. A split that merely prepares machinery is insufficient.
 
 ## Publish
 
