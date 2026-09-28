@@ -1,68 +1,56 @@
 ---
 name: to-spec
-description: "Route accepted intent to a reviewable single PR or Epic plan, draft the smallest complete specification, and publish it after approval."
+description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a draft spec PR or Epic issues."
 disable-model-invocation: true
 ---
 
 # To spec
 
-Turn accepted conversation, codebase context, or an existing issue into the smallest set of meaningful, production-safe delivery units. Each final delivery unit must be production-mergeable. Epic child contracts must be coherent, reviewable implementation slices that accumulate safely into that delivery. Optimize for coherent human review, not the fewest PRs, issues, or Epics.
+Write the smallest spec that solves the real problem. Every requirement costs effort to build, review, and maintain, so try the simplest fix before anything bigger.
 
-## Choose the delivery shape
+## 1. Understand the problem
 
-Before drafting the detailed specification, inspect only enough repository and tracker context to recommend one route:
+- **Goal:** State what the human is trying to achieve, including tradeoffs such as cost against quality. If they asked for a specific solution or measurement, find the problem behind it. A suggested mechanism is a hypothesis, not a requirement, unless they confirm it.
+- **Root cause:** Before designing anything, work out the bottleneck, the constraints, and what makes this hard. Base it on evidence: logs, data, prior runs, code, and tracker history, read from the original source rather than a wrapper. Theory without evidence is not understanding. For new features with no observed problem, understand the goal, constraints, and existing capabilities to build on.
+- **Investigate now:** If existing evidence can answer a question, analyze it yourself now, or ask to. Never spec an analysis tool, report, or telemetry to find a cause. Propose new recording only when existing evidence cannot reveal the problem, and keep it minimal. Say what you could not establish instead of adding speculative requirements.
+- **Simplest fix:** Prefer an existing capability, an established practice, or a small direct change. Build more only when the problem needs it, not for hypothetical futures. Name the evidence that will show whether the fix worked.
 
-- **Single PR:** one focused change can be implemented, tested, understood, and accepted as a coherent whole.
-- **Existing Epic:** the work clearly serves its goal, preserves its original intent, and will not make its cumulative final PR materially harder to review. Otherwise recommend a separate related Epic.
-- **New Epic:** multiple meaningful child assignments help implementation, while their accumulated result remains one coherent final PR.
-- **Multiple related Epics:** no single reasonably reviewable PR can deliver the overall goal. Split only at semantic delivery boundaries; do not introduce nested Epic machinery without a genuinely separate planning hierarchy.
+## 2. Choose the route
 
-The final PR is the sizing boundary. A competent reviewer should be able to understand the intent, diff, tests, and correctness of each delivery unit in one reasonable review without reconstructing other unmerged work. File count and line count are evidence only when they affect that judgment. Keep tightly coupled behavior together when splitting would obscure correctness; separate independently reviewable concerns when combining them would overload the review.
+- **Single PR:** one focused change that can be reviewed as a whole.
+- **Existing Epic:** fits that Epic's goal without making its final PR much harder to review; otherwise use a separate Epic.
+- **New Epic:** several child issues that add up to one reviewable final PR.
+- **Multiple Epics:** only when no single reviewable PR can deliver the goal. Each Epic must be safe to merge alone, even if no later one happens. Do not nest Epics.
 
-Each related Epic must be safe and supportable if merged alone and no later Epic happens. It must preserve existing behavior, leave touched behavior complete, keep migrations, schemas, APIs, and integrations compatible where required, and avoid exposing half-finished user flows. Later Epics may add capability but must not repair an unsafe earlier merge. Add compatibility layers or feature flags only when a concrete boundary requires them.
+Every final PR must be safe to merge: existing behavior preserved, touched behavior complete, no half-finished user flow. Epic children must be reviewable and provable on their own and combine safely, but they do not need to ship alone, so skip feature flags or compatibility layers added just for a child.
 
-Show the recommended route and a short reviewability and production-safety rationale. Wait for the human to confirm or change it before drafting detailed specs.
+Show the goal, your understanding of the problem, the proposed fix, and the route. Wait for the human to confirm before drafting.
 
-## Converge on the contract
+## 3. Write the spec
 
-Specify outcomes, not implementation. Keep each contract to the simplest set of requirements that achieves the outcome robustly; length alone does not make a contract overcomplicated, and the necessity tests in steps 2 and 4 decide what stays. Prefer requirements provable at an observable boundary with fast, deterministic evidence, such as fixtures rather than live services or paid runs. When the real outcome inherently requires a slower or external check, keep that requirement, name its evidence path, and isolate the slow proof to the narrowest boundary. Reshape a requirement only when it cannot be proven at all. Leave modules, interfaces, and design patterns to `to-tickets` and implementation.
+Add a requirement only if the fix fails without it. Describe observable outcomes, not implementation, unless the mechanism is the fix. Never trade correctness for brevity.
 
-1. Establish the governing outcome, current behavior, important invariants, exclusions, and observable success. Inspect code only where existing context is insufficient. Let the outcome set emphasis: unattended work needs a complete path to success or a useful human handoff; operator-driven work may stop safely between steps. State the outcome in the human's actual objective, including its tradeoffs, such as result quality against cost, rather than a narrower proxy. Say whether the delivery achieves that outcome or only enables a later step, and scope its observable success to match. When the outcome depends on a measurement or signal, confirm the evidence this delivery produces or relies on can support it: identify signals that saturate or are capped and require enough accompanying evidence to interpret that limit without skewing the result, and capture the confounders the outcome requires controlling, such as the size or difficulty of the work, and the scope of observation it needs.
-2. Build on existing evidence. Before requiring new persistent state, stores, identities, write paths, or protocols, find what the system already records or can derive, such as logs, state files, generated identifiers, and provider artifacts. Require new machinery only when the outcome cannot be met from that evidence plus a small extension, and justify each field of a new record individually: a field existing evidence already carries is duplication. Every required field, output, view, and interface must be consumed by the outcome or by the later step it enables; cut intermediate signals and views nothing consumes. Each guarantee, such as durability after its source is deleted, tolerance of concurrent writers, snapshots, or atomic lifecycle records, must be demanded by the outcome or by a reachable consequential failure under step 4; otherwise it is speculative hardening. When the contract relies on a code or data-format fact taken from derived or indirect evidence, such as a wrapper's normalization, verify it at the authoritative source; treat facts the human established as given.
-3. Resolve only consequential ambiguity that would force an implementer to invent product behavior. Ask for the unclear behavior with a simple recommendation and short reason. Prefer an existing invariant or one workflow rule covering a class of cases.
-4. Include failure behavior only when it is reachable from the proposed design and could prevent required progress, corrupt accepted work or persisted state, falsely report success or skew a reported result, such as by how units with incomplete evidence are counted, break existing behavior, or make a delivery boundary unsafe. For unattended orchestration, define continuation, human stopping conditions, what failed work cannot advance, and the safe restart boundary before adding specific recovery cases.
-5. Write once consequential decisions are resolved. Preserve opinionated requirements; leave implementation mechanisms open unless the mechanism itself is required. Specify testing decisions only when they add useful guidance, favoring observable behavior at stable system boundaries. Do not write acceptance criteria that pin down internal mechanisms, such as counting calls, unless the mechanism itself is required. When refining a requirement, change only what resolves it; do not add sub-rules for cases that fail steps 2 and 4.
+- **Acceptance criteria:** Prove behavior with fast, deterministic tests. If the outcome truly needs a slow or external check, keep it and keep it narrow.
+- **Failures:** Cover a failure only if it can actually happen and would block progress, corrupt data, report a false or wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Do not design retry or recovery machinery the goal does not need.
+- **Questions:** Ask only when an implementer would otherwise have to invent product behavior, and give a recommended answer.
+- **Blockers:** If the confirmed goal cannot be met as stated, stop and bring the human a smaller or alternative proposal. Do not add infrastructure or drop a confirmed guarantee yourself.
+- **Someone else's draft:** List what you removed and why, so the human can restore anything they need.
+- **Epics:** Draft the parent and every child before review. Children proposed by `to-tickets` go through review too.
+- **Size:** Aim for under about 4,000 characters and five acceptance criteria per spec. Explain if you go over. If staying under would change the confirmed route or child split, ask the human first. State each requirement once.
 
-Use only sections that improve understanding: problem, desired outcome, user stories, core invariants, testing decisions, additional review or verification boundaries, acceptance criteria, constraints, and out of scope. Each requirement has one home. A competent engineer should understand and judge each concise contract in one pass. Do not add future work, speculative hardening, or generalized infrastructure.
+## 4. Review
 
-Each contract is complete when a reasonable implementer can build the right behavior without inventing important requirements. For an Epic route, draft the parent context and every needed child contract before review; `to-tickets` may help decompose the confirmed parent shape, but its proposed children must return to this review and approval flow before publication. Child issues are meaningful implementation contracts, not arbitrary slices. For multiple Epics, make each production-safe boundary and any required compatibility behavior explicit.
+Start a fresh reviewer in a new context. Give it the goal, the guarantees the human confirmed, the agreed understanding and route, and the full spec. Mechanisms the human only suggested are not binding. The reviewer may check stated facts against their sources.
 
-## Converge through independent review
+Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope, route, and child split; that every requirement is needed; that acceptance criteria are clear and sufficient; and that every final PR is safe to merge.
 
-For every review pass, start an independent reviewer in a new context window. Do not continue or reuse a prior reviewer context. Give it only the original intent, confirmed route, and complete current spec or specs; it may inspect minimal authoritative sources only to check stated facts and whether required new state duplicates existing evidence. The reviewer does not implement the task or redesign the product. It checks that:
+The reviewer returns at most one important finding. Prefer fixing it by removing or narrowing a requirement. If the fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead. Otherwise revise and start a new reviewer on the full spec. Stop after a clean pass. After three passes with findings, show the human the spec, your revisions, and the open finding, and ask how to proceed. Resumed review restarts the count and still needs a clean pass.
 
-- the route and contracts are correct, preserve the original intent, and do not expand scope;
-- the stated outcome matches the human's objective, the contract says whether it achieves or only enables that outcome, and its success evidence supports that claim without an unaccounted-for capped, confounded, or narrower proxy;
-- each delivery unit is as small as reasonably possible and practical for a human to review;
-- the contract states outcomes rather than implementation, every requirement passes the necessity tests, and each is provable with fast deterministic evidence or has a named, narrowly isolated slower evidence path;
-- independently reviewable concerns are not combined and tightly coupled behavior is not split artificially;
-- each final delivery unit is robust and production-mergeable, and child contracts compose safely without regressions or an invalid intermediate accepted state;
-- reachable consequential failures are covered without speculative recovery or machinery;
-- every required new state, store, write path, field, output, or guarantee is needed for the outcome or a reachable consequential failure rather than satisfiable from existing evidence, and stated facts drawn from derived evidence match their authoritative source;
-- each requirement has one home across all sections;
-- acceptance criteria are observable, sufficient, and unambiguous, and they test behavior rather than internal mechanisms.
+## 5. Publish
 
-When review finds a material problem, it returns one concrete finding. Revise only what resolves that finding, then start an independent reviewer in a new context window on the complete corrected spec. Continue until a full pass finds no material issue: the specs are correct, lean, robust, easy for a human to review, and each final delivery is production-mergeable when completed. Return to the human when convergence requires a new product or architecture decision; do not let the loop reopen unrelated questions or accumulate speculative detail. After three passes that each found a material problem, stop the loop and return to the human with the current spec, the revisions made, and the outstanding finding, and ask how to resolve it. Resuming review starts a new count, and approval still requires a clean full pass.
+Follow the repository's instructions and tracker policy.
 
-After review succeeds, show the final proposed spec or specs and wait for final human approval before changing GitHub.
+- **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR with the spec as its body, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
+- **Epics:** Show the final specs and wait for approval. Then create or update the child issue in an existing Epic, or create the approved Epics and child issues. Each child issue is the binding spec; the parent is context.
 
-## Publish the approved shape
-
-Resolve repository instructions and tracker policy before tracker operations. Publish only the approved contracts:
-
-- **Single PR:** create the focused PR; its body is the complete binding contract for standalone Sandcastle execution.
-- **Existing Epic:** create or update the appropriate child issue as the complete binding contract.
-- **New Epic:** create the Epic and only the child issues required by the approved plan.
-- **Multiple related Epics:** create the approved related Epics and their necessary children, preserving the independently safe delivery boundaries.
-
-In Epic work, each approved child is the binding implementation contract; the parent supplies broader non-binding context. Do not add a Sandcastle execution model or modify Sandcastle under this skill.
+Do not modify Sandcastle under this skill.
