@@ -3,4 +3,4 @@ interface:
   short_description: "Decide whether strategy comparison is needed"
   default_prompt: "Use $review-approach to decide whether this choice needs comparison, direct implementation, or a small tracer bullet."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true
