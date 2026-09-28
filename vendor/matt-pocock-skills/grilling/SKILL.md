@@ -9,6 +9,6 @@ Interview until shared understanding is reached. Map decisions as a design tree 
 
 Find environmental facts yourself through authoritative discovery. Delegate substantial independent investigation when useful; a running investigation is an unsettled prerequisite, so only its downstream questions wait. User decisions remain the user's; never answer their side of the interview.
 
-When the user wants the interview documented, or the target repository keeps `CONTEXT.md` or `docs/adr/`, record resolved terms and qualifying decisions with `domain-modeling` as they settle.
+When the user wants the interview documented or asks to record resolved terms or decisions, record them with `domain-modeling` as they settle.
 
 Finish when every branch has been visited and no consequential assumption remains silent. Confirm shared understanding with the user before acting on the design.
