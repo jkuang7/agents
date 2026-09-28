@@ -36,7 +36,7 @@ Use sections that earn their place:
 - Genuine prerequisites.
 - Design direction, when warranted.
 
-Add design direction only when the existing code suggests one that would make the slice easier to test, maintain, or reason about: a seam to test through, a deep module that hides complexity behind a small interface, an adapter at a boundary the slice must fake in tests, or a pattern the codebase already uses. Include a structure only when it earns its place in this slice. Use `codebase-design` vocabulary. State it as a recommendation with its reason, and say that the implementer may depart from it with a stated reason. Acceptance stays behavioral: never make a recommended structure an acceptance criterion.
+Add design direction only when the existing code suggests one that would make the slice easier to test, maintain, or reason about: a seam to test through, a deep module that hides complexity behind a small interface, an adapter at a boundary the slice must fake in tests, or a pattern the codebase already uses. Include a structure only when it earns its place in this slice. Use `codebase-design` vocabulary. State it as a recommendation with its reason; the implementer may depart from it when implementation evidence supports a better approach. Acceptance stays behavioral: never make a recommended structure an acceptance criterion.
 
 The sequence is ready when every slice has one required behavioral reason to exist, is as small as useful independent proof permits, carries no requirement beyond what its behavior needs, and leaves implementers free to discover internal mechanics. A split that merely prepares machinery is insufficient.
 
