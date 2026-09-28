@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Cut AI tells from any writing. Must always apply.
+description: Edit prose to remove AI writing patterns such as filler, inflated vocabulary, and chatbot phrasing.
 disable-model-invocation: true
 ---
 

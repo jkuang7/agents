@@ -30,6 +30,10 @@ import in repository commit `49ff916`:
 - `teach`
 - `to-questionnaire`
 
+`grill-me` and `grill-with-docs` were removed locally: `grilling` covers
+both, recording domain terms through `domain-modeling` when documentation is
+wanted. Do not reimport them.
+
 When importing an upstream update, compare it with the current vendored copy
 and reconcile these local changes. Do not replace a locally modified skill
 without reviewing the difference. Update this list when a skill gains or loses

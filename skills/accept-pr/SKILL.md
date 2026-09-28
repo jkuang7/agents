@@ -75,7 +75,7 @@ synchronization, or cleanup failures do not change the merge outcome.
 
 ## Apply the issue lifecycle
 
-Read [the shared issue and Epic lifecycle contract](../../references/ISSUE-LIFECYCLE.md).
+Read [the shared issue and Epic lifecycle contract](../submit-for-review/references/ISSUE-LIFECYCLE.md).
 
 After the PR is confirmed merged, determine whether it explicitly implements or
 closes delivery issues and whether it identifies one parent Epic. Read fresh host
