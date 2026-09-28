@@ -43,3 +43,6 @@ Add a behavioral case only after an observed failure could cause meaningful
 harm and could realistically recur. Keep the input and expected behavior small.
 Delete the case when the behavior disappears or a deterministic test replaces
 it. Do not retain run reports, digests, control registries, or generated copies.
+
+This failure-driven policy is deliberately lighter than Anthropic's generic
+recommendation of at least three evaluations per skill.
