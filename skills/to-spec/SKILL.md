@@ -64,7 +64,7 @@ The reviewer returns at most one important finding. Prefer fixing it by removing
 
 Follow the repository's instructions and tracker policy.
 
-- **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR whose body starts with a one-line note that it was written as a spec before implementation, followed by the spec, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
+- **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR with the spec as its body, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
 - **Epics:** Show the final specs and wait for approval. Then create or update the child issue in an existing Epic, or create the approved Epics and child issues. Each child issue is the binding spec; the parent is context.
 
 Do not modify Sandcastle under this skill.
