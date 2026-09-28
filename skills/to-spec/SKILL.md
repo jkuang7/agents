@@ -35,7 +35,7 @@ A single-PR spec and an Epic parent use these sections in this order, so reviewe
 1. `## Goal`: the outcome and its tradeoffs, and whether this delivery achieves it or only enables a later step.
 2. `## Problem`: current behavior, the root cause, and the evidence with its source. Say what you could not establish.
 3. `## Requirements`: numbered `R1`, `R2`, and so on. Each one is a single observable outcome, stated once. The numbers let `to-tickets` and reviewers refer to each requirement.
-4. `## Acceptance`: numbered `A1`, `A2`, and so on. Each one names the requirements it proves, such as `(R1)`. Every requirement has at least one.
+4. `## Acceptance`: numbered `A1`, `A2`, and so on. Every requirement is proved by at least one criterion.
 5. `## Constraints` (optional): existing behavior or invariants that must not change.
 6. `## Failures` (optional): see Failures below.
 7. `## Open questions` (optional): each with a recommended answer.
