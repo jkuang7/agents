@@ -7,7 +7,7 @@ user's intent and authorization boundaries.
 
 For a consequential failure that could recur, add one small behavioral case to
 the collection's evaluation directory. In this repository, follow
-[the eval guidance](../../../evals/README.md). Give an evaluator a realistic
+`evals/README.md` at the repository root. Give an evaluator a realistic
 request and only the artifacts needed to perform it. Keep the expected behavior
 separate. Use a deterministic unit test when executable code can prove the
 contract.

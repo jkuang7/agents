@@ -44,7 +44,7 @@ Read [REVIEW-GUIDE.md](references/REVIEW-GUIDE.md) before drafting the review bo
 
 ## Publish and hand off
 
-Read [the shared issue and Epic lifecycle contract](../../references/ISSUE-LIFECYCLE.md)
+Read [the shared issue and Epic lifecycle contract](references/ISSUE-LIFECYCLE.md)
 before choosing closing references.
 
 Immediately before publishing, fetch the remote branch and compare its head with the inspected SHA. If it changed, reconcile that work and reverify the changed candidate. For an authorized rewrite, use `--force-with-lease` against the exact remote SHA from the final inspection. If the lease fails, stop and reassess instead of refreshing it and retrying blindly.
