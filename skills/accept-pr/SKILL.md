@@ -7,8 +7,9 @@ description: Accept and merge a PR the user explicitly asks to accept, including
 
 Given explicit user authorization to accept a PR, resolve the exact PR from the
 request and current conversation, merge it safely, and confirm the host recorded
-the merge. Treat issue lifecycle changes and post-merge local mutations as
-separately authorized operations. Report each outcome independently.
+the merge, then clean up the PR's own head branch and worktree. Treat issue
+lifecycle changes and other post-merge local mutations as separately authorized
+operations. Report each outcome independently.
 
 ## Resolve authorization and target
 
@@ -40,10 +41,12 @@ PRs remain plausible, ask the user to identify the target.
 
 Resolve the remote and target branch from fresh repository and forge metadata.
 Follow repository instructions before reading linked issues or specifications.
-An acceptance or merge request authorizes only the merge and its safety checks.
-It does not authorize closing an Epic, synchronizing a local checkout, deleting
-local artifacts, or deleting remote branches. Reviewing, preparing, or submitting
-a PR does not authorize the merge.
+An acceptance or merge request authorizes the merge, its safety checks, and
+cleanup of the merged PR's own head branch: its local branch, any worktree
+checked out on it, and its remote branch in the PR's repository. It does not
+authorize closing an Epic, synchronizing a local checkout, or deleting any other
+local artifact or remote branch. Reviewing, preparing, or submitting a PR does
+not authorize the merge.
 
 Fetch current remote refs needed for acceptance checks. Inspect the PR's state,
 head SHA, and target branch. Check mergeability, required checks, and reviews.
@@ -94,10 +97,11 @@ missing.
 
 ## Synchronize and clean up
 
-Synchronize a local checkout or delete local artifacts only when the user
-separately authorized that operation or an already-authorized governing workflow
-explicitly owns and requires it. Without authorization, leave local state intact
-and report the operation as not requested. Generic repository or workspace
+Always clean up the merged PR's own head branch and its worktrees as described
+below. Synchronize a local checkout or delete other local artifacts only when
+the user separately authorized that operation or an already-authorized governing
+workflow explicitly owns and requires it. Without authorization, leave that
+local state intact and report the operation as not requested. Generic repository or workspace
 cleanup policy constrains an authorized cleanup; it does not by itself grant
 cleanup authorization.
 
@@ -116,10 +120,15 @@ branch only when doing so preserves local commits and working-tree changes. Neve
 reset or discard work. If safe fast-forward is impossible, leave the checkout
 unchanged and report why.
 
-When cleanup is authorized, enumerate registered Git worktrees and local
-branches. Consider an artifact related only when ownership can be established
-from the merged PR head, linked Epic/delivery state, accepted receipts, recorded
-run evidence, or commit ancestry. Names alone are not proof.
+Enumerate registered Git worktrees and local branches. The PR's head branch and
+any worktree checked out on it are always related. When broader cleanup is
+authorized, consider another artifact related only when ownership can be
+established from the merged PR head, linked Epic/delivery state, accepted
+receipts, recorded run evidence, or commit ancestry. Names alone are not proof.
+
+Work is contained in the merged target when it is an ancestor of the freshly
+fetched target or, after a squash or rebase merge, is exactly the head SHA the
+forge recorded as merged.
 
 For each related worktree:
 
@@ -146,7 +155,10 @@ For each related local branch:
 
 Confirm removed worktree registrations, paths, and local branch refs are gone.
 
-Do not delete remote branches or terminate processes unless separately authorized.
+Delete the PR's remote head branch only when it is in the PR's own repository,
+is not the default branch, is not the base of another open PR, and still points
+at the head SHA the forge recorded as merged. Confirm it is gone. Do not delete
+other remote branches or terminate processes unless separately authorized.
 Leave anything uncertain in place and report it.
 
 ## Report
