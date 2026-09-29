@@ -1,16 +1,20 @@
 ---
 name: to-tickets
-description: "Break an accepted parent spec into small, independently provable behavioral subissues that accumulate toward the parent outcome."
+description: "Break an accepted parent spec into small, independently mergeable behavioral issues, one PR each, that add up to the parent outcome."
 disable-model-invocation: true
 ---
 
 # To tickets
 
-Turn an accepted parent spec into small behavioral slices that each prove useful progress. Accepted slices accumulate into the same parent delivery candidate and final PR. The parent remains authoritative; decomposition does not redesign it.
+Turn an accepted parent spec into small behavioral slices that each prove useful progress. Each slice is delivered by its own PR, merged in order. The parent remains authoritative; decomposition does not redesign it.
 
 ## Choose slices
 
 Read the parent and inspect code only enough to identify behavioral boundaries. Prefer several simple slices over one complex ticket. Each slice is a bounded piece of the parent: every parent behavior has exactly one owning slice. Other slices may depend on or exercise that behavior but must not duplicate its acceptance responsibility. Each slice owns one behavioral concern, includes the incidental implementation it needs, and can be implemented through red, green, and refactor, verified, and reviewed in one fresh session.
+
+Each slice is one issue delivered by one PR, and it must be safe to merge on its own, even if no later slice happens. When a user flow cannot be finished within one slice, keep its incomplete part unreachable until the slice that completes it.
+
+Size each slice for one fresh session and one reviewable PR. Estimate changed lines as additions plus deletions, including tests, but excluding generated files, lockfiles, and snapshots. Aim for about 350; at about 500, look for a natural behavioral split. Line count is a signal, never the reason to split: keep a coherent slice whole when splitting it would only create scaffolding, and split a small slice when it spans several state machines or responsibilities. Coherent behavior, observable acceptance, and a stable verification boundary come before size.
 
 Prefer slices whose acceptance can be proven by fast deterministic tests at a stable boundary, such as fixtures rather than live services or paid runs. Short feedback loops keep each red-green-refactor cycle cheap. When the behavior inherently needs a slower or external check, keep it and confine that proof to the narrowest boundary, with the rest of the slice proven through a seam that is easy to test.
 
@@ -43,3 +47,5 @@ The sequence is ready when every slice has one required behavioral reason to exi
 ## Publish
 
 Show the proposed sequence as a simple story of what becomes possible after each slice, with any stop point. Wait for approval unless the sequence is already approved. Then publish only those tickets as native subissues in agreed order, following the resolved tracker policy. Add blocking relationships only for genuine prerequisites and apply the implementation-ready label where appropriate. Publication does not start execution.
+
+Until Sandcastle can run an issue directly, give each published issue one native subissue that copies its requirements, acceptance, and constraints verbatim. Sandcastle runs the issue as its Epic and delivers it as one PR. Run the issues one at a time, in order, starting each only after its prerequisites have merged to `main`.

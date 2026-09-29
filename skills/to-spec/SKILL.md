@@ -17,12 +17,13 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 
 ## 2. Choose the route
 
-- **Single PR:** one focused change that can be reviewed as a whole.
-- **Existing Epic:** fits that Epic's goal without making its final PR much harder to review; otherwise use a separate Epic.
-- **New Epic:** several child issues that add up to one reviewable final PR. The parent spec lives in a GitHub Epic issue, with a linked draft PR for human review.
-- **Multiple Epics:** only when no single reviewable PR can deliver the goal. Each Epic must be safe to merge alone, even if no later one happens. Do not nest Epics.
+- **Single PR:** one focused change of about 350 changed lines or less, delivered by one PR.
+- **Existing Epic:** add issues to an Epic whose goal the change serves; otherwise use a new Epic.
+- **New Epic:** a feature too large for one PR. The Epic is a tracking issue whose native subissues are its issues, in delivery order. Each issue is delivered by one PR of about 350 changed lines. Do not nest Epics.
 
-Every final PR must be safe to merge: existing behavior preserved, touched behavior complete, no half-finished user flow. Epic children must be reviewable and provable on their own and combine safely, but they do not need to ship alone, so skip feature flags or compatibility layers added just for a child.
+Estimate the work in PRs of about 350 changed lines, as `to-tickets` sizes them, to choose between a single PR and an Epic.
+
+Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it. Order issues only by genuine prerequisites: an earlier issue must unlock a later one, not merely build one of its layers.
 
 Show the goal, your understanding of the problem, the proposed fix, and the route. Wait for the human to confirm before drafting.
 
@@ -30,7 +31,7 @@ Show the goal, your understanding of the problem, the proposed fix, and the rout
 
 Add a requirement only if the fix fails without it. Describe observable outcomes, not implementation, unless the mechanism is the fix. Leave modules, interfaces, and design direction to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
 
-A single-PR spec and an Epic parent use these sections in this order, so reviewers and `to-tickets` always find the same parts in the same place. Epic children use the `to-tickets` ticket format. Omit an optional section when it would be empty; do not add other sections.
+A single-PR spec and an Epic parent use these sections in this order, so reviewers and `to-tickets` always find the same parts in the same place. Issues under an Epic use the `to-tickets` ticket format. Omit an optional section when it would be empty; do not add other sections.
 
 1. `## Goal`: the outcome and its tradeoffs, and whether this delivery achieves it or only enables a later step.
 2. `## Problem`: current behavior, the root cause, and the evidence with its source. Say what you could not establish.
@@ -47,14 +48,14 @@ A single-PR spec and an Epic parent use these sections in this order, so reviewe
 - **Questions:** Ask only when an implementer would otherwise have to invent product behavior, and give a recommended answer.
 - **Blockers:** If the confirmed goal cannot be met as stated, stop and bring the human a smaller or alternative proposal. Do not add infrastructure or drop a confirmed guarantee yourself.
 - **Someone else's draft:** Tell the human what you removed and why, so they can restore anything they need. Put this in your reply or a PR comment, not in the spec, because workers read the spec as binding.
-- **Epics:** Draft and review the parent spec before publication. `to-tickets` proposes children after the human reviews the Epic; review their contracts before publishing them as subissues.
-- **Size:** Aim for under about 4,000 characters and five acceptance criteria per spec. Explain if you go over. If staying under would change the confirmed route or child split, ask the human first. State each requirement once.
+- **Epics:** Draft and review the parent spec before publication. `to-tickets` proposes its issues after the human reviews the Epic; review their contracts before publishing them as subissues.
+- **Size:** Aim for under about 4,000 characters and five acceptance criteria per spec. Explain if you go over. If staying under would change the confirmed route or issue split, ask the human first. State each requirement once.
 
 ## 4. Review
 
 Start a fresh reviewer in a new context. Give it the goal, the guarantees the human confirmed, the agreed understanding and route, and the full spec. Mechanisms the human only suggested are not binding. The reviewer may check stated facts against their sources.
 
-Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope, route, and child split; that every requirement is needed; that acceptance criteria are clear and sufficient and cover every requirement; that single-PR specs and Epic parents follow the section format; and that every final PR is safe to merge.
+Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope, route, and issue split; that every requirement is needed; that acceptance criteria are clear and sufficient and cover every requirement; that single-PR specs and Epic parents follow the section format; and that every final PR is safe to merge.
 
 The reviewer returns at most one important finding. Prefer fixing it by removing or narrowing a requirement. If the fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead. Otherwise revise and start a new reviewer on the full spec. Stop after a clean pass. After three passes with findings, show the human the spec, your revisions, and the open finding, and ask how to proceed. Resumed review restarts the count and still needs a clean pass.
 
@@ -63,7 +64,7 @@ The reviewer returns at most one important finding. Prefer fixing it by removing
 Follow the repository's instructions and tracker policy.
 
 - **Single PR:** Do not wait for approval. Create a `spec/<short-name>` branch from the latest `main` with one empty commit, open a **draft** PR with the spec as its body, and end with the link. The human reviews and edits the spec there. Opening the PR does not start Sandcastle.
-- **New Epic:** Do not wait for another approval after the review pass. Create the GitHub Epic issue with the parent spec as its body. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** containing the same spec; link the PR and Epic issue. End with both links so the human can review and edit the spec in the PR. The Epic issue is the parent for native subissues; the draft PR is its review surface, not Sandcastle's later implementation PR. After the human approves the PR's spec, apply any approved edits to the Epic issue before handing it to `to-tickets` to propose and publish native subissues through its approval flow. Do not publish children or start Sandcastle before that approval.
-- **Existing Epic:** Show the proposed addition and wait for approval before updating its issues. Keep the existing Epic as the parent; each approved child issue is a binding spec.
+- **New Epic:** Do not wait for another approval after the review pass. Create the GitHub Epic issue with the parent spec as its body. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** containing the same spec; link the PR and Epic issue. End with both links so the human can review and edit the spec in the PR. The Epic issue is the parent for native subissues; the draft PR is its review surface, not Sandcastle's later implementation PR. After the human approves the PR's spec, apply any approved edits to the Epic issue before handing it to `to-tickets` to propose and publish native subissues through its approval flow. Do not publish issues or start Sandcastle before that approval.
+- **Existing Epic:** Show the proposed addition and wait for approval before updating its issues. Keep the existing Epic as the parent; each approved issue is a binding spec.
 
 Do not modify Sandcastle under this skill.
