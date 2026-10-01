@@ -97,6 +97,25 @@ class DeployTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertFalse(stale_link.is_symlink())
 
+    def test_claude_agents_deploy_and_prune(self):
+        agents = self.repository / "claude-agents"
+        agents.mkdir()
+        reviewer = agents / "reviewer.md"
+        reviewer.write_text("---\nname: reviewer\n---\n")
+        retired = agents / "retired.md"
+        retired.write_text("---\nname: retired\n---\n")
+        claude_agents = self.runtime_roots["CLAUDE_HOME"] / "agents"
+
+        self.assertEqual(self.run_deploy().returncode, 0)
+        self.assertEqual((claude_agents / "reviewer.md").readlink(), reviewer)
+
+        retired.unlink()
+        result = self.run_deploy()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse((claude_agents / "retired.md").is_symlink())
+        self.assertFalse((self.runtime_roots["CODEX_HOME"] / "agents").exists())
+        self.assertEqual(self.run_deploy("--check").returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
