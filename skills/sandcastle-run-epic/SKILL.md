@@ -34,7 +34,7 @@ Detect each controller exit (a background wait on the process or its recorded re
 
 | Result | Caller action |
 |---|---|
-| `ready`, with a child PR | If merging is authorized for this queue: wait for CI to pass, then merge it with `accept-pr` (merge commit, matching the head commit). The merge closes the child through `Closes #<child>`. Sync local `main` (step 5) and rerun the same command. Otherwise report the PR and stop. |
+| `ready`, with a child PR | If merging is authorized for this queue: wait for CI to pass, then merge it through the merge gate (Commands), which is this repository's merge path for `accept-pr`; apply `accept-pr`'s confirmation and cleanup to the merged PR. The merge closes the child through `Closes #<child>`. Sync local `main` (step 5) and rerun the same command. Otherwise report the PR and stop. |
 | `complete` | The last child PR has merged (its review ran the Epic's real-world check). If closure is authorized and the checks in `accept-pr`'s issue lifecycle contract pass, close the Epic. Report it and start the next queued issue. |
 | `blocked`, class `transient` | Rerun once. If the same signature blocks again, treat it as a decision. |
 | `blocked`, class `decision`, cause `runtime` | A Sandcastle defect. Check whether an open issue already has the same `signature`. Otherwise diagnose it with `diagnosing-bugs` against the recorded state and logs, and file one issue with the reproduction and root cause. Fix it through a focused issue, or, when the user authorized hotfixes and the runner cannot fix itself, through a hand-made hotfix PR. Then rerun. |
