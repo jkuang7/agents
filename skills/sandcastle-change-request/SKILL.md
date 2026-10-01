@@ -33,7 +33,7 @@ Before editing an assignment owned by a live controller, use [controller stop an
 
 Record each amendment to a started child as one comment on that child, saying what changed and which kind it is. Those comments are the count.
 
-Scope grows through amendments before it shows up as extra review rounds or tokens. On 2026-09-30, #198's one new-behavior amendment (AC5) held all three gaps its third review found.
+Scope grows through amendments before it shows up as extra review rounds or tokens: a single new-behavior amendment can hold every gap a later review finds.
 
 Apply the requested change to the selected authority only when needed. Record the complete scoped requirement, acceptance criteria, exclusions, and superseded requirements without rewriting an already-correct contract. Any parent constraint intended to bind an Epic child must be copied or restated in that child. Preserve other parent material separately as non-binding context; never enlarge the child's contract by inference.
 

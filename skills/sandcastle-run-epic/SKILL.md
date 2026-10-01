@@ -5,7 +5,7 @@ description: Run or resume a Sandcastle issue (an Epic or an issue with no sub-i
 
 # Sandcastle run Epic
 
-Sandcastle is the runner; this skill is its caller. One runner command runs one issue until it has something for the caller, then exits with one result record (ADR 0003). The caller acts on that record: it merges, reruns, closes or asks. The runner never merges, advances `main`, closes the Epic or runs a queue.
+Sandcastle is the runner; this skill is its caller. One runner command runs one issue until it has something for the caller, then exits with one result record. The caller acts on that record: it merges, reruns, closes or asks. The runner never merges, advances `main`, closes the Epic or runs a queue.
 
 ## 1. Select mode
 
@@ -39,7 +39,7 @@ Detect each controller exit (a background wait on the process or its recorded re
 | `blocked`, class `transient` | Rerun once. If the same signature blocks again, treat it as a decision. |
 | `blocked`, class `decision`, cause `runtime` | A Sandcastle defect. Check whether an open issue already has the same `signature`. Otherwise diagnose it with `diagnosing-bugs` against the recorded state and logs, and file one issue with the reproduction and root cause. Fix it through a focused issue, or, when the user authorized hotfixes and the runner cannot fix itself, through a hand-made hotfix PR. Then rerun. |
 | `blocked`, class `decision`, cause `environment` | Missing authentication, permission or target. Fix access directly when you can (for example `gh auth login`, or a missing remote or repository); otherwise ask the user to fix it. Then rerun: environment blocks are not replayed. |
-| any other `decision` (spec, drift, no progress, regression, self-change, budget) | Stop the queue and ask the user the record's `question`, with the reason and evidence. Rerun only after they answer by changing the spec, children or budget. Any amendment to a started child's spec, including one the user authorized for clear spec gaps, follows `sandcastle-change-request`'s scope check. After amending a spec for a `spec` block, run the on-demand preflight (Commands) on the amended body and rerun only when it reports no conflicts; fixing only the reported conflict let #198 block four times in four minutes. |
+| any other `decision` (spec, drift, no progress, regression, self-change, budget) | Stop the queue and ask the user the record's `question`, with the reason and evidence. Rerun only after they answer by changing the spec, children or budget. Any amendment to a started child's spec, including one the user authorized for clear spec gaps, follows `sandcastle-change-request`'s scope check. After amending a spec for a `spec` block, run the on-demand preflight (Commands) on the amended body and rerun only when it reports no conflicts. Fixing only the reported conflict lets each rerun block on the next one. |
 | no result record, or a record that doesn't fit this table | Investigate the logs. Treat anything unclear as a decision. |
 
 Fix operational problems in the runner's environment directly, such as a stale lock whose writers are proven gone, or auth or disk issues. Report every block with its class and cause.
@@ -60,7 +60,7 @@ Fix operational problems in the runner's environment directly, such as a stale l
 
 ## 6. Commands
 
-Run these from the operator checkout. Confirm each against the current README and `--help` first; they were current on 2026-10-01. `<n>` is the issue, `<pr>` and `<sha>` the child PR and its head.
+Run these from the operator checkout. Confirm each against the current README and `--help` first, and use the documented form when they differ. `<n>` is the issue, `<pr>` and `<sha>` the child PR and its head.
 
 - **Start:** `(nohup npm start -- <n> >> .scratch/queue-orchestration/controller-<n>.out 2>&1 < /dev/null &)`. Wait about 20 seconds, then confirm ownership with `pgrep -fl "node.*loader.mjs src/cli/main.ts <n>$"` and a `started` line in that file.
 - **Exit watcher:** one background command with the longest timeout, which fires only on exit. Don't poll or add milestone monitors:
