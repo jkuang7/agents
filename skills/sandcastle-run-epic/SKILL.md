@@ -23,12 +23,14 @@ Always launch from the operator checkout on clean `main`, even when the issue ch
 | `ready`, with a child PR | When merging is authorized: wait for CI, merge through the merge gate, sync `main`, and rerun the same issue. Otherwise report the PR and stop. |
 | `complete` | When closure is authorized, close the Epic. Report it and start the next queued issue. |
 | `blocked`, class `transient`, or cause `environment` or `self-change` | Fix the stated condition (auth or access, a clean operator checkout), then rerun. If the same cause blocks twice in a row, treat it as a decision. |
-| `blocked`, cause `runtime` | A Sandcastle defect. Look for an open issue with the same `signature`; otherwise diagnose it with `diagnosing-bugs` and file one issue with the reproduction and cause. Then rerun. |
+| `blocked`, cause `runtime` | A Sandcastle defect. Look for an open issue with the same `signature`; otherwise ask the advisor to diagnose it and file one issue with the reproduction and cause. Then rerun. |
 | `blocked`, class `fixable` | Checks or review still failed after corrections. Rerun once; if it blocks the same way, treat it as a decision. |
-| Any other decision | Stop the queue and ask the user the record's `question`, with its `reason`. Rerun after they change the spec, children or budget. |
-| No result record, or one this table doesn't cover | Read the run's logs and treat it as a decision. |
+| Any other decision | Ask the advisor for a recommendation, then stop the queue and ask the user the record's `question` with its `reason` and that recommendation. Rerun after they change the spec, children or budget. |
+| No result record, or one this table doesn't cover | Ask the advisor to read the run's logs, then treat it as a decision. |
 
-**Spec blocks:** the record's `reason` lists every conflict, its `question` only the first. Resolve all of them in one amendment, through `sandcastle-change-request` for a started child, and run the on-demand preflight on the amended body before rerunning. A moved-path block (`old → new` pairs) is a clarification: update those paths and rerun without asking.
+**Advisor:** for the rows above that name it, and for spec blocks, start the `advisor` agent with a brief: the result record, the run's log directory, `.scratch/queue-orchestration/continuation.md`, and the question to answer. Carry out its recommendation within the user's authorization; anything outside it goes to the user. Handle every other row yourself.
+
+**Spec blocks:** the record's `reason` lists every conflict, its `question` only the first. Ask the advisor how to resolve them, then resolve all of them in one amendment, through `sandcastle-change-request` for a started child, and run the on-demand preflight on the amended body before rerunning. A moved-path block (`old → new` pairs) is a clarification: update those paths and rerun without asking.
 
 **Spec concerns:** for a `ready` or `blocked` child, read the reviewer's verdict message in the run's `review-*.log` (the `agent_message` containing `<review>`) and keep its lines starting `Spec concern:`. Matching the phrase anywhere else in the log gives false hits. Quote each to the user and, for a `ready` child, post them as one PR comment. They never block a merge.
 
