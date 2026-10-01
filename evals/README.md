@@ -17,9 +17,6 @@ This directory keeps compact cases for observed, consequential skill failures:
 - `acceptance-conversation-target/` checks that a bare acceptance invocation can
   use an unambiguous submission handoff without treating skill-edit requests or
   unsubmitted local changes as merge authorization.
-- `sandcastle-handoff/` checks that Sandcastle-facing skills hand execution to
-  the trusted controller, preserve native Epic ordering, and keep observation
-  read-only.
 - `make_fixture.py` generates four disposable repository cases for working-tree
   review, regression-test retirement, stale continuation evidence, and routing.
   Their expected behavior is in `generated-expected.md`.
