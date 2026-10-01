@@ -1,6 +1,7 @@
 ---
 name: to-tickets
 description: "Break an accepted parent spec into small behavioral subissues, each delivered as its own mergeable PR toward the parent outcome; also re-split an existing Epic's unstarted children or add one child to it. Use when the user asks to write or split tickets or sub-issues, or names to-tickets."
+model: opus
 ---
 
 # To tickets
@@ -48,6 +49,6 @@ The sequence is ready when every slice has one required behavioral reason to exi
 
 ## Publish
 
-Before showing it, have a fresh reviewer in a new context check the sequence against the parent and every rule above. Give it the parent and the `to-spec` sections this skill points to. Run `to-spec`'s **Review loop** on the sequence, looking for a simpler split where it says to look for a simpler design.
+Before showing it, have a fresh reviewer (in Claude, the `reviewer` agent) in a new context check the sequence against the parent and every rule above. Give it the parent and the `to-spec` sections this skill points to. Run `to-spec`'s **Review loop** on the sequence, looking for a simpler split where it says to look for a simpler design.
 
 Show the proposed sequence as a simple story of what becomes possible after each slice, with each slice's size estimate and any stop point. Wait for approval unless the sequence is already approved. Then publish only those tickets as native subissues in agreed order (when re-splitting an existing Epic, change only unstarted children; remove each replaced child from the Epic before closing it with a link to its successors, since a closed but still-linked child can block the Epic), following the resolved tracker policy. If the parent has an open draft spec PR (linked from the parent issue, on a `spec/` branch), publish only after the human has approved it there, and ask otherwise; after publishing, close it unmerged with a link to the parent and delete its branch. Sandcastle runs children in their sub-issue order and reads no labels or blocking links, so that order is the run order. When the repository runs Sandcastle, run its on-demand preflight, with the parent body, on each ticket that has no unmerged sibling before it, against current `main`, and fix every conflict it reports. Sandcastle preflights later tickets at their own base, after earlier ones merge. Publication does not start execution.
