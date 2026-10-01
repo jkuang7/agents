@@ -7,11 +7,11 @@ argument-hint: "What would you like to learn about?"
 
 # Teach
 
-Teach a topic across sessions in the current workspace. Ground every lesson in the user's mission and demonstrated understanding.
+Teach a topic across sessions in the current workspace, which holds only this learning; if it is a code repository or the Dev workspace root, ask which directory to use instead. Ground every lesson in the user's mission and demonstrated understanding.
 
 ## Workspace records
 
-Reach each format when creating or updating its record:
+Read each format when creating or updating its record:
 
 - `MISSION.md`: concrete purpose, success, and constraints. Use [MISSION-FORMAT.md](MISSION-FORMAT.md).
 - `RESOURCES.md`: trusted knowledge sources and practitioner communities. Use [RESOURCES-FORMAT.md](RESOURCES-FORMAT.md).
@@ -30,7 +30,7 @@ Establish the mission before teaching if it is missing or unclear. Confirm chang
 
 Ground knowledge in high-trust resources rather than parametric guesses. Populate missing sources first and cite claims in lessons. Teach only the knowledge needed for the chosen skill, then give practice with a tight, preferably automatic feedback loop.
 
-Choose skills by real practical use. Among skills within the learner's zone of proximal development, rank by how often the learner will actually use the skill in the situations listed under "Where I'll use it" in `MISSION.md`, and whether the goal can be accomplished without it. Break ties by cost of getting it wrong and by how many other skills it underpins. Favor what keeps paying off over the long run: first principles, judgment, and high-frequency building blocks such as core vocabulary, over facts that serve only one occasion, unless the mission itself centers on that occasion. Back the ranking with cited sources or practitioner communities; otherwise label it as practitioner judgment. Ask for those situations when none are recorded. Teach each skill to the depth the mission's situations and time horizon demand, and practice it in context: simulate the situations where it will be used, such as answering aloud for an interview, a real work task for a job, or the conversations the learner will actually have in a new language, adding realism as difficulty rises.
+Choose skills by real practical use. Among skills within the learner's zone of proximal development, rank by how often the learner will use the skill in the situations under "Where I'll use it" in `MISSION.md` (ask when none are recorded), and whether the goal is reachable without it. Break ties by cost of getting it wrong and how many other skills it underpins. Favor lasting payoff (first principles, judgment, core vocabulary) over one-occasion facts unless the mission centers on that occasion. Cite the ranking's sources, or label it practitioner judgment. Teach each skill to the depth the mission's situations and time horizon demand, and practice it in context: simulate the situations where it will be used, such as answering aloud for an interview, a real work task for a job, or the conversations the learner will actually have in a new language, adding realism as difficulty rises.
 
 Aim for long-term storage strength, not just fluent immediate recall. Use retrieval practice, spacing, and interleaving related skills. Reduce difficulty during initial understanding; use desirable difficulty during practice.
 
@@ -57,13 +57,13 @@ Keep the load light and the pace lively: plain sentences; each paragraph advance
 
 Produce a focused HTML lesson with readable single-column article typography, sized for parts 1–3, for one tangible win tied to the mission, numbered `0001-<slug>.html` onward, following the teaching method. Link related lessons and references through anchors, recommend the best primary source to read or watch, and invite follow-up questions.
 
-Narrate every lesson so it can be listened to away from a screen, unless `NOTES.md` opts out. Write the lesson as an `<article>` with a `<p class="standfirst">` summary under the title and `<h2>` section headings, then run `scripts/narrate-lesson.py <lesson.html>` from this skill before publishing. It writes one continuous audio file to `lessons/audio/<lesson>.mp3`, so playback survives a locked phone, and adds the lesson's total listening and reading time under the title, a listen button labelled with its length for the whole lesson and for each section, and a player pinned to the bottom of the page whose green scroll progress bar shows the percentage read and the time left. It also wraps the lesson in a complete HTML document (`<!doctype>`, `<head>` with the title and stylesheet, `<body>`), so hosts don't move head elements into the body. When only the page layout changes and the text does not, `--keep-audio` refreshes these without regenerating the audio. Publish that file at `audio/<lesson>.mp3` beside the page. If the script cannot run, say the lesson was not narrated; an updated lesson then keeps its old narration, which may no longer match the text.
+Narrate every lesson so it can be listened to away from a screen, unless `NOTES.md` opts out: write it as an `<article>` with a `<p class="standfirst">` summary under the title and `<h2>` section headings, then run this skill's `scripts/narrate-lesson.py <lesson.html>` before publishing. Its docstring describes what it writes and its options. Publish the audio file at `audio/<lesson>.mp3` beside the page. If the script cannot run, say the lesson was not narrated; an updated lesson then keeps its old narration, which may no longer match the text.
 
-Reuse existing assets before introducing new reusable components. Use a shared stylesheet so lessons form a consistent course. Choose structure that preserves the lesson's portability while sharing assets; repeated code belongs in assets rather than copied into each lesson.
+Reuse existing assets before adding new ones. Use a shared stylesheet so lessons form a consistent course, and put repeated code in assets rather than copying it into each lesson.
 
-Use quizzes, interactive tasks, or guided real-world practice. Retrieval questions come after the article, never inside it; the mastery check is free-response. Keep answer options parallel in length and formatting so presentation does not reveal the correct answer.
+Use quizzes, interactive tasks, or guided real practice. Retrieval questions on the new material come after the article, never inside it; the mastery check is free-response. Keep answer options parallel in length and formatting so presentation does not reveal the correct answer.
 
-Create compact printable references for reusable knowledge as separate files, never inside a lesson, and adhere to established glossary terms. Open the finished lesson when possible and return its path. So the learner can open lessons on any device, also publish each new or updated lesson, and any existing lesson without a link in `lessons/README.md`, as a private page with its shared assets, unless `NOTES.md` opts out. If no artifact-publishing tool is available, say the lesson was not published. Update an existing published lesson in place so its link stays stable, point cross-lesson links at published pages, and keep one line per lesson (number, title, link) in `lessons/README.md`.
+Create compact printable references for reusable knowledge as separate files, never inside a lesson, and adhere to established glossary terms. Open the lesson when possible and return its path. So the learner can open lessons on any device, also publish each new or updated lesson, and any existing lesson without a link in `lessons/README.md`, as a private page with its shared assets, unless `NOTES.md` opts out. If no artifact-publishing tool is available, say the lesson was not published. Update an existing published lesson in place so its link stays stable, point cross-lesson links at published pages, and keep one line per lesson (number, title, link) in `lessons/README.md`.
 
 ## Practitioner judgment
 
