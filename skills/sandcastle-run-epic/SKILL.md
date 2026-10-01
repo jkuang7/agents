@@ -46,6 +46,8 @@ Fix operational problems in the runner's environment directly, such as a stale l
 
 **Spec concerns:** on a `ready` or `blocked` result for a child, search that run's raw review logs (`review-<n>.log` in the run's log directory) for `Spec concern:`. The logs are Codex JSONL, so the text sits inside an escaped JSON string: match it anywhere in a line, or extract each `item.text` and split it into lines. These are a reviewer's non-blocking notes that a spec rule gives a wrong answer for a realistic case; the progress log omits them. Pass each one to the user with the result, quoted and attributed to the review, and for a `ready` child also post them as one comment on its PR. They never block a merge or change the caller's action; the user decides whether to amend the spec or file a follow-up.
 
+**Moved spec paths:** a `spec` block from Sandcastle's moved-path check lists `old → new` path pairs. It is a clarification, not a question for the user. Update those paths where the spec tells the implementer to read, change or test them; leave history and context text as written. Edit the issue body directly when its run hasn't started, or, for a started child, follow `sandcastle-change-request` (its scope check, amendment comment and third-amendment rule), whose invocation is the rerun. Then rerun without asking the user. Every other `spec` block goes to the user, as the table says. A missing path with no rename is not checked; the implementer's spec conflict covers it.
+
 **Reading cost:** on a `complete` result, report two figures with it so the user can see when the code is getting harder for workers to navigate. Compute them from the Epic's stage logs (`implementation-*`, `review-*` and `final-review-*` in every run directory under `.sandcastle/logs/epic-<N>/`), skipping `worker-*` logs because they duplicate the stage logs:
 
 - the share of `command_execution` commands that search or list (`rg`, `grep`, `find`, `ls`);
@@ -63,4 +65,4 @@ The figures are approximate and for information only. File nothing and change no
 
 ## Scope boundary
 
-Requirement and spec changes belong to `sandcastle-change-request`, `to-spec` and `to-tickets`. This skill does not create or edit child issues, change specs, or merge, close or advance anything outside step 4's table and the user's queue authorization.
+Requirement and spec changes belong to `sandcastle-change-request`, `to-spec` and `to-tickets`. This skill does not create or edit child issues or change specs, apart from the moved-path clarifications in step 4, and does not merge, close or advance anything outside step 4's table and the user's queue authorization.
