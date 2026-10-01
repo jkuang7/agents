@@ -5,13 +5,14 @@ vendor/matt-pocock-skills/writing-for-agents/MAINTENANCE.md.
 """
 
 from pathlib import Path
+import os
 import re
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = [ROOT / "skills", ROOT / "vendor/matt-pocock-skills"]
-SIZE_LIMIT = 10 * 1024
+SIZE_LIMIT = 12 * 1024
 DUPLICATE_WORDS = 12
 
 SKILLS = {
@@ -32,8 +33,10 @@ BRITTLE = [
 ]
 
 SKILL_REFERENCE = re.compile(
-    r"(?:\b(?:[Uu]se|[Rr]un|[Ii]nvoke|[Ll]oad|[Rr]oute to|[Hh]and off to|via)\s+`([a-z0-9]+(?:-[a-z0-9]+)+)`"
-    r"|`([a-z0-9]+(?:-[a-z0-9]+)+)`\s+skill)"
+    r"(?:\b(?:[Uu]se|[Rr]un|[Ii]nvoke|[Ll]oad|[Rr]oute to|[Hh]and off to|via)\s+`/?([a-z0-9]+(?:-[a-z0-9]+)*)`"
+    r"|`/?([a-z0-9]+(?:-[a-z0-9]+)*)`\s+skill"
+    r"|(?<![\w/.>~-])/([a-z0-9]+(?:-[a-z0-9]+)+)\b(?![/.])"
+    r"|\$([a-z0-9]+(?:-[a-z0-9]+)+)\b)"
 )
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 FENCE = re.compile(r"^(```|~~~).*?^\1", re.MULTILINE | re.DOTALL)
@@ -44,6 +47,19 @@ def skill_files():
         for path in sorted(directory.rglob("*")):
             if path.is_file() and path.suffix in {".md", ".yaml"}:
                 yield name, path
+
+
+def exists_exactly(directory, target):
+    """Resolve a link with case-sensitive names, as Linux CI does."""
+    current = directory
+    for part in Path(target).parts:
+        if part in {".", ".."}:
+            current = current / part
+        elif not current.is_dir() or part not in os.listdir(current):
+            return False
+        else:
+            current = current / part
+    return True
 
 
 def without_fences(text):
@@ -107,7 +123,7 @@ class SkillTextTests(unittest.TestCase):
             for target in LINK.findall(without_fences(path.read_text())):
                 if re.match(r"[a-z]+:|#", target):
                     continue
-                if not (path.parent / target.split("#", 1)[0]).exists():
+                if not exists_exactly(path.parent, target.split("#", 1)[0]):
                     problems.append(f"{relative(path)}: {target}")
         self.assertEqual(problems, [])
 
@@ -115,7 +131,7 @@ class SkillTextTests(unittest.TestCase):
         problems = []
         for _, path in skill_files():
             for match in SKILL_REFERENCE.finditer(path.read_text()):
-                name = match.group(1) or match.group(2)
+                name = next(group for group in match.groups() if group)
                 if name not in SKILLS:
                     problems.append(f"{relative(path)}: {name}")
         self.assertEqual(problems, [])

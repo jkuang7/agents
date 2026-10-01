@@ -16,7 +16,7 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 
 ## 2. Choose the route
 
-- **Single PR:** one focused change of about 350 changed lines or less, delivered by one PR.
+- **Single PR:** one focused change of about 350 changed lines or less (counted as `to-tickets` counts them).
 - **Existing Epic:** fits that Epic's goal as one more child PR; otherwise use a separate Epic.
 - **New Epic:** too large for one PR, delivered as several child issues toward one goal, each its own PR. This skill writes the parent; `to-tickets` writes the children.
 - **Multiple Epics:** only when the goals are separate. Do not nest Epics.
@@ -28,7 +28,7 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 3. **Compounding gains:** changes that make every later run faster or less error-prone, such as cleanup that lets agents read less.
 4. **New features and high-risk work:** last, because they take longest to prove.
 
-Within a tier, put the larger gain first. A prerequisite goes first. Number an Epic's requirements in this order, and show each item's tier with the route.
+Within a tier, put the larger gain first. A prerequisite goes just before the work that needs it, whatever its tier. Number an Epic's requirements in this order, and show each item's tier with the route.
 
 **Safe to merge:** Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it.
 
@@ -49,8 +49,8 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 7. `## Open questions` (optional): only where an implementer would otherwise invent product behavior, each with a recommended answer.
 8. `## Out of scope`: what a reasonable implementer might otherwise do.
 
-- **Readability:** Write for a human reviewer: plain sentences, no jargon, a shared lead-in once above a list.
-- **Wording:** State a requirement's reason when it isn't obvious, so the implementer can handle uncovered cases; implementers stop on wrong wording rather than override it. Use always, never, or only only when any exception would be a defect.
+- **Readability:** Write for a human reviewer: plain sentences, no jargon, a shared lead-in once above a list, a short label on each numbered item.
+- **Wording:** State a requirement's reason when it isn't obvious, so the implementer can handle uncovered cases; implementers stop on wrong wording rather than override it. Use "always", "never" or "only" only when any exception would be a defect.
 - **Acceptance criteria:** Prove behavior with fast, deterministic tests at the fastest level that catches the regression: unit for a rule, integration through the real entry point when the risk is in how parts fit, end-to-end only when it spans the whole system. Keep a truly needed slow or external check narrow.
 - **Existing tests:** for each acceptance criterion that changes behavior, search the existing tests for assertions of the behavior it replaces, and for tests whose setup relies on it, such as a removed flag or a skipped step. Name every hit in the acceptance text ("Existing tests pass with assertions unchanged, except: …", with the new expectation), and name a family of variants (parametrized or cached cases) by file and pattern. An implementer told to keep tests unchanged stops when one contradicts the spec, which costs a full implementation.
 - **Failures:** Cover a failure only if it can happen and would block progress, corrupt data, report a wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Do not design retry or recovery machinery the goal does not need.
@@ -62,18 +62,18 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 
 ## 4. Review
 
-Start a fresh reviewer in a new context. Give it the goal, the confirmed guarantees, the agreed understanding and route, and the full spec; mechanisms the human only suggested are not binding. It may check stated facts against their sources.
+Start a fresh reviewer in a new context with the goal, the confirmed guarantees, the agreed understanding and route, and the full spec; suggested mechanisms are not binding. It may check facts against their sources.
 
-Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks the spec against every rule in sections 2 and 3. For each rule in the spec, it tries to find a realistic case where the rule gives the wrong answer.
+Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks the spec against every rule in sections 2 and 3.
 
-**Review loop** (`to-tickets` uses it too): The reviewer returns every important finding it can support, most important first. Prefer fixing each by removing or narrowing a requirement. If a fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead; otherwise revise for all findings. If a pass's fixes add requirements or machinery (saved state, formats, rules), look for a simpler design that drops the need; if none exists, ask the human whether the goal is worth it. After each pass that changed a requirement or the design, start a new reviewer on the full spec. Stop when a pass finds only wording or test tightening; apply it. Stop for the human early only when a fix needs their decision or review stops converging (a fixed finding returns, or a pass finds at least as many requirement- or design-level problems as the last). Then show the spec, your revisions, and the open findings.
+**Review loop** (`to-tickets` uses it too): For each rule in the work under review, the reviewer tries to find a realistic case where the rule gives the wrong answer. It returns every important finding it can support, most important first. Prefer fixing each by removing or narrowing a requirement. If a fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead; otherwise revise for all findings. If a pass's fixes add requirements or machinery (saved state, formats, rules), look for a simpler design that drops the need; if none exists, ask the human whether the goal is worth it. After each pass that changed a requirement or the design, start a new reviewer on the full spec. Stop when a pass finds only wording or test tightening; apply it. There is no pass limit. Stop for the human early only when a fix needs their decision or review stops converging (a fixed finding returns, or a pass finds at least as many requirement- or design-level problems as the last). Then show the spec, your revisions, and the open findings, and ask how to proceed.
 
 ## 5. Publish
 
 Follow the repository's instructions and tracker policy.
 
 - **Single PR:** Do not wait for approval. Create one issue with the spec as its body and no sub-issues, and end with the link; the human reviews and edits it there. Publishing does not start Sandcastle.
-- **New Epic:** Do not wait for another approval after review. Create the GitHub Epic issue with the parent spec as its body. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** with the same spec as its body; link it and the Epic issue. End with both links. The Epic issue is the parent for native subissues; the draft PR is only its review surface. Do not publish child issues or start Sandcastle until the human approves the PR's spec. Then apply any approved edits to the Epic issue, use `to-tickets` to write and publish the children, and close the spec PR unmerged with a link to the Epic and delete its branch. Each child issue is the binding spec; the parent is context.
+- **New Epic:** Do not wait for another approval after review. Create the Epic issue with the parent spec as its body; it is the only copy of the spec. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** whose body links the Epic issue. End with both links. The human edits the spec in the issue and approves it in the PR. Do not publish child issues or start Sandcastle until that approval; then use `to-tickets`. Each child issue is the binding spec; the parent is context.
 - **Existing Epic:** Confirm the Epic, then use `to-tickets` to add the child issue from the confirmed need.
 
 Do not modify Sandcastle under this skill.
