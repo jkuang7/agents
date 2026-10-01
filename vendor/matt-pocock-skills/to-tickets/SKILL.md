@@ -14,7 +14,7 @@ Read the parent and inspect code only enough to identify behavioral boundaries. 
 
 Prefer slices whose acceptance can be proven by fast deterministic tests at a stable boundary, such as fixtures rather than live services or paid runs. Short feedback loops keep each red-green-refactor cycle cheap. When the behavior inherently needs a slower or external check, keep it and confine that proof to the narrowest boundary, with the rest of the slice proven through a seam that is easy to test.
 
-Every slice must be safe to merge on its own, even if no later slice happens: existing behavior preserved, touched behavior complete, no half-finished user flow. Order slices so each builds on the merged ones before it. Prefer a split that needs no feature flags or compatibility layers; if a slice can't be made safe alone, merge it with its neighbor.
+Every slice must be safe to merge on its own, even if no later slice happens: existing behavior preserved, touched behavior complete, no half-finished user flow. Order slices so each builds on the merged ones before it, and otherwise follow the parent's requirement order. Prefer a split that needs no feature flags or compatibility layers; if a slice can't be made safe alone, merge it with its neighbor.
 
 **Size:** each slice's PR should add at most about 350 lines of production code; tests and deletions don't count. Estimate from the code the slice touches, and split any slice likely to go over. If a slice can't be split and stay safe to merge, keep it whole and state its estimate.
 

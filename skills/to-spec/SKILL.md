@@ -22,6 +22,15 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 - **New Epic:** several child issues toward one goal. Sandcastle delivers each child as its own PR, merged to `main` before the next child starts; the last child's review also runs the Epic's real-world check. There is no separate final review.
 - **Multiple Epics:** only when the goals are separate. Do not nest Epics.
 
+**Work order:** Whenever there is more than one piece of work (several problems in one request, several Epics, or the requirements within an Epic), order it to win the most speed and performance soonest. Speed and performance include agent runs: fewer mistakes, fewer wasted reads and writes, and faster completion all count.
+
+1. **Robustness:** anything that makes the system being worked on, including Sandcastle, buggy, broken, or unreliable, or that makes agents fail or redo work. Faster runs are worthless while runs fail.
+2. **Low-hanging fruit:** changes that are quick to implement and verify in total.
+3. **Compounding speed gains:** changes that make every later run faster or less error-prone, including refactoring, restructuring, and cleaning up the repository so agents read less and get it right more often.
+4. **New features and high-risk work:** last, because they take longest to prove.
+
+Within a tier, put the larger gain first. A prerequisite always goes before the work that needs it, whatever its tier. Number an Epic's requirements in this order. Show the order, with each item's tier, when you present the route.
+
 Every PR must be safe to merge on its own: existing behavior preserved, touched behavior complete, no half-finished user flow. For an Epic this skill writes the parent only; `to-tickets` splits the approved parent into child PRs, each safe to merge alone.
 
 Show the goal, your understanding of the problem, the proposed fix, and the route. Wait for the human to confirm before drafting.
@@ -58,7 +67,7 @@ A single-PR spec and an Epic parent use these sections in this order, so reviewe
 
 Start a fresh reviewer in a new context. Give it the goal, the guarantees the human confirmed, the agreed understanding and route, and the full spec. Mechanisms the human only suggested are not binding. The reviewer may check stated facts against their sources.
 
-Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope and route; that every requirement is needed; that an Epic's goal names a real-world check; that acceptance criteria are clear and sufficient and cover every requirement; that every existing test asserting replaced behavior is named as an exception; that single-PR specs and Epic parents follow the section format; and that the PR, or each Epic's goal, can be delivered by PRs that are each safe to merge.
+Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks scope and route; that every requirement is needed; that an Epic's goal names a real-world check; that acceptance criteria are clear and sufficient and cover every requirement; that every existing test asserting replaced behavior is named as an exception; that the work follows the work order; that single-PR specs and Epic parents follow the section format; and that the PR, or each Epic's goal, can be delivered by PRs that are each safe to merge.
 
 It also looks for rules that are wrong, not only rules that conflict: for each rule, it tries to find a realistic case where the rule gives the wrong answer, and checks that the spec names counterexamples. For each saved result, it checks that the spec names every input that invalidates it and what happens on crash, rerun, and mid-run change.
 
