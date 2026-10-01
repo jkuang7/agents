@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Link personal and vendored skills into the supported runtime homes.
+# Link personal and vendored skills into the supported runtime homes, and
+# Claude agent definitions into the Claude agents home.
 #
 #   deploy           link current skills and prune removed ones
 #   deploy --check   report drift without changing anything
@@ -108,6 +109,38 @@ for runtime_home in "${runtime_homes[@]}"; do
       say "linked  $target"
     fi
   done
+done
+
+claude_agents_source="$agents_root/claude-agents"
+claude_agents_home="${CLAUDE_HOME:-$HOME/.claude}/agents"
+mkdir -p "$claude_agents_home"
+for entry in "$claude_agents_home"/*.md; do
+  [[ -L "$entry" ]] || continue
+  source="$(readlink "$entry")"
+  [[ "$source" == "$claude_agents_source"/* && ! -f "$source" ]] || continue
+  if $check_only; then
+    say "STALE   $entry"
+    problems=$((problems + 1))
+  else
+    rm -- "$entry"
+    say "pruned  $entry"
+  fi
+done
+for source in "$claude_agents_source"/*.md; do
+  [[ -f "$source" ]] || continue
+  target="$claude_agents_home/$(basename "$source")"
+  if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
+    say "ok      $target"
+  elif [[ -e "$target" || -L "$target" ]]; then
+    say "CONFLICT $target"
+    problems=$((problems + 1))
+  elif $check_only; then
+    say "MISSING $target"
+    problems=$((problems + 1))
+  else
+    ln -s "$source" "$target"
+    say "linked  $target"
+  fi
 done
 
 if (( problems )); then

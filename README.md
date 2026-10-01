@@ -12,6 +12,9 @@ Locally authored skills live in `skills/`. Skills derived from
 - `~/.claude/skills`
 - `~/.agents/skills`
 
+It also links Claude agent definitions from `claude-agents/` into
+`~/.claude/agents`.
+
 Verify the links without changing them:
 
 ```sh
