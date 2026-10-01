@@ -5,6 +5,7 @@ vendor/matt-pocock-skills/writing-for-agents/MAINTENANCE.md.
 """
 
 from pathlib import Path
+import difflib
 import os
 import re
 import unittest
@@ -32,11 +33,12 @@ BRITTLE = [
     ("commit ID", re.compile(r"\b(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{7,40}\b")),
 ]
 
+NAME = r"([a-z0-9]+(?:-[a-z0-9]+)*)"
 SKILL_REFERENCE = re.compile(
-    r"(?:\b(?:[Uu]se|[Rr]un|[Ii]nvoke|[Ll]oad|[Rr]oute to|[Hh]and off to|via)\s+`/?([a-z0-9]+(?:-[a-z0-9]+)*)`"
-    r"|`/?([a-z0-9]+(?:-[a-z0-9]+)*)`\s+skill"
-    r"|(?<![\w/.>~-])/([a-z0-9]+(?:-[a-z0-9]+)+)\b(?![/.])"
-    r"|\$([a-z0-9]+(?:-[a-z0-9]+)+)\b)"
+    rf"\b(?:[Uu]se|[Rr]un|[Ii]nvoke|[Ll]oad|[Rr]oute to|[Hh]and off to|via)\s+`/?{NAME}`"
+    rf"|`/?{NAME}`\s+skill"
+    rf"|(?<![\w$])\${NAME}(?=[\s`'),:.]|$)",
+    re.MULTILINE,
 )
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 FENCE = re.compile(r"^(```|~~~).*?^\1", re.MULTILINE | re.DOTALL)
@@ -130,9 +132,13 @@ class SkillTextTests(unittest.TestCase):
     def test_named_skills_exist(self):
         problems = []
         for _, path in skill_files():
-            for match in SKILL_REFERENCE.finditer(path.read_text()):
+            for match in SKILL_REFERENCE.finditer(without_fences(path.read_text())):
                 name = next(group for group in match.groups() if group)
-                if name not in SKILLS:
+                if name in SKILLS:
+                    continue
+                # A one-word name may be a command such as `gh`; flag it only
+                # when it looks like a misspelled or renamed skill.
+                if "-" in name or difflib.get_close_matches(name, SKILLS, cutoff=0.75):
                     problems.append(f"{relative(path)}: {name}")
         self.assertEqual(problems, [])
 
