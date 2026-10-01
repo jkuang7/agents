@@ -18,7 +18,7 @@ To stop a controller, use its documented interface or a graceful interrupt, wait
 
 ## Result record
 
-Read the result contract from the README and ADR 0003: status, class, cause, signature, reason, question, and the child PR when there is one. It is the last line of stdout and is also saved in durable state. Treat anything ambiguous as a decision.
+Read the result contract from the README: status, class, cause, signature, reason, question, and the child PR when there is one. It is the last line of stdout and is also saved in durable state. Treat anything ambiguous as a decision.
 
 ## Child PRs
 
