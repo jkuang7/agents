@@ -1,39 +1,29 @@
 # Runtime discovery and control
 
-Use the selected trusted runtime's repository instructions, README, CLI/help, and source as the authority. Locate the relevant entry points there before acting. This reference identifies evidence to establish; it does not define runtime behavior or supply fallback controller logic.
+The trusted runtime's README, CLI help, repository instructions and source are the authority. Discover the current command forms, result contract and state locations there before acting. This reference names the evidence to establish; it supplies no fallback controller logic.
 
 ## Trusted operator and routing
 
-Inspect operator validation and CLI repository selection. Establish the accepted operator revision, its eligibility under repository policy, and the tracker repository actually selected by the controller. Confirm routing against the requested Epic and durable delivery state, including forks. Keep operator and candidate code separate under the runtime's trust model.
+Establish the operator checkout's accepted revision, that it is clean and contained in `main`, and the tracker repository the controller will select. That includes forks: `-R` on an issue command does not change controller routing. Keep operator code and candidate code separate.
 
-## Delivery identity and durable state
+## Issue state
 
-Locate the registered Epic worktree through Git's worktree inventory. Inspect current delivery validation and durable-state loading to establish its repository, branch, worktree identity, and accepted HEAD. Follow workspace placement and retention rules; preserve registered locations and unfinished work.
+Locate the issue's durable state and logs from the README. They typically hold budgets, the current child, any recorded candidate or open child PR, the last result record, and the log directory with its `current` pointer. Read them fresh, together with the issue's native sub-issues and their PRs, to establish where the issue stands. Branch names, issue closure or a last log line alone do not establish state. Inconsistent or missing state calls for the documented recovery or a reported stop.
 
-Account for all durable accepted advances, including corrections or reconciliations where supported. Branch names, issue closure, and the last child receipt alone do not establish current accepted HEAD. Record starting accepted state outside candidate control so fresh evidence can identify children accepted during this invocation. Inconsistent or missing state requires supported recovery or a reported stop.
+## Controller ownership
 
-## Controller ownership and safe stop
+Correlate the checkout lock, the process and the current run log with the selected issue. A PID, lock or log alone does not prove live ownership. Start a new controller in a surface that outlives this agent, such as a terminal tab. The handoff succeeds only when current runtime evidence shows that the controller passed startup and owns the issue.
 
-Inspect current locking, process handling, and observation interfaces. Correlate lock/process/log evidence with the selected delivery and active run. A PID, lock, or historical log alone does not establish live ownership. Retain ownership protection while writers or identity remain uncertain.
+To stop a controller, use its documented interface or a graceful interrupt, wait for it and its workers to exit, then re-read state. A controller that has recorded its result and released its lock but has not exited may be interrupted. Recover a stale lock only after proving that its writers exited, using the runtime's procedure where one exists.
 
-For an already-live controller, use supported current-run evidence to establish its configured run limit as well as ownership. Compare that evidence with the requested mode, preserving an explicit evidence gap when the active configuration cannot be established.
+## Result record
 
-For a new launch, discover the supported startup and ownership signals from the trusted operator's README, CLI/help, source, capability/state interfaces, and durable state. Start the documented controller in an execution surface that remains alive after this agent returns. Handoff succeeds only after the controller passes preflight and current runtime evidence corroborates that it accepted ownership of the selected Epic delivery. If the controller exits during startup or ownership remains unproven, report a failed handoff.
+Read the result contract from the README and ADR 0003: status, class, cause, signature, reason, question, and the child PR when there is one. It is the last line of stdout and is also saved in durable state. If the running version predates the full contract, use what it records (its final log line and the `finished` marker) and treat anything ambiguous as a decision.
 
-After confirmed ownership, return without following the run to readiness. Use the documented `--attach` or `--attach-worker` watcher only for an explicit observation request; these are read-only interfaces, and stopping one leaves the controller running.
+## Child PRs
 
-For an explicitly requested stop/change, use the supported controller interface. Wait for the controller and its writers to exit and ownership to release before a replacement launch. Re-read accepted HEAD after shutdown because acceptance may finish during interruption. Recover stale ownership only through the documented procedure after proving its writers have exited. Stopping a read-only observer does not stop the controller.
+Each child's PR is the runner's publication for that child. Confirm its number, base (`main`), head commit and CI status from the forge before merging. Ambiguous PR evidence stops the merge rather than creating or guessing a replacement.
 
-## Cumulative PR
+## Resume and retry
 
-Inspect current publication lookup and validation to resolve the cumulative PR for this delivery. Confirm its identity and target through runtime-established evidence. Reuse it or leave creation to normal publication. Ambiguous or conflicting PR evidence requires a stop rather than guessing or creating a replacement.
-
-## Invocation and retry/recovery
-
-Discover current command forms and run-limit semantics from CLI/help and the entry point. Use the existing controller and read-only observation interfaces.
-
-For authorized retry or recovery, establish the supported control and its prerequisites from current runtime documentation and validation code. Durable blocks remain binding without explicit retry authorization. Provenance reconciliation alone does not establish approval. Unsupported controls require a reported stop; preserve state rather than substituting manual integration or an outer retry loop.
-
-## Fresh state
-
-Read durable accepted state, invocation receipts/logs, and cumulative PR metadata together when establishing starting state, ownership, or an explicitly requested observation result. Process exit, observer exit, or a ready flag alone does not prove ownership or completion.
+Discover from CLI help how a rerun resumes and whether a block needs an explicit retry control. Durable decision blocks stay binding until their inputs change or the user authorizes a retry. Unsupported controls call for a reported stop, not manual integration or an outer retry loop.

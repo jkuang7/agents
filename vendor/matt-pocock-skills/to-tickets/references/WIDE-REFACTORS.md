@@ -6,6 +6,6 @@ Use this reference when changing a shared schema or interface would break caller
 2. Migrate callers in bounded batches based on affected behavior or ownership. Each batch depends on the compatibility slice and must pass its required checks while remaining callers use the old form.
 3. Remove the old form only after all caller migrations complete. Make this removal depend on every migration batch and verify that no required caller or stored-data consumer still needs the old form.
 
-If batches cannot pass independently even with a compatibility step, explain why and propose a shared integration branch in the breakdown review. Declare which checks each batch can satisfy and which must wait for the combined candidate. Add a final integration-and-verification ticket blocked by every batch. Make clear that intermediate work is not independently releasable and preserve the project's integration policy.
+Each slice is merged on its own, so every batch must pass all checks and be safe to merge. If batches cannot pass independently even with a compatibility step, combine them into one slice and state its size estimate in the breakdown review.
 
-The sequence is ready when every caller is accounted for, each ticket has explicit prerequisites and verification, and the final ticket establishes compatibility and removal safety. Keep the dependency graph acyclic.
+The sequence is ready when every caller is accounted for, each ticket has explicit prerequisites and verification, and the removal ticket establishes that no caller still needs the old form. Keep the dependency graph acyclic.

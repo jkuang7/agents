@@ -15,6 +15,9 @@
 - {Another specific thing}
 - {…}
 
+## Where I'll use it
+- {A concrete real-world situation where this skill gets used, and how often, e.g. "45-minute system design rounds, ~2 a week for 2 months", "reviewing teammates' design docs, weekly for years", "ordering food and small talk in Tokyo, daily for a month"}
+
 ## Constraints
 - {Time, budget, prior commitments, learning preferences, anything that bounds the approach}
 
@@ -28,4 +31,5 @@
 - **Concrete over abstract.** "Run a half marathon by October" beats "get fitter." "Ship a Rust CLI to my team" beats "learn Rust."
 - **Push back on vagueness.** If the user cannot articulate why, interview them before writing anything. A bad mission is worse than no mission.
 - **Revise when reality shifts.** Missions change. When the user's goal moves, update this file: don't leave a stale mission steering future sessions.
+- **Name real situations.** "Where I'll use it" drives which skills get taught first and where practice is set. Ask for it rather than inventing it.
 - **Keep it short.** If `MISSION.md` runs past a screen, it has stopped being a compass and started being a plan.

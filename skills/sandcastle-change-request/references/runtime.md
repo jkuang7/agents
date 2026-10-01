@@ -46,15 +46,11 @@ These are discovery hints; confirm them against the current operator:
 
 These are discovery hints; confirm them against the current operator:
 
-- `git worktree list --porcelain` locates the existing `sandcastle/epic-<number>` checkout. Validate its Git common directory, path, and branch against durable state. Recover a missing registered delivery checkout through the documented procedure rather than creating a replacement.
-- Delivery `.sandcastle/epics/epic-<number>.json` records the base, required-child order, receipts, reconciliations, and corrections. Corroborate the recorded accepted chain with receipts and actual HEAD; the last child receipt alone may omit later accepted corrections.
-- Operator `.sandcastle/logs/epic-<number>/current` identifies the run logs and stop history.
-- `src/cli/main.ts` builds assignment snapshots and trusted prompts. `src/epic/epic.ts` defines consumed tracker fields. GitHub native sub-issues determine the required set, including closed children; read back order after assignment changes.
-- Discover the trusted runtime's actual canonical observation of the selected child. Verify that it treats the child's contract-bearing title and body as the complete binding contract, excludes comments and workflow metadata from binding authority, and keeps parent Epic material as separate non-binding context; do not infer inherited constraints or prescribe an unimplemented authority projection.
-- Read the runtime's current queue selection rules and durable required-child order. Determine whether the selected child is the next executable assignment when immediate execution matters. Preserve native ordering and report a later child as queued; do not reorder, bypass, or manually target it unless the trusted runtime documents that capability.
-- `src/epic/workflow.ts` contains acceptance, correction verification, blocking, final review, and readiness controls.
-- `npm start -- <epic-number> --attach` and `--attach-worker <iteration>` are read-only watchers. Stopping a watcher leaves the controller running.
-- `npm start -- <epic-number> --retry-blocked` requests explicit retry. `--reconcile-delivery <source-commit>` validates provenance, not approval.
+- The README names where the issue's durable state and run logs live (operator `.sandcastle/logs/epic-<number>/current` points to the current run). Read them with the issue's native sub-issues and each child's PR to establish which children are accepted (in the per-child PR model, a child is accepted when its PR has merged), which child is next, and any recorded block or candidate.
+- GitHub native sub-issues determine the required set and order, including closed children. A closed child that is still linked but was never accepted blocks the Epic. Read the order back after any assignment change.
+- Discover the trusted runtime's actual canonical observation of the selected child. Verify that it treats the child's contract-bearing title and body as the complete binding contract, excludes comments and workflow metadata from binding authority, and keeps parent Epic material as separate non-binding context. Do not infer inherited constraints or prescribe an unimplemented authority projection.
+- Determine whether the selected child is the next executable assignment when immediate execution matters. The controller rereads the child order at each child boundary. Preserve native ordering and report a later child as queued. Do not reorder, bypass or manually target it unless the trusted runtime documents that capability.
+- CLI help lists the entry point, the read-only watchers (`--attach`, `--attach-worker`; stopping one leaves the controller running), and the current resume or retry controls.
 
 Check the operator's selected repository, including `gh repo view` where used, against the durable target before launch. `origin` may point upstream while delivery targets a fork; `-R` on issue edits does not change controller routing. Resolve mismatches through authorized configuration or stop.
 
@@ -70,9 +66,9 @@ If the user explicitly requests observation, use only the interface the current 
 
 ## Controller stop and snapshot
 
-Resolve the selected delivery's controller, operator revision, worktree/branch, and PR from durable evidence. Follow repository worktree placement rules and retain existing registered locations. For Epic work, pin exact accepted HEAD, required-child order, main HEAD, and relevant working-tree status from ledger, receipts, logs, and PR metadata. For standalone work, inspect only state used by its supported mechanism. Dirty candidate work remains unfinished.
+Resolve the selected delivery's controller, operator revision, worktree/branch, and PR from durable evidence. Follow repository worktree placement rules and retain existing registered locations. For Epic work, pin the accepted children, required-child order, `main` HEAD, any open child PR or recorded candidate, and relevant working-tree status from durable state, logs, and PR metadata. For standalone work, inspect only state used by its supported mechanism. Dirty candidate work remains unfinished.
 
-Only stop a controller that exists for the selected delivery. Verify its command, working directory, run identity, and liveness before signaling; the PID/start time in `.sandcastle/logs/checkout.lock` is insufficient alone. Prefer its owning terminal or documented graceful interrupt. Wait for workers and host commands to exit and ownership to release, then re-read accepted HEAD because acceptance may have completed during interruption.
+Only stop a controller that exists for the selected delivery. Verify its command, working directory, run identity, and liveness before signaling; the PID/start time in `.sandcastle/logs/checkout.lock` is insufficient alone. Prefer its owning terminal or documented graceful interrupt. Wait for workers and host commands to exit and ownership to release, then re-read state, because acceptance or publication may have completed during interruption.
 
 Preserve durable state and unfinished work. Uncertain locks or workers that will not exit require investigation, not lock deletion or a competing controller. For proven stale ownership, use documented recovery only after confirming original writers exited; without that interface, leave the run stopped.
 
@@ -86,14 +82,12 @@ Where `.sandcastle/review-policy.md` or `verify-policy.md` is supported, resolve
 
 ## Correction handoff
 
-For an explicitly authorized review correction, record the assignment and proof in its durable source and use the existing correction handoff or exact-assignment integration interface. Preserve accepted Epic receipts. An audit recommendation alone does not authorize unrelated cleanup.
-
-Use the trusted flow's exact corrected-commit verification before integration. Where separate recovery-ref integration or provenance reconciliation is necessary, use only interfaces actually exposed by that runtime and only after fresh exact approval. Reconciliation is neither verification nor child acceptance.
+For an explicitly authorized review correction, record the assignment and proof in its durable source (a child issue, or a correction sub-issue) and let the runtime deliver it through its normal flow. Preserve accepted history. An audit recommendation alone does not authorize unrelated cleanup. Use only integration or recovery interfaces the runtime actually exposes, and only after fresh exact approval.
 
 ## Trusted flow controls
 
-Use the current runtime's documented retry, blocking, final-review, and publication controls. Do not hardcode limits or recreate controller logic here.
+Use the current runtime's documented retry, blocking and publication controls. Do not hardcode limits or recreate controller logic here.
 
-Preserve durable blocks and require explicit retry where the runtime does. Do not automatically relaunch after exhaustion or no-progress stops.
+Preserve durable blocks. A plain resume or rerun never authorizes an explicit retry control such as `--retry-blocked`. Retry only where the runtime's documented behavior allows it, or with the user's explicit authorization. Do not automatically relaunch after exhaustion or no-progress stops.
 
-For Epic work, use the normal final-review and publication path. For standalone work, use only the supported mechanism established above.
+For Epic work, use the normal publication path (a PR per child in the per-child PR model). For standalone work, use only the supported mechanism established above.

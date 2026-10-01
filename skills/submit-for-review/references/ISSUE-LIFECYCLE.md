@@ -25,10 +25,11 @@ Close a parent Epic only when both conditions hold:
    closure, or an already-authorized governing workflow explicitly owns and
    requires it. Repository policy can constrain closure but does not itself grant
    mutation authority.
-2. Fresh evidence establishes that the merged PR completes the Epic: the PR or
-   repository metadata explicitly identifies that Epic as its delivered parent;
-   every required child and acceptance criterion is complete or has equivalent
-   recorded delivery evidence; and no required scope remains open.
+2. Fresh evidence establishes that the Epic is complete: every required child
+   is closed by its merged PR or has equivalent recorded delivery evidence; no
+   required scope remains open; and, when the delivery workflow runs a final
+   review of the Epic (Sandcastle reports `complete`), that review approved the
+   current `main`.
 
 Branch names, issue proximity, a parent link alone, or the merge itself are not
 delivery evidence. If authorization or completion evidence is missing or
