@@ -1,6 +1,7 @@
 ---
 name: code-review
 description: Review a PR, branch, or working-tree candidate against a fixed base for repository standards and accepted requirements.
+model: sonnet
 ---
 
 Two-axis review of an explicit candidate against a fixed base:
@@ -8,7 +9,7 @@ Two-axis review of an explicit candidate against a fixed base:
 - **Standards**: does the code conform to this repo's documented coding standards?
 - **Spec**: does the code correctly implement the originating issue or spec, or, without one, the change's stated intent?
 
-Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
+Both axes run as **parallel sub-agents** (in Claude, the `reviewer` agent) so they don't pollute each other's context, then this skill aggregates their findings.
 
 If delegation is unavailable, perform both passes directly and disclose the reduced independence. Preserve the same candidate and evidence requirements; do not claim a separate reviewer ran.
 

@@ -2,6 +2,7 @@
 name: improve-codebase-architecture
 description: Delegate a codebase architecture scan and HTML report to a subagent, return the file, then grill through whichever opportunity you pick.
 disable-model-invocation: true
+model: opus
 ---
 
 # Improve Codebase Architecture
@@ -10,7 +11,7 @@ Keep the scan and report generation in a subagent context so the main task retai
 
 ## 1. Delegate the review
 
-Resolve the target repository and pass its absolute path, the user's requested scope or pain point, and any relevant constraints to one subagent. If the target is ambiguous, clarify it before dispatching.
+Resolve the target repository and pass its absolute path, the user's requested scope or pain point, and any relevant constraints to one subagent (in Claude, the `advisor` agent). If the target is ambiguous, clarify it before dispatching.
 
 Use a fresh context (`fork_turns="none"` when supported), with a concise brief rather than the conversation history. Give the subagent the absolute path to [REVIEW-WORKER.md](REVIEW-WORKER.md) and instruct it to read and execute that file. The worker owns history analysis, domain and ADR reading, code exploration, design vocabulary, and HTML generation. Load those materials only in the worker context during this phase.
 
