@@ -14,7 +14,7 @@ Sandcastle's README and `--help` own its commands, result contract, block causes
 - `handoff` (default): start or resume one issue, confirm it started, give the user the `--attach` command, and return.
 - `queue`: the user asked this thread to run AFK or work through a queue. Act on every result as below. Merging PRs and closing Epics need the user's authorization for this queue; "continue" or "AFK" alone doesn't grant it. The `## Authority` section of `continuation.md` is the user's standing authorization for its queue (merging, closing, and amending a spec when its intent is clear): apply it instead of asking again.
 
-**Pick-up:** in queue mode, first read `.scratch/queue-orchestration/continuation.md` in the operator checkout, then check live state (a running controller via "Already running?", open child PRs, whether local `main` matches `origin/main`) and continue the queue from there, not fresh.
+**Pick-up:** in queue mode, first read `.scratch/queue-orchestration/continuation.md` in the operator checkout, including its recorded reruns, then check live state (a running controller via "Already running?", open child PRs, whether local `main` matches `origin/main`) and continue the queue from there, not fresh.
 
 Always launch from the operator checkout on clean `main`, even when the issue changes Sandcastle itself.
 
@@ -22,15 +22,14 @@ Always launch from the operator checkout on clean `main`, even when the issue ch
 
 | Result | Caller action |
 |---|---|
-| `ready`, with a child PR | When merging is authorized: run `gh pr checks <pr> --watch`, then `node scripts/merge-green.mjs <pr>`, and rerun the same issue. Otherwise report the PR and stop. |
+| `ready`, with a child PR | When merging is authorized: run `gh pr checks <pr> --watch`, then `node scripts/merge-green.mjs <pr>`, and rerun the same issue. If it refuses because checks failed, rerun the failed CI jobs once and try again. Any other refusal, or a second failure, is a decision. Without authorization, report the PR and stop. |
 | `complete` | When closure is authorized, close the Epic. Report it and start the next queued issue. |
-| `blocked`, class `transient`, or cause `environment` or `self-change` | Fix the stated condition (auth or access, a clean operator checkout), then rerun. If the same cause blocks twice in a row, treat it as a decision. |
-| `blocked`, cause `runtime` | A Sandcastle defect. Look for an open issue with the same `signature`; otherwise ask the advisor to diagnose it and file one issue with the reproduction and cause. Then rerun. |
-| `blocked`, class `fixable` | Checks or review still failed after corrections. Rerun once; if it blocks the same way, treat it as a decision. |
+| `blocked`, class `transient` or `fixable`, or cause `environment` or `self-change` | Clear only what is safe: install a missing tool inside the project, or remove your own scratch files from the operator checkout. Then rerun once; the same class and cause again is a decision. Auth, access, and other files in the operator checkout are decisions. |
+| `blocked`, cause `runtime` | A Sandcastle defect, so a code change: a decision. |
 | Any other decision | Ask the advisor for a recommendation, then stop the queue and ask the user the record's `question` with its `reason` and that recommendation. Rerun after they change the spec, children or budget. |
 | No result record, or one this table doesn't cover | Ask the advisor to read the run's logs, then treat it as a decision. |
 
-**Advisor:** for the rows above that name it, and for spec blocks, start the `advisor` agent (a session already running on Opus decides them itself) with a brief: the result record, the run's log directory, `.scratch/queue-orchestration/continuation.md`, and the question to answer. Carry out its recommendation within the user's authorization; anything outside it goes to the user. Handle every other row yourself.
+**Advisor:** for the rows above that name it, and for spec blocks, start the `advisor` agent (a session already running on Opus decides them itself) with a brief: the result record or merge refusal, the run's log directory, `.scratch/queue-orchestration/continuation.md`, and the question to answer. For a merge refusal it reads the refusal text first; if the refusal came after the merge (`git pull` or `npm ci` failed), it checks the PR state before anyone reruns. Carry out its recommendation within the user's authorization; anything outside it goes to the user. Handle every other row yourself.
 
 **Spec blocks:** the record's `reason` lists every conflict, its `question` only the first. Ask the advisor how to resolve them, then resolve all of them in one amendment, through `sandcastle-change-request` for a started child, and run the on-demand preflight on the amended body before rerunning. A moved-path block (`old → new` pairs) is a clarification: update those paths and rerun without asking.
 
@@ -39,8 +38,9 @@ Always launch from the operator checkout on clean `main`, even when the issue ch
 ## Queue rules
 
 - Run one issue at a time: one operator checkout runs one controller. Children of an Epic run in their sub-issue order.
-- Merge only while no controller runs, one PR at a time, and only after CI passes and the merge gate succeeds. If a merge breaks the next start, revert it through a PR and file an issue.
-- Keep the queue order, authorization and current issue in `.scratch/queue-orchestration/continuation.md`, so a handoff carries state, not procedure.
+- Merge only Sandcastle's own child pull requests, and only when green: through `merge-green`, while no controller runs, one at a time.
+- Code changes are decisions: a Sandcastle runtime defect, a fix to `main`, a revert of a bad merge. The caller never writes or merges them; it stops and asks the user, with the advisor's recommendation naming the fix.
+- Keep the queue order, authorization, current issue and each rerun (issue, class, cause; a CI-job rerun counts) in `.scratch/queue-orchestration/continuation.md`, so a handoff carries state, not procedure.
 - Unless the user says otherwise, put robustness first, then speed, then leanness.
 
 ## Commands
