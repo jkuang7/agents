@@ -21,3 +21,6 @@ venv/
 .env
 .env.*
 !.env.example
+
+# Worktrees
+.worktrees/
