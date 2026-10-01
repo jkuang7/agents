@@ -12,13 +12,13 @@ Locate the issue's durable state and logs from the README. They typically hold b
 
 ## Controller ownership
 
-Correlate the checkout lock, the process and the current run log with the selected issue. A PID, lock or log alone does not prove live ownership. Start a new controller in a surface that outlives this agent, such as a terminal tab. The handoff succeeds only when current runtime evidence shows that the controller passed startup and owns the issue.
+Correlate the checkout lock, the process and the current run log with the selected issue. A PID, lock or log alone does not prove live ownership. Start a new controller detached from this agent, as the skill's Commands section shows, not in a new terminal tab. The handoff succeeds only when current runtime evidence shows that the controller passed startup and owns the issue.
 
 To stop a controller, use its documented interface or a graceful interrupt, wait for it and its workers to exit, then re-read state. A controller that has recorded its result and released its lock but has not exited may be interrupted. Recover a stale lock only after proving that its writers exited, using the runtime's procedure where one exists.
 
 ## Result record
 
-Read the result contract from the README and ADR 0003: status, class, cause, signature, reason, question, and the child PR when there is one. It is the last line of stdout and is also saved in durable state. If the running version predates the full contract, use what it records (its final log line and the `finished` marker) and treat anything ambiguous as a decision.
+Read the result contract from the README and ADR 0003: status, class, cause, signature, reason, question, and the child PR when there is one. It is the last line of stdout and is also saved in durable state. Treat anything ambiguous as a decision.
 
 ## Child PRs
 
