@@ -1,7 +1,6 @@
 ---
 name: to-spec
-description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic issue with a linked review PR."
-disable-model-invocation: true
+description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic issue with a linked review PR. Use when the user asks for a spec, to file work as issues, or names to-spec."
 ---
 
 # To spec

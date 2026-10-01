@@ -42,6 +42,8 @@ Apply the requested change to the selected authority only when needed. Record th
 
 Read the authoritative specification back from the tracker or PR and confirm the selected child/PR and the runtime's actual canonical authority observation before invocation. Verify that the observation respects the selected binding-source boundary; do not prescribe an Epic projection the trusted runtime does not implement. A running worker is bound to the observed authority; later authoritative edits are handled by the runtime's fail-closed change detection.
 
+When the amendment answers a spec-conflict block, run the runtime's on-demand preflight on the amended body against the child's base, and invoke only when it reports no conflicts. Otherwise each rerun finds one more conflict.
+
 If the runtime cannot consume the selected authoritative source, preserve the specification, report the unsupported handoff, and stop.
 
 ## Invoke the trusted flow

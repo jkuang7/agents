@@ -1,8 +1,7 @@
 ---
 name: handoff
-description: Compact the current conversation into a pasteable Markdown handoff so the user can clear context and resume in a fresh session.
+description: Compact the current conversation into a pasteable Markdown handoff so the user can clear context and resume in a fresh session. Use when the user asks for a handoff or to pass context to another thread.
 argument-hint: "What will the next session be used for?"
-disable-model-invocation: true
 ---
 
 # Handoff
