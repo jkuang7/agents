@@ -36,10 +36,12 @@ python3 evals/make_fixture.py routing
 ```
 
 `test_wizard.py` and `test_deploy.py` are normal unit tests for executable shell
-behavior. Run them with:
+behavior. `test_skills.py` checks skill text mechanically (see
+`writing-for-agents/MAINTENANCE.md`). CI runs all three on every PR and push to
+`main`; run them locally with:
 
 ```sh
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest evals/test_wizard.py evals/test_deploy.py
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest evals/test_skills.py evals/test_wizard.py evals/test_deploy.py
 ```
 
 Add a behavioral case only after an observed failure could cause meaningful
