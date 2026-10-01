@@ -15,7 +15,7 @@ Resolve the target repository and follow its instructions and issue-tracker conv
 
 The request or approved context must identify exactly one authoritative assignment target:
 
-- a specific selected Epic child assignment, whether newly published or existing; or
+- a specific selected Epic child assignment, whether newly published or existing (where the runtime supports it, an issue with no sub-issues is its own only child); or
 - a specific focused standalone PR.
 
 Do not search for an Epic, select or create a child, choose standalone instead, or otherwise reinterpret the request into another delivery shape. If the target is missing or ambiguous, report that and stop.
@@ -25,6 +25,15 @@ Before changing the selected authority, use [runtime capability discovery](refer
 ## Record and confirm the specification
 
 Before editing an assignment owned by a live controller, use [controller stop and snapshot](references/runtime.md#controller-stop-and-snapshot) and wait for ownership release.
+
+**Scope check for a started child.** A child has started once it has run history, a recorded candidate or a block. Before amending it, ask: would an implementer have to build something the original spec didn't ask for?
+- **Clarification (no):** amend as below. Examples: naming an existing test as an exception, fixing wording, resolving a contradiction without changing what the child must do.
+- **New behavior (yes):** stop before amending and ask the user. Recommend moving it into a follow-up child or issue, so the started child finishes with its original scope. New behavior means a new requirement, a new acceptance criterion, or a new case the child must handle.
+- **Third amendment of any kind** to the same started child: ask the user before amending, because the spec likely wasn't ready.
+
+Record each amendment to a started child as one comment on that child, saying what changed and which kind it is. Those comments are the count.
+
+Scope grows through amendments before it shows up as extra review rounds or tokens. On 2026-09-30, #198's one new-behavior amendment (AC5) held all three gaps its third review found.
 
 Apply the requested change to the selected authority only when needed. Record the complete scoped requirement, acceptance criteria, exclusions, and superseded requirements without rewriting an already-correct contract. Any parent constraint intended to bind an Epic child must be copied or restated in that child. Preserve other parent material separately as non-binding context; never enlarge the child's contract by inference.
 
