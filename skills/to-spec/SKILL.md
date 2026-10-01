@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic parent issue."
+description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic issue with a linked review PR."
 disable-model-invocation: true
 ---
 
@@ -17,10 +17,12 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 
 ## 2. Choose the route
 
-- **Single PR:** one focused change that can be reviewed as a whole.
+- **Single PR:** one focused change of about 350 changed lines or less, delivered by one PR.
 - **Existing Epic:** fits that Epic's goal as one more child PR, which `to-tickets` writes from the confirmed need; otherwise use a separate Epic.
-- **New Epic:** several child issues toward one goal. Sandcastle delivers each child as its own PR, merged to `main` before the next child starts; the last child's review also runs the Epic's real-world check. There is no separate final review.
+- **New Epic:** a feature too large for one PR, delivered as several child issues toward one goal. Sandcastle delivers each child as its own PR, merged to `main` before the next child starts; the last child's review also runs the Epic's real-world check. There is no separate final review.
 - **Multiple Epics:** only when the goals are separate. Do not nest Epics.
+
+Estimate the work in PRs of about 350 changed lines, as `to-tickets` sizes them, to choose between a single PR and an Epic.
 
 **Work order:** Whenever there is more than one piece of work (several problems in one request, several Epics, or the requirements within an Epic), order it to win the most speed and performance soonest. Speed and performance include agent runs: fewer mistakes, fewer wasted reads and writes, and faster completion all count.
 
@@ -31,7 +33,7 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 
 Within a tier, put the larger gain first. A prerequisite always goes before the work that needs it, whatever its tier. Number an Epic's requirements in this order. Show the order, with each item's tier, when you present the route.
 
-Every PR must be safe to merge on its own: existing behavior preserved, touched behavior complete, no half-finished user flow. For an Epic this skill writes the parent only; `to-tickets` splits the approved parent into child PRs, each safe to merge alone.
+Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it. For an Epic this skill writes the parent only; `to-tickets` splits the approved parent into child PRs, each safe to merge alone.
 
 Show the goal, your understanding of the problem, the proposed fix, and the route. Wait for the human to confirm before drafting.
 
@@ -39,7 +41,7 @@ Show the goal, your understanding of the problem, the proposed fix, and the rout
 
 Add a requirement only if the fix fails without it. Describe observable outcomes, not implementation, unless the mechanism is the fix. Leave modules, interfaces, and design direction to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
 
-A single-PR spec and an Epic parent use these sections in this order, so reviewers and `to-tickets` always find the same parts in the same place. Omit an optional section when it would be empty; do not add other sections.
+A single-PR spec and an Epic parent use these sections in this order, so reviewers and `to-tickets` always find the same parts in the same place. Issues under an Epic use the `to-tickets` ticket format. Omit an optional section when it would be empty; do not add other sections.
 
 1. `## Goal`: the outcome and its tradeoffs, and whether this delivery achieves it or only enables a later step. It also names a **real-world check**: one concrete command or observation on real data that shows the goal was met, or, when this delivery only enables a later step, that step's outcome, such as "`--usage` on a real run log shows non-zero totals". Passing tests alone is not a real-world check. Sandcastle's review runs it (or its stated scripted substitute): the issue's own review for a single PR, the last required child's review for an Epic. When the result depends on a model's judgment, state what counts as a pass, so a reasonable variation does not block the run.
 2. `## Problem`: current behavior, the root cause, and the evidence with its source. Say what you could not establish.
@@ -77,6 +79,7 @@ The reviewer returns every important finding it can support, most important firs
 Follow the repository's instructions and tracker policy.
 
 - **Single PR:** Do not wait for approval. Create one issue with the spec as its body and no sub-issues, and end with the link. The human reviews and edits the spec there. Sandcastle runs an issue with no sub-issues as itself, delivering one PR. Publishing does not start Sandcastle.
-- **Epics:** Show the final parent spec and wait for approval. Then create the Epic issue, or confirm the existing Epic, and ask the human to run `/to-tickets` on it to write and publish the child issues. Each child issue is the binding spec; the parent is context.
+- **New Epic:** Do not wait for another approval after the review pass. Create the GitHub Epic issue with the parent spec as its body. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** containing the same spec; link the PR and Epic issue. End with both links so the human can review and edit the spec in the PR. The Epic issue is the parent for native subissues; the draft PR is its review surface, not Sandcastle's later implementation PR. After the human approves the PR's spec, apply any approved edits to the Epic issue, then ask the human to run `/to-tickets` on it to write and publish the child issues. Do not publish issues or start Sandcastle before that approval. Each child issue is the binding spec; the parent is context.
+- **Existing Epic:** Confirm the Epic and ask the human to run `/to-tickets` on it to add the child issue from the confirmed need.
 
 Do not modify Sandcastle under this skill.
