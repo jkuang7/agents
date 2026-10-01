@@ -22,7 +22,7 @@ Keep external PRs as a triage request surface disabled unless intentionally enab
 
 ## Write configuration
 
-Show a concrete draft for unresolved configuration before writing. Reuse authorization and accepted choices. Prefer editing existing CLAUDE.md, otherwise existing AGENTS.md; if neither exists, ask which to create. Preserve surrounding content and update an existing Agent skills section in place.
+Show a concrete draft for unresolved configuration before writing. Reuse authorization and accepted choices. Prefer editing existing AGENTS.md, otherwise existing CLAUDE.md; if neither exists, create AGENTS.md. Preserve surrounding content and update an existing Agent skills section in place.
 
 The Agent skills section needs only a summary and conditional pointer for each configured policy: tracker before issue/spec operations, label mapping before triage state changes, and domain conventions before relevant codebase exploration. Reuse inherited policy pointers where they already suffice.
 

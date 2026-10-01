@@ -1,8 +1,8 @@
 # Continuation records
 
-Use for sustained work, an interruption, a blocked exit, or transfer to another worker. The active workflow owns the record. Reuse its existing plan, task record, or execution state instead of creating another authority.
+Use for sustained work, an interruption, a blocked exit, or transfer to another worker. The active workflow owns the record. Reuse its existing plan, task record, execution state, or the continuation record named by the handoff that started this session, instead of creating another authority.
 
-When no record exists, use the repository's local artifact convention, falling back to `.scratch/<task>/continuation.md`. Keep operational notes out of product commits. Without a repository, use `~/.agents/handoffs/<task>/continuation.md` unless the user named a location. Use a task-specific directory, return its absolute path, and put a pointer in the existing task or plan when that artifact is available and updating it is authorized. Preserve accepted decisions in their authoritative specification rather than only in this record.
+When no record exists, use the repository's local artifact convention, falling back to `.scratch/<task>/continuation.md`. Keep operational notes out of product commits. Without a repository, use the workspace's `.scratch/<task>/continuation.md` unless the user named a location. Use a task-specific directory, return its absolute path, and put a pointer in the existing task or plan when that artifact is available and updating it is authorized. Preserve accepted decisions in their authoritative specification rather than only in this record.
 
 Keep the record compact, with links to detailed evidence:
 

@@ -11,12 +11,10 @@ Edit text to remove AI patterns.
 ## Process
 
 1. Scan for the patterns below.
-2. Rewrite. Preserve meaning, match intended tone.
+2. Rewrite. Preserve meaning, match intended tone. Leave code, identifiers, quotations, names, and terms a glossary or skill defines (such as `codebase-design`'s "leverage" or "seam") unchanged, even when a pattern below would rewrite them.
 3. Self-audit: "What makes this obviously AI generated?" Fix remaining tells.
 
 ## Patterns to detect and fix
-
-Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 
 ### Content
 

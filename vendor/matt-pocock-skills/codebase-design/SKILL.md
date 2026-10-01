@@ -30,4 +30,4 @@ Callers and tests cross the module's interface. Tests reaching past it suggest t
 
 For testable logic, accept dependencies rather than constructing them internally and prefer returned results over incidental mutation. Keep interfaces small so callers and tests need less setup.
 
-Read [DEEPENING.md](DEEPENING.md) when deepening a cluster with dependencies and replacing tests. Read [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md) when exploring materially different interfaces.
+Read [DEEPENING.md](DEEPENING.md) when deepening a cluster with dependencies and replacing tests. Read [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md) only when the user asks to compare alternative interfaces; it runs several sub-agents.
