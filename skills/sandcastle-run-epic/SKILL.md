@@ -1,80 +1,60 @@
 ---
 name: sandcastle-run-epic
-description: Run or resume a Sandcastle issue (an Epic or an issue with no sub-issues) through its trusted controller, or act as its caller for a queue of issues. Use for run, resume, continue, AFK and queue requests. Requirement changes use the separate change-request workflow.
+description: Run or resume a Sandcastle issue (an Epic or an issue with no sub-issues) through its controller, or act as its caller for a queue of issues. Use for Sandcastle run, resume, AFK and queue requests. Requirement changes use sandcastle-change-request.
 ---
 
 # Sandcastle run Epic
 
-Sandcastle is the runner; this skill is its caller. One runner command runs one issue until it has something for the caller, then exits with one result record. The caller acts on that record: it merges, reruns, closes or asks. The runner never merges, advances `main`, closes the Epic or runs a queue.
+Sandcastle is the runner; this skill is its caller. One run delivers at most one child PR, then exits with one result record as the last line of its output. The caller acts on that record: it merges, reruns, closes or asks. The runner never merges, advances `main`, closes the Epic or runs a queue.
 
-## 1. Select mode
+Sandcastle's README and `--help` own its commands, result contract, block causes, budgets and recovery. Read them once per session and again after `main` changes; where this skill and they disagree, they win. Sandcastle itself refuses a second controller on the same checkout, recovers stale locks, fails closed on spec edits and replays saved decisions, so the caller doesn't re-check those.
 
-- `handoff` (default): start or resume one issue, confirm the controller owns it, and return to the user.
-- `queue`: the user asked this thread to continue, run AFK, or work through a queue. Act as the caller (step 4) after every run. Merging PRs and closing Epics need the user's explicit authorization for this queue; continue or AFK alone doesn't grant it.
+## Modes
 
-If the user asks for only one child and the runtime supports a run limit, pass a limit of 1.
+- `handoff` (default): start or resume one issue, confirm it started, give the user the `--attach` command, and return.
+- `queue`: the user asked this thread to run AFK or work through a queue. Act on every result as below. Merging PRs and closing Epics need the user's authorization for this queue; "continue" or "AFK" alone doesn't grant it.
 
-## 2. Resolve the issue and trusted runtime
+Always launch from the operator checkout on clean `main`, even when the issue changes Sandcastle itself.
 
-Resolve one repository, follow workspace and repository instructions and the issue-tracker convention, and confirm the issue exists and is open. Ask only if ownership remains ambiguous.
-
-Establish the trusted operator revision, routing, the issue's durable state and controller ownership using [runtime.md](references/runtime.md). If a controller already owns this issue, do not launch another. Report it as the handoff when its ownership is established; otherwise report the gap.
-
-## 3. Invoke the controller once
-
-Invoke the current documented command once for the issue, from the trusted operator checkout, detached so it outlives this agent (see Commands below). Don't open a new terminal tab per run. Use the trusted operator even when the issue changes Sandcastle itself; candidate runtime code cannot activate itself. A plain resume or rerun never authorizes an explicit retry control such as `--retry-blocked`. Retry a decision block only after its inputs change or the user authorizes the retry.
-
-Confirm through supported runtime evidence that the controller passed startup and acquired ownership. A process spawn, PID, lock file or historical log alone is insufficient. If launch fails or ownership cannot be corroborated, preserve durable state and report a failed handoff.
-
-In `handoff` mode, report the issue, operator revision, ownership evidence, and a copyable command that changes to the operator checkout and runs the runtime's read-only `--attach` for this issue, then return. Sandcastle owns implementation, review, checks, publication, retries within its budgets, and stopping. Observation is a separate, explicit request; use only the runtime's read-only watchers, and stopping one never stops the controller.
-
-## 4. Act as the caller (queue mode)
-
-Detect each controller exit (a background wait on the process or its recorded result), then read its **result record** (the last stdout line and durable state; see [runtime.md](references/runtime.md)) and act on exactly what it says:
+## Act on each result (queue mode)
 
 | Result | Caller action |
 |---|---|
-| `ready`, with a child PR | If merging is authorized for this queue: wait for CI to pass, then merge it through the merge gate (Commands), which is this repository's merge path for `accept-pr`; apply `accept-pr`'s confirmation and cleanup to the merged PR. The merge closes the child through `Closes #<child>`. Sync local `main` (step 5) and rerun the same command. Otherwise report the PR and stop. |
-| `complete` | The last child PR has merged (its review ran the Epic's real-world check). If closure is authorized and the checks in `accept-pr`'s issue lifecycle contract pass, close the Epic. Report it and start the next queued issue. |
-| `blocked`, class `transient` | Rerun once. If the same signature blocks again, treat it as a decision. |
-| `blocked`, class `decision`, cause `runtime` | A Sandcastle defect. Check whether an open issue already has the same `signature`. Otherwise diagnose it with `diagnosing-bugs` against the recorded state and logs, and file one issue with the reproduction and root cause. Fix it through a focused issue, or, when the user authorized hotfixes and the runner cannot fix itself, through a hand-made hotfix PR. Then rerun. |
-| `blocked`, class `decision`, cause `environment` | Missing authentication, permission or target. Fix access directly when you can (for example `gh auth login`, or a missing remote or repository); otherwise ask the user to fix it. Then rerun: environment blocks are not replayed. |
-| any other `decision` (spec, drift, no progress, regression, self-change, budget) | Stop the queue and ask the user the record's `question`, with the reason and evidence. Rerun only after they answer by changing the spec, children or budget. Any amendment to a started child's spec, including one the user authorized for clear spec gaps, follows `sandcastle-change-request`'s scope check. After amending a spec for a `spec` block, run the on-demand preflight (Commands) on the amended body and rerun only when it reports no conflicts. Fixing only the reported conflict lets each rerun block on the next one. |
-| no result record, or a record that doesn't fit this table | Investigate the logs. Treat anything unclear as a decision. |
+| `ready`, with a child PR | When merging is authorized: wait for CI, merge through the merge gate, sync `main`, and rerun the same issue. Otherwise report the PR and stop. |
+| `complete` | When closure is authorized, close the Epic. Report it and start the next queued issue. |
+| `blocked`, class `transient`, or cause `environment` or `self-change` | Fix the stated condition (auth or access, a clean operator checkout), then rerun. If the same cause blocks twice in a row, treat it as a decision. |
+| `blocked`, cause `runtime` | A Sandcastle defect. Look for an open issue with the same `signature`; otherwise diagnose it with `diagnosing-bugs` and file one issue with the reproduction and cause. Then rerun. |
+| `blocked`, class `fixable` | Checks or review still failed after corrections. Rerun once; if it blocks the same way, treat it as a decision. |
+| Any other decision | Stop the queue and ask the user the record's `question`, with its `reason`. Rerun after they change the spec, children or budget. |
+| No result record, or one this table doesn't cover | Read the run's logs and treat it as a decision. |
 
-Fix operational problems in the runner's environment directly, such as a stale lock whose writers are proven gone, or auth or disk issues. Report every block with its class and cause.
+**Spec blocks:** the record's `reason` lists every conflict, its `question` only the first. Resolve all of them in one amendment, through `sandcastle-change-request` for a started child, and run the on-demand preflight on the amended body before rerunning. A moved-path block (`old → new` pairs) is a clarification: update those paths and rerun without asking.
 
-**Spec concerns:** on a `ready` or `blocked` result for a child, search that run's raw review logs (`review-<n>.log` in the run's log directory) for `Spec concern:`. The logs are Codex JSONL: take the `item.text` of the `agent_message` that contains the `<review>` verdict tag, split it into lines, and keep only lines that start with `Spec concern:`. Don't match the phrase anywhere in the log; the review prompt, spec, diff and command output also contain it. These are a reviewer's non-blocking notes that a spec rule gives a wrong answer for a realistic case; the progress log omits them. Pass each one to the user with the result, quoted and attributed to the review, and for a `ready` child also post them as one comment on its PR. They never block a merge or change the caller's action; the user decides whether to amend the spec or file a follow-up.
+**Spec concerns:** for a `ready` or `blocked` child, read the reviewer's verdict message in the run's `review-*.log` (the `agent_message` containing `<review>`) and keep its lines starting `Spec concern:`. Matching the phrase anywhere else in the log gives false hits. Quote each to the user and, for a `ready` child, post them as one PR comment. They never block a merge.
 
-**Moved spec paths:** a `spec` block from Sandcastle's moved-path check lists `old → new` path pairs. It is a clarification, not a question for the user. Update those paths where the spec tells the implementer to read, change or test them; leave history and context text as written. Edit the issue body directly when its run hasn't started, or, for a started child, follow `sandcastle-change-request` (its scope check, amendment comment and third-amendment rule), whose invocation is the rerun. Then rerun without asking the user. Every other `spec` block goes to the user, as the table says. A missing path with no rename is not checked; the implementer's spec conflict covers it.
+## Queue rules
 
-**Reading cost:** only when the user asks, report how hard the code is getting for workers to navigate, from the Epic's `implementation-*` and `review-*` stage logs (skip `worker-*`, which duplicate them): the share of `command_execution` commands that search or list (`rg`, `grep`, `find`, `ls`), and the three repository files with the most command output.
+- Run one issue at a time: one operator checkout runs one controller. Children of an Epic run in their sub-issue order.
+- Merge only while no controller runs, one PR at a time, and only after CI passes and the merge gate succeeds. If a merge breaks the next start, revert it through a PR and file an issue.
+- Keep the queue order, authorization and current issue in `.scratch/queue-orchestration/continuation.md`, so a handoff carries state, not procedure.
+- Unless the user says otherwise, put robustness first, then speed, then leanness.
 
-## 5. Queue order, parallel runs and `main`
+## Commands
 
-- **Order:** follow the queue the user set. Children of one Epic always run in order, one PR at a time.
-- **Parallel:** after each run, list queued issues whose prerequisites have merged. Two issues may run at the same time only when the files they will change do not overlap, shared tests included. Compare each running issue's open child PR or candidate diff with the files the other issue names or will clearly change. Otherwise run them one after another. Report what runs in parallel and why the others wait.
-- **Keep `main` runnable:** when the runner runs from this repository's `main`, merge only while no controller runs. Merge only after CI passes and the merge gate (Commands) succeeds; chain the merge on its success with `&&`, never through a pipe or `||`. (Run logs live only in the operator checkout, so `--usage` from a fresh worktree always fails.) The first controller start after the merge is the real check: if the merge broke startup, revert its merge commit through a PR and file an issue.
-- **Merging:** merge one PR at a time. Resolve a later PR's conflicts on its own branch and wait for CI to pass again before merging it.
-- **Local `main`:** fast-forward the operator checkout, and reinstall dependencies when the lockfile changed, only while no controller that runs from it is live.
+Run from the operator checkout. `<n>` is the issue; `<pr>` and `<sha>` are the child PR and its head. Each command is self-contained, because every shell starts fresh.
 
-## 6. Commands
-
-Run these from the operator checkout. Confirm each against the current README and `--help` first, and use the documented form when they differ. `<n>` is the issue, `<pr>` and `<sha>` the child PR and its head.
-
-- **Start:** `(nohup npm start -- <n> >> .scratch/queue-orchestration/controller-<n>.out 2>&1 < /dev/null &)`. Wait about 20 seconds, then confirm ownership with `pgrep -fl "node.*loader.mjs src/cli/main.ts <n>$"` and a `started` line in that file.
-- **Exit watcher:** one background command with the longest timeout, which fires only on exit. Don't poll or add milestone monitors:
-  `while pgrep -f "node.*loader.mjs src/cli/main.ts <n>$" >/dev/null; do sleep 30; done; tail -1 .scratch/queue-orchestration/controller-<n>.out`
+- **Already running?** If `kill -0 $(cat .scratch/queue-orchestration/controller-<n>.pid 2>/dev/null) 2>/dev/null` succeeds, don't launch: report it running and give the attach command.
+- **Start:** `mkdir -p .scratch/queue-orchestration && (nohup npm --silent start -- <n> >> .scratch/queue-orchestration/controller-<n>.out 2>&1 < /dev/null & echo $! > .scratch/queue-orchestration/controller-<n>.pid)`. Don't open a terminal tab per run. After about 20 seconds, check the process is alive and the output shows the run started. A run with nothing new to do (a replayed decision, `ready` before its merge, `complete`) exits within seconds: then read its result instead of reporting a failed start.
+- **Result record:** `grep '^{"status"' .scratch/queue-orchestration/controller-<n>.out | tail -1`.
+- **Attach (for the user):** `cd <operator checkout> && npm start -- <n> --attach`.
+- **Exit watcher:** one background command that fires only on exit; restart it if it times out while the process lives:
+  `while kill -0 $(cat .scratch/queue-orchestration/controller-<n>.pid) 2>/dev/null; do sleep 30; done; grep '^{"status"' .scratch/queue-orchestration/controller-<n>.out | tail -1`
 - **CI:** `gh pr checks <pr> --watch >/dev/null 2>&1; gh pr checks <pr>`, in the background.
-- **Merge gate:** check that `gh pr view <pr> --json headRefOid -q .headRefOid` still equals `<sha>`, then:
-  `git fetch -q origin pull/<pr>/head && git worktree add --detach .worktrees/merge-gate-<pr> <sha> && (cd .worktrees/merge-gate-<pr> && npm ci --silent && npx tsx src/cli/main.ts --help && gh pr merge <pr> --merge --match-head-commit <sha>)`
-- **After the merge:** `git worktree remove --force .worktrees/merge-gate-<pr> && git pull --ff-only origin main`. Run `npm ci` only if `package-lock.json` changed. Then rerun the issue to get `complete`.
-- **On-demand preflight:** `npm start -- preflight <issue-body.md> <base-commit> [parent-body.md]`.
+- **Merge gate:** proves the PR head starts before it reaches `main`:
+  `git fetch -q origin pull/<pr>/head && git worktree add --detach .worktrees/merge-gate-<pr> <sha> && (cd .worktrees/merge-gate-<pr> && npm ci --silent && npm start -- --help >/dev/null && gh pr merge <pr> --merge --match-head-commit <sha>)`
+- **After the merge:** `git worktree remove --force .worktrees/merge-gate-<pr> && git pull --ff-only origin main`, and `npm ci` if `package-lock.json` changed.
+- **On-demand preflight:** see the README's preflight section.
 
-## Queue defaults
+## Scope
 
-Unless the user says otherwise, put robustness first, then speed, then leanness, and prefer less machinery. Keep the state that only this thread knows (queue order, authorization, current issue) in `.scratch/queue-orchestration/continuation.md`, so a handoff carries state and authorization, not procedure.
-
-## Scope boundary
-
-Requirement and spec changes belong to `sandcastle-change-request`, `to-spec` and `to-tickets`. This skill does not create or edit child issues or change specs, apart from the moved-path clarifications in step 4, and does not merge, close or advance anything outside step 4's table and the user's queue authorization.
+Spec and child changes belong to `sandcastle-change-request`, `to-spec` and `to-tickets`. This skill edits a spec only for moved-path clarifications.

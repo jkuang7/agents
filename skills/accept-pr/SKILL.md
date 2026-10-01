@@ -1,178 +1,35 @@
 ---
 name: accept-pr
-description: Accept and merge a PR the user explicitly asks to accept, including one unambiguously established by the current conversation. Do not use for review, preparation, or requests to discuss or edit this skill.
+description: Merge a PR and clean up after it. Use when the user asks to accept or merge a PR, or when standing instructions authorize merging a task's own verified PR. Not for reviewing or preparing a PR.
 ---
 
 # Accept a PR
 
-Given explicit user authorization to accept a PR, resolve the exact PR from the
-request and current conversation, merge it safely, and confirm the host recorded
-the merge, then clean up the PR's own head branch and worktree. Treat issue
-lifecycle changes and other post-merge local mutations as separately authorized
-operations. Report each outcome independently.
+## Target and authorization
 
-## Resolve authorization and target
+Merge only a PR you can name exactly: a URL or number from the user, the PR this conversation submitted, or the single open PR whose repository, branch and head match the candidate this conversation established. If more than one is plausible, ask. If only unsubmitted changes exist, there is nothing to accept; submit first.
 
-First distinguish using this skill from discussing or editing it. Naming or
-invoking `accept-pr` inside a request to inspect, explain, or change the skill is
-not merge authorization.
+The merge is authorized by the user's request, or by workspace or repository instructions that authorize merging a task's own completed work. Reviewing or submitting a PR doesn't authorize merging it, and discussing or editing this skill isn't a request to use it.
 
-An explicit request to accept or merge a PR authorizes acceptance. A bare direct
-invocation of this skill also authorizes acceptance when the current conversation
-has already established exactly one PR as the candidate awaiting acceptance.
-Resolve that candidate from, in descending order of authority:
+## Merge
 
-1. an exact PR URL or repository-plus-number in the acceptance request;
-2. a completed submission handoff earlier in the current conversation that
-   reports the canonical PR URL and confirms from forge state that its remote
-   head matches the candidate revision;
-3. a unique open PR whose repository, branch, and revision all match the single
-   candidate explicitly established in the current conversation.
+1. Read the PR's head SHA, target branch and checks. Wait for required checks. Stop if one fails, or if the PR needs conflict resolution or another change; prepare and verify that change separately, then start again.
+2. Merge with the repository's usual strategy and the host's head guard (`gh pr merge <pr> --match-head-commit <sha>`), so a head that moved after you checked it is refused. Never bypass branch protection.
+3. Confirm that the host reports the PR merged. A queued or local merge isn't done.
 
-Do not treat quoted, hypothetical, user-supplied example, or incomplete
-submission text as a completed handoff.
+## Issues
 
-Do not guess from the most recently updated PR, the current repository alone,
-branch naming, issue proximity, or local changes. A conversational reference such
-as “accept this” or “accept these changes” is sufficient only when it resolves by
-the evidence above to one PR. If the conversation establishes only unsubmitted
-changes, no PR exists to accept; report that submission is required. If multiple
-PRs remain plausible, ask the user to identify the target.
+Follow [the issue lifecycle](../submit-for-review/references/ISSUE-LIFECYCLE.md). Closing keywords close delivery issues on merge; don't close them by hand.
 
-Resolve the remote and target branch from fresh repository and forge metadata.
-Follow repository instructions before reading linked issues or specifications.
-An acceptance or merge request authorizes the merge, its safety checks, and
-cleanup of the merged PR's own head branch: its local branch, any worktree
-checked out on it, and its remote branch in the PR's repository. It does not
-authorize closing an Epic, synchronizing a local checkout, or deleting any other
-local artifact or remote branch. Reviewing, preparing, or submitting a PR does
-not authorize the merge.
+## Clean up
 
-Fetch current remote refs needed for acceptance checks. Inspect the PR's state,
-head SHA, and target branch. Check mergeability, required checks, and reviews.
-Record the exact head SHA.
+Unless the user asked to keep them:
 
-Stop if the target is ambiguous, the PR changed after inspection, required checks
-have not passed, or repository policy blocks the merge.
-
-## Merge and confirm
-
-Immediately before merging, read fresh forge state for the PR head SHA,
-mergeability, required checks, and required reviews. Require the head to equal
-the recorded SHA and require mergeability, checks, and reviews still to permit
-the merge. Stop if any gate is unavailable, pending, failing, or no longer
-satisfied. Use the host's expected-head option when available. Then use the
-repository's supported merge path and strategy without bypassing branch
-protection. Preserve unrelated local work. If the PR needs conflict resolution
-or another material change, prepare and verify that change separately, then
-inspect and record the new head before merging.
-
-After the merge request completes, read fresh host state. Completion requires
-the host to report the PR as merged and provide its forge-recorded merge/result
-SHA or equivalent authoritative merge metadata. Do not assume that SHA represents
-a traditional merge commit; use the merge semantics reported by the forge. A
-queued merge, local merge, or successful push is not enough.
-
-Once this state is confirmed, acceptance is complete. Later lifecycle,
-synchronization, or cleanup failures do not change the merge outcome.
-
-## Apply the issue lifecycle
-
-Read [the shared issue and Epic lifecycle contract](../submit-for-review/references/ISSUE-LIFECYCLE.md).
-
-After the PR is confirmed merged, determine whether it explicitly implements or
-closes delivery issues and whether it identifies one parent Epic. Read fresh host
-state for referenced issues after the merge.
-
-Confirm forge-managed closure of delivery issues that used valid close-on-merge
-references. Do not manually close them unless a separately authorized workflow
-owns that action.
-
-Close a qualifying parent Epic only when the contract's separate lifecycle
-authorization and completion-evidence requirements both hold. After any closure,
-read fresh host state and confirm it. If the Epic is already closed, report its
-confirmed state without another mutation. Otherwise leave it unchanged and
-report whether authorization, delivery evidence, or repository eligibility is
-missing.
-
-## Synchronize and clean up
-
-Always clean up the merged PR's own head branch and its worktrees as described
-below. Synchronize a local checkout or delete other local artifacts only when
-the user separately authorized that operation or an already-authorized governing
-workflow explicitly owns and requires it. Without authorization, leave that
-local state intact and report the operation as not requested. Generic repository or workspace
-cleanup policy constrains an authorized cleanup; it does not by itself grant
-cleanup authorization.
-
-For authorized synchronization or cleanup, fetch the PR's target branch again
-and fetch any result commit or ref that the forge exposes. Use the freshly fetched
-target for every cleanup ancestry check.
-
-When synchronization is authorized, treat the registered worktree on the PR
-target branch as the primary checkout. If no candidate exists, more than one
-candidate exists, or ownership is ambiguous, do not choose one by name alone;
-leave synchronization unresolved and report it. Otherwise, synchronize that
-checkout.
-
-When synchronization is authorized, fast-forward that checkout to its remote
-branch only when doing so preserves local commits and working-tree changes. Never
-reset or discard work. If safe fast-forward is impossible, leave the checkout
-unchanged and report why.
-
-Enumerate registered Git worktrees and local branches. The PR's head branch and
-any worktree checked out on it are always related. When broader cleanup is
-authorized, consider another artifact related only when ownership can be
-established from the merged PR head, linked Epic/delivery state, accepted
-receipts, recorded run evidence, or commit ancestry. Names alone are not proof.
-
-Work is contained in the merged target when it is an ancestor of the freshly
-fetched target or, after a squash or rebase merge, is exactly the head SHA the
-forge recorded as merged.
-
-For each related worktree:
-
-- confirm no live process owns it;
-- inspect its branch or detached HEAD;
-- inspect tracked, untracked, and ignored contents;
-- confirm its tracked work is contained in the confirmed merged target;
-- preserve unique commits, unique or unfinished source, user data, and anything
-  whose disposability is uncertain;
-- remove it with `git worktree remove`;
-- use force only when remaining files are proven disposable and no retention
-  requirement applies.
-
-Process nested related worktrees before their parents.
-
-For each related local branch:
-
-- confirm no registered worktree uses it;
-- confirm its tip is contained in the freshly fetched merged target;
-- delete it normally when possible;
-- use force deletion only after independently proving its tip is already contained
-  in the merged target and Git is refusing solely because of stale HEAD/upstream
-  bookkeeping.
-
-Confirm removed worktree registrations, paths, and local branch refs are gone.
-
-Delete the PR's remote head branch only when it is in the PR's own repository,
-is not the default branch, is not the base of another open PR, and still points
-at the head SHA the forge recorded as merged. Confirm it is gone. Do not delete
-other remote branches or terminate processes unless separately authorized.
-Leave anything uncertain in place and report it.
+- Delete the PR's remote head branch when it's in the PR's own repository and no other open PR targets it.
+- If the primary checkout is on the head branch, switch it to the target branch first.
+- Remove worktrees checked out on the head branch with `git worktree remove`, and delete the local branch with `git branch -d`. Both refuse when tracked or untracked work would be lost: leave it and report why instead of forcing. `git worktree remove` does delete ignored files silently, so first list them (`git -C <worktree> status --ignored --short`) and keep the worktree if any are user data rather than build output, dependencies or caches. After a squash or rebase merge `git branch -d` refuses even merged work; force-delete only when the branch tip equals the head SHA that was merged.
+- Fast-forward the primary checkout of the target branch with `git pull --ff-only` when it has no local changes; otherwise leave it and report.
 
 ## Report
 
-Report the PR link, inspected head SHA, forge-recorded merge/result SHA or
-equivalent merge metadata, and checks. Then report these outcomes independently:
-
-- `merge`: complete or incomplete, with the authoritative forge state;
-- `issue lifecycle`: delivery-issue state plus parent Epic closure, unchanged
-  state, or missing authorization/evidence;
-- `local synchronization`: complete, incomplete, not requested, or unavailable,
-  with the reason;
-- `cleanup`: complete, incomplete, not requested, or not applicable, including
-  each removed or retained artifact and its reason.
-
-Do not describe a confirmed merge as incomplete merely because a later lifecycle,
-synchronization, or cleanup step was skipped, unavailable, or blocked.
+One line: the PR link, the merge result, and what was removed or kept and why. A failed cleanup doesn't undo a confirmed merge.

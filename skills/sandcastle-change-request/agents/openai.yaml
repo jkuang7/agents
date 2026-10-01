@@ -1,4 +1,4 @@
 interface:
   display_name: "Sandcastle change request"
-  short_description: "Hand an already-selected assignment to Sandcastle"
-  default_prompt: "Use $sandcastle-change-request to validate and update this already-selected Epic child or standalone PR, start or resume its matching trusted controller, confirm ownership, and return control to me."
+  short_description: "Amend a Sandcastle child spec and rerun"
+  default_prompt: "Use $sandcastle-change-request to amend this child issue's spec and rerun it."

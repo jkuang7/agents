@@ -1,57 +1,29 @@
 ---
 name: sandcastle-change-request
-description: Record or update a focused requirement in an already-selected Sandcastle Epic child or standalone PR, then start or resume its trusted controller and confirm ownership.
+description: Amend the spec of an already-selected Sandcastle child issue (or standalone PR), then rerun it. Use when a requirement changes or a run blocks on a spec problem.
 ---
 
 # Sandcastle change request
 
-Kickstart or resume one already-selected focused assignment through the existing trusted Sandcastle runtime. The selected target and contract are upstream decisions; this skill does not choose them. It validates and updates that exact authoritative target, then hands it to Sandcastle. After a successful handoff, the runtime owns implementation, review, verification, acceptance, publication, retries, recovery, and readiness; keep its procedures in [runtime.md](references/runtime.md).
+Amend one already-selected assignment and hand it back to Sandcastle. Choosing the target or its delivery shape is not this skill's job: if the request doesn't identify exactly one child issue or standalone PR, say so and stop.
 
-Apply-and-resume requests authorize the tracker/PR updates and invocation below. Preparation-only requests stop before tracker, PR, controller, or delivery mutations.
+The child issue's title and body are its whole binding spec; comments and the parent Epic are context only. Copy any parent constraint the child must obey into the child body. For a standalone PR, the PR body is the spec. Sandcastle's README describes how it reads and checks either one.
 
-## Require the selected assignment target
+## Scope check
 
-Resolve the target repository and follow its instructions and issue-tracker convention.
+A child has started once it has run history, a recorded candidate or a block. Before amending a started child, ask: would the implementer have to build something the original spec didn't ask for?
 
-The request or approved context must identify exactly one authoritative assignment target:
+- **Clarification (no):** amend. Examples: naming an existing test as an exception, fixing wording, resolving a contradiction without changing what the child must do, updating moved paths.
+- **New behavior (yes):** stop and ask the user, recommending a follow-up child or issue so the started child finishes with its original scope. New behavior is a new requirement, a new acceptance criterion or a new case to handle. A single new-behavior amendment can hold every gap a later review finds.
+- **Third amendment of any kind** to the same started child: ask the user first, because the spec likely wasn't ready.
 
-- a specific selected Epic child assignment, whether newly published or existing (where the runtime supports it, an issue with no sub-issues is its own only child); or
-- a specific focused standalone PR.
+Record each amendment to a started child as one comment on it, saying what changed and which kind it is. Those comments are the count.
 
-Do not search for an Epic, select or create a child, choose standalone instead, or otherwise reinterpret the request into another delivery shape. If the target is missing or ambiguous, report that and stop.
+## Amend and rerun
 
-Before changing the selected authority, use [runtime capability discovery](references/runtime.md#selected-target-capability-discovery) to verify that the current trusted operator supports that exact target and binding-source boundary. If support is absent or unproven, prepare only the smallest durable proposed update for the selected target, report the capability evidence, and stop. Do not mutate the authority, choose another shape, invent a controller loop, or add orchestration capability under this skill.
+1. Make sure no controller is running this issue. Sandcastle fails the current attempt closed when the spec changes mid-run, so an edit during a run wastes it.
+2. Edit the title or body with the complete change: requirement, acceptance, exclusions and anything it supersedes. Leave an already-correct contract alone.
+3. For a spec-conflict block, resolve every conflict in the record's `reason`, not only the one in `question`, then run the README's on-demand preflight on the amended body and continue only when it reports none.
+4. Rerun a child issue through `sandcastle-run-epic`; in queue mode, keep acting on its results there. Rerun a standalone PR with the README's standalone command, adding `--retry-blocked` only for a block this amendment resolves.
 
-## Record and confirm the specification
-
-Before editing an assignment owned by a live controller, use [controller stop and snapshot](references/runtime.md#controller-stop-and-snapshot) and wait for ownership release.
-
-**Scope check for a started child.** A child has started once it has run history, a recorded candidate or a block. Before amending it, ask: would an implementer have to build something the original spec didn't ask for?
-- **Clarification (no):** amend as below. Examples: naming an existing test as an exception, fixing wording, resolving a contradiction without changing what the child must do.
-- **New behavior (yes):** stop before amending and ask the user. Recommend moving it into a follow-up child or issue, so the started child finishes with its original scope. New behavior means a new requirement, a new acceptance criterion, or a new case the child must handle.
-- **Third amendment of any kind** to the same started child: ask the user before amending, because the spec likely wasn't ready.
-
-Record each amendment to a started child as one comment on that child, saying what changed and which kind it is. Those comments are the count.
-
-Scope grows through amendments before it shows up as extra review rounds or tokens: a single new-behavior amendment can hold every gap a later review finds.
-
-Apply the requested change to the selected authority only when needed. Record the complete scoped requirement, acceptance criteria, exclusions, and superseded requirements without rewriting an already-correct contract. Any parent constraint intended to bind an Epic child must be copied or restated in that child. Preserve other parent material separately as non-binding context; never enlarge the child's contract by inference.
-
-- Epic mode: the selected unaccepted child issue's contract-bearing title and body are the complete binding contract; comments and workflow metadata are non-binding. The parent supplies only non-binding context, rationale, and broader intent. Preserve accepted history and Sandcastle's native child ordering. The Epic controller owns the queue: determine and report whether the selected child is currently the next executable assignment when that affects the handoff, and do not promise immediate execution when earlier unaccepted children precede it.
-- Standalone mode: the focused PR is the live specification authority. Runtime/bootstrap records may identify and observe it, but never copy or replace it as a second specification.
-
-Read the authoritative specification back from the tracker or PR and confirm the selected child/PR and the runtime's actual canonical authority observation before invocation. Verify that the observation respects the selected binding-source boundary; do not prescribe an Epic projection the trusted runtime does not implement. A running worker is bound to the observed authority; later authoritative edits are handled by the runtime's fail-closed change detection.
-
-When the amendment answers a spec-conflict block, run the runtime's on-demand preflight on the amended body against the child's base, and invoke only when it reports no conflicts. Otherwise each rerun finds one more conflict.
-
-If the runtime cannot consume the selected authoritative source, preserve the specification, report the unsupported handoff, and stop.
-
-## Invoke the trusted flow
-
-Invoke the trusted controller that matches the selected child or PR using [runtime.md](references/runtime.md). For an Epic child, hand off the Epic queue in its native order; do not reorder, bypass, or manually target a later child unless the trusted runtime explicitly supports that operation. Do not switch modes when invocation fails. Confirm through the runtime's supported evidence that the controller accepted and acquired ownership of this delivery. Starting a process without establishing ownership is not a successful handoff.
-
-After that confirmation, return control to the user. Do not supervise workers, reconstruct runtime state from the conversation, or wait for readiness. If the user explicitly asks to wait, watch, or attach, use [supported observation](references/runtime.md#controller-ownership-handoff-and-observation); observation does not transfer ownership back to this agent.
-
-If launch fails or ownership cannot be established, preserve the authoritative assignment and report the failed handoff. If execution becomes unsupported after launch, use only the runtime's supported stop/recovery boundary. If an independently authorized runtime change must be activated first, use [operator activation and recovery](references/runtime.md#operator-activation-and-recovery); never activate an unverified candidate runtime.
-
-Never merge the PR, advance `main`, close the Epic, or create another delivery path. Report the authoritative assignment, operator revision, and the evidence that ownership was accepted, or the evidence that prevented handoff.
+Never merge, advance `main`, close the Epic or create another delivery path here.
