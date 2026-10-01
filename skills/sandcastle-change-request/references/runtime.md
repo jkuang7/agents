@@ -82,7 +82,7 @@ Where `.sandcastle/review-policy.md` or `verify-policy.md` is supported, resolve
 
 ## Correction handoff
 
-For an explicitly authorized review correction, record the assignment and proof in its durable source (a child issue, or a correction sub-issue) and let the runtime deliver it through its normal flow. Preserve accepted history. An audit recommendation alone does not authorize unrelated cleanup. Use only integration or recovery interfaces the runtime actually exposes, and only after fresh exact approval.
+For an explicitly authorized review correction, record the assignment and proof in its durable source (a child issue) and let the runtime deliver it through its normal flow. Preserve accepted history. An audit recommendation alone does not authorize unrelated cleanup. Use only integration or recovery interfaces the runtime actually exposes, and only after fresh exact approval.
 
 ## Trusted flow controls
 

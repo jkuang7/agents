@@ -27,9 +27,8 @@ Close a parent Epic only when both conditions hold:
    mutation authority.
 2. Fresh evidence establishes that the Epic is complete: every required child
    is closed by its merged PR or has equivalent recorded delivery evidence; no
-   required scope remains open; and, when the delivery workflow runs a final
-   review of the Epic (Sandcastle reports `complete`), that review approved the
-   current `main`.
+   required scope remains open; and, for a Sandcastle Epic, the runner reported
+   `complete` after the last child PR merged.
 
 Branch names, issue proximity, a parent link alone, or the merge itself are not
 delivery evidence. If authorization or completion evidence is missing or
