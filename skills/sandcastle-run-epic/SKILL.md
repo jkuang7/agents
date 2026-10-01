@@ -49,7 +49,7 @@ Run from the operator checkout. `<n>` is the issue; `<pr>` and `<sha>` are the c
 - **Attach (for the user):** `cd <operator checkout> && npm start -- <n> --attach`.
 - **Exit watcher:** one background command that fires only on exit; restart it if it times out while the process lives:
   `while kill -0 $(cat .scratch/queue-orchestration/controller-<n>.pid) 2>/dev/null; do sleep 30; done; grep '^{"status"' .scratch/queue-orchestration/controller-<n>.out | tail -1`
-- **CI:** `gh pr checks <pr> --watch >/dev/null 2>&1; gh pr checks <pr>`, in the background.
+- **CI:** `gh pr checks <pr> --watch >/dev/null 2>&1; gh pr checks <pr>`, in the background. CI has passed only when the final `gh pr checks` exits 0; read its exit status, not a slice of its output. The repository has no branch protection, so this is the only CI gate.
 - **Merge gate:** proves the PR head starts before it reaches `main`:
   `git fetch -q origin pull/<pr>/head && git worktree add --detach .worktrees/merge-gate-<pr> <sha> && (cd .worktrees/merge-gate-<pr> && npm ci --silent && npm start -- --help >/dev/null && gh pr merge <pr> --merge --match-head-commit <sha>)`
 - **After the merge:** `git worktree remove --force .worktrees/merge-gate-<pr> && git pull --ff-only origin main`, and `npm ci` if `package-lock.json` changed.
