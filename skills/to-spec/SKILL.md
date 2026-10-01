@@ -1,6 +1,7 @@
 ---
 name: to-spec
 description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic issue with a linked review PR. Use when the user asks for a spec or names to-spec."
+model: opus
 ---
 
 # To spec
