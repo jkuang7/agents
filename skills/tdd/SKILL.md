@@ -13,7 +13,7 @@ A cycle should be small enough that a failure teaches something clear. Write one
 
 ## Test boundary
 
-Test required behavior at the highest appropriate stable seam. Prefer observable contracts over internal representation, and reuse an existing seam when it gives strong evidence.
+Test required behavior once, at the cheapest stable seam that proves it. Start real processes, servers or external tools only when the risk is that boundary itself, such as signals, locks or process cleanup. Don't add a test for a combination that takes the same code path as an existing one. Prefer observable contracts over internal representation, and reuse an existing seam when it gives strong evidence.
 
 When the contract includes a meaningful state boundary, test the event that makes the new state true and prove that downstream mutation does not precede it. Assert observable behavior, not the implementation's call sequence.
 
