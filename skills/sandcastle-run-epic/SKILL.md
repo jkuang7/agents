@@ -12,7 +12,9 @@ Sandcastle's README and `--help` own its commands, result contract, block causes
 ## Modes
 
 - `handoff` (default): start or resume one issue, confirm it started, give the user the `--attach` command, and return.
-- `queue`: the user asked this thread to run AFK or work through a queue. Act on every result as below. Merging PRs and closing Epics need the user's authorization for this queue; "continue" or "AFK" alone doesn't grant it.
+- `queue`: the user asked this thread to run AFK or work through a queue. Act on every result as below. Merging PRs and closing Epics need the user's authorization for this queue; "continue" or "AFK" alone doesn't grant it. The `## Authority` section of `continuation.md` is the user's standing authorization for its queue (merging, closing, and amending a spec when its intent is clear): apply it instead of asking again.
+
+**Pick-up:** in queue mode, first read `.scratch/queue-orchestration/continuation.md` in the operator checkout, then check live state (a running controller via "Already running?", open child PRs, whether local `main` matches `origin/main`) and continue the queue from there, not fresh.
 
 Always launch from the operator checkout on clean `main`, even when the issue changes Sandcastle itself.
 
@@ -20,7 +22,7 @@ Always launch from the operator checkout on clean `main`, even when the issue ch
 
 | Result | Caller action |
 |---|---|
-| `ready`, with a child PR | When merging is authorized: wait for CI, merge through the merge gate, sync `main`, and rerun the same issue. Otherwise report the PR and stop. |
+| `ready`, with a child PR | When merging is authorized: run `gh pr checks <pr> --watch`, then `node scripts/merge-green.mjs <pr>`, and rerun the same issue. Otherwise report the PR and stop. |
 | `complete` | When closure is authorized, close the Epic. Report it and start the next queued issue. |
 | `blocked`, class `transient`, or cause `environment` or `self-change` | Fix the stated condition (auth or access, a clean operator checkout), then rerun. If the same cause blocks twice in a row, treat it as a decision. |
 | `blocked`, cause `runtime` | A Sandcastle defect. Look for an open issue with the same `signature`; otherwise ask the advisor to diagnose it and file one issue with the reproduction and cause. Then rerun. |
@@ -28,7 +30,7 @@ Always launch from the operator checkout on clean `main`, even when the issue ch
 | Any other decision | Ask the advisor for a recommendation, then stop the queue and ask the user the record's `question` with its `reason` and that recommendation. Rerun after they change the spec, children or budget. |
 | No result record, or one this table doesn't cover | Ask the advisor to read the run's logs, then treat it as a decision. |
 
-**Advisor:** for the rows above that name it, and for spec blocks, start the `advisor` agent with a brief: the result record, the run's log directory, `.scratch/queue-orchestration/continuation.md`, and the question to answer. Carry out its recommendation within the user's authorization; anything outside it goes to the user. Handle every other row yourself.
+**Advisor:** for the rows above that name it, and for spec blocks, start the `advisor` agent (a session already running on Opus decides them itself) with a brief: the result record, the run's log directory, `.scratch/queue-orchestration/continuation.md`, and the question to answer. Carry out its recommendation within the user's authorization; anything outside it goes to the user. Handle every other row yourself.
 
 **Spec blocks:** the record's `reason` lists every conflict, its `question` only the first. Ask the advisor how to resolve them, then resolve all of them in one amendment, through `sandcastle-change-request` for a started child, and run the on-demand preflight on the amended body before rerunning. A moved-path block (`old → new` pairs) is a clarification: update those paths and rerun without asking.
 
@@ -51,10 +53,8 @@ Run from the operator checkout. `<n>` is the issue; `<pr>` and `<sha>` are the c
 - **Attach (for the user):** `cd <operator checkout> && npm start -- <n> --attach`.
 - **Exit watcher:** one background command that fires only on exit; restart it if it times out while the process lives:
   `while kill -0 $(cat .scratch/queue-orchestration/controller-<n>.pid) 2>/dev/null; do sleep 30; done; grep '^{"status"' .scratch/queue-orchestration/controller-<n>.out | tail -1`
-- **CI:** `gh pr checks <pr> --watch >/dev/null 2>&1; gh pr checks <pr>`, in the background. CI has passed only when the final `gh pr checks` exits 0; read its exit status, not a slice of its output. The repository has no branch protection, so this is the only CI gate.
-- **Merge gate:** proves the PR head starts before it reaches `main`:
-  `git fetch -q origin pull/<pr>/head && git worktree add --detach .worktrees/merge-gate-<pr> <sha> && (cd .worktrees/merge-gate-<pr> && npm ci --silent && npm start -- --help >/dev/null && gh pr merge <pr> --merge --match-head-commit <sha>)`
-- **After the merge:** `git worktree remove --force .worktrees/merge-gate-<pr> && git pull --ff-only origin main`, and `npm ci` if `package-lock.json` changed.
+- **CI:** `gh pr checks <pr> --watch`, in the background; the script decides pass/fail.
+- **Merge:** `node scripts/merge-green.mjs <pr>` in the operator checkout: checks CI on the PR head, runs the merge gate, merges, syncs `main`. Refuses while a controller runs.
 - **On-demand preflight:** see the README's preflight section.
 
 ## Scope
