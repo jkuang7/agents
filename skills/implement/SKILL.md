@@ -27,6 +27,6 @@ Verify the slice's important guarantees. For a meaningful state boundary, identi
 
 Group commits by logical purpose so a reviewer can understand how the solution comes together. Reorganize or squash only when it improves that story within existing authorization.
 
-Run required repository checks on the final candidate. Report delivered behavior, candidate revision or working-tree state, verification, and evidence gaps.
+Run the tests that cover the change on the final candidate. Run the full suite only when the repository requires it of implementers and no controller or CI runs it on the candidate. Report delivered behavior, candidate revision or working-tree state, verification, and evidence gaps.
 
 Stop with the verified candidate. Independent review is a separate phase. Publish, merge, close issues, or start another ticket only when requested.
