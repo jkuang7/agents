@@ -29,7 +29,7 @@ Apply the deletion test from codebase-design to suspected shallow modules.
 
 ### 2. Present candidates as an HTML report
 
-Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), and write to `<tmpdir>/architecture-review-<timestamp>.html` so each run gets a fresh file. Give each candidate a stable HTML anchor so the main task can refer to it.
+Write a self-contained HTML file to the repository's `.scratch/architecture-review/architecture-review-<timestamp>.html`, unless the brief names another path, so each run gets a fresh file. Give each candidate a stable HTML anchor so the main task can refer to it.
 
 Read [HTML-REPORT.md](HTML-REPORT.md) for required candidate content, visuals, and presentation. Write a top recommendation and stable anchors for candidate-specific follow-up.
 

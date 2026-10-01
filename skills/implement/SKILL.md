@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Implement one assigned task as a verified candidate, without expanding its scope from parent work.
+description: Implement one assigned issue, ticket, or accepted spec as a verified candidate, without expanding its scope from parent work. Not for small direct edits.
 ---
 
 # Implement

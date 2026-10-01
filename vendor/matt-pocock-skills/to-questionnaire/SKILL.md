@@ -20,4 +20,4 @@ Order questions most important first and group by theme when helpful. Include:
 - One idea per question, an answer stub, and a short rationale only when it prevents misunderstanding or throwaway answers.
 - A closing opportunity to supply missed information.
 
-Write concrete questions aimed at the established gap. Keep context short and every question independently answerable. Save `to-questionnaire-<slug>.md` in the current directory and return its path. Complete when every requested decision or fact is covered. Creating the document does not authorize sending it.
+Write concrete questions aimed at the established gap. Keep context short and every question independently answerable. Save `to-questionnaire-<slug>.md` where the user asks, otherwise in `.scratch/to-questionnaire/` of the current repository or workspace, and return its path. Complete when every requested decision or fact is covered. Creating the document does not authorize sending it.

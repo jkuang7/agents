@@ -10,7 +10,7 @@ Route from the user's outcome and current evidence. Reuse sufficient existing de
 
 ## Uncertainty
 
-- Clear small work or an accepted spec: `implement`.
+- Clear small work, or an accepted spec where Sandcastle doesn't run: `implement`.
 - Consequential competing strategies: `review-approach`.
 - Requested stress test or unresolved design interview: `grilling`, which records resolved domain terms through `domain-modeling` when documentation is wanted. A repository alone does not require an interview.
 - Factual gap: `research`; handle cheap lookups directly.
@@ -19,7 +19,7 @@ Route from the user's outcome and current evidence. Reuse sufficient existing de
 
 ## Delivery
 
-Use `to-spec` when settled intent needs a durable contract, then `to-tickets` when independent delivery slices are needed. `implement` produces a verified candidate; `tdd` owns its test-first method. `code-review` independently assesses the candidate and returns findings to the implementation owner. Use `submit-for-review` for requested publication and `accept-pr` for explicitly requested acceptance or merge. Prepared tickets need no automatic retriage.
+Use `to-spec` when settled intent needs a durable contract; it hands an Epic to `to-tickets` for independent delivery slices. In a repository that runs Sandcastle, published specs go to `sandcastle-run-epic`, and a changed requirement on a selected issue goes to `sandcastle-change-request`. Otherwise `implement` produces a verified candidate; `tdd` owns its test-first method. `code-review` independently assesses the candidate and returns findings to the implementation owner. Use `submit-for-review` for requested publication and `accept-pr` for acceptance or merge. Prepared tickets need no automatic retriage.
 
 ## Other entry points
 
@@ -30,6 +30,7 @@ Use `to-spec` when settled intent needs a durable contract, then `to-tickets` wh
 - Questions for someone else's knowledge: `to-questionnaire`.
 - Steps only a human can perform: `wizard`.
 - Unclear explanation: `wait-what`.
+- Prose that reads as AI-written: `unslop`.
 - Learning across sessions: `teach`.
 
 `domain-modeling` owns repository vocabulary and qualifying ADRs; `codebase-design` owns module design vocabulary; `writing-for-agents` owns agent-document authoring and maintenance.

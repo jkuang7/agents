@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Plan a multi-session effort as a shared map of decision tickets. Resolve the route to a named destination, rather than slicing or delivering the build. Execution belongs in the map only when its Notes explicitly includes it.
 
-Resolve the target repository and its inherited tracker policy before operations. Use its wayfinding conventions; fall back to local Markdown only when no policy is supplied. Missing per-repo setup is not a reason to ignore inherited configuration.
+Resolve the target repository and its inherited tracker policy before operations. Use its wayfinding conventions. For a GitHub tracker whose policy defines none, use the Wayfinding operations in [issue-tracker-github.md](../setup-matt-pocock-skills/issue-tracker-github.md); fall back to local Markdown only when no tracker policy applies. Missing per-repo setup is not a reason to ignore inherited configuration.
 
 ## Map and frontier
 

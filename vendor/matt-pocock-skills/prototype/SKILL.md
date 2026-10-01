@@ -22,6 +22,6 @@ Use in-memory state by default. When persistence itself is being explored, use a
 
 ## Capture
 
-Record the verdict and question settled in the implementation issue or a commit. Preserve the prototype as a rerunnable primary source on a throwaway branch, with a pointer from the issue. Keep exploratory code out of main.
+Report the question, the verdict, and how to rerun the prototype. Record them in an issue, or commit the prototype to a throwaway branch, only when the user asks. Keep exploratory code out of `main`.
 
 Fold validated decisions into real code within the authorized implementation scope, using normal testing and review. A successful demonstration settles its design question, not production correctness. Retain its conclusion and evidence limits during adoption.

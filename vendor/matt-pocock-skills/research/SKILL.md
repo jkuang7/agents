@@ -8,9 +8,8 @@ Handle a small lookup directly. Delegate substantial, separable reading when the
 The investigator owns:
 
 1. Investigate the question against **primary sources** (official docs, source code, specs, first-party APIs), not a secondary write-up of them. Follow every claim back to the source that owns it.
-2. Write the findings to a single Markdown file, citing each claim's source.
-3. Save it where the repo already keeps such notes; match the existing convention, and if there is none, put it somewhere sensible and say where.
+2. Report the findings, citing each claim's source. Write them to a single Markdown file only when the parent assigned an output path, the user asked for a file, or they are too long for a reply; put it where the user said, else in the task's `.scratch/<task>/` directory, and say where.
 
 For a collection of lessons or documents, first establish the requested collection and record its coverage. Process each item into a compact understanding note before synthesizing shared principles or comparing another system against them. Keep full source text outside the synthesis context and revisit it only for a specific uncertainty.
 
-The parent reconciles findings, checks coverage against the requested question, and owns the conclusion. Distinguish source claims from inference and identify missing evidence. Return the saved note and any unresolved limits.
+The parent reconciles findings, checks coverage against the requested question, and owns the conclusion. Distinguish source claims from inference and identify missing evidence. Return the findings, the note's path if one was saved, and any unresolved limits.

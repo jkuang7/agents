@@ -6,7 +6,7 @@ description: Review a PR, branch, or working-tree candidate against a fixed base
 Two-axis review of an explicit candidate against a fixed base:
 
 - **Standards**: does the code conform to this repo's documented coding standards?
-- **Spec**: does the code faithfully implement the originating issue / spec?
+- **Spec**: does the code correctly implement the originating issue or spec, or, without one, the change's stated intent?
 
 Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
 
@@ -23,9 +23,9 @@ Use the caller's base and candidate when supplied. Resolve refs to exact SHAs an
 - For a committed candidate, use `git diff <merge-base-sha> <candidate-sha>` and the corresponding commit list. Disclose dirty work excluded from an explicitly committed review.
 - For working-tree changes, use `git diff <merge-base-sha> -- <in-scope-paths>` for tracked final contents. Enumerate `git ls-files --others --exclude-standard -- <in-scope-paths>` and include the contents of relevant new files separately. Git diff alone omits untracked files. Account for pre-existing and excluded work from the task's starting state. Use the whole change only when it is all in scope.
 
-Capture the selected patch, new-file contents, file identities, and verification references in a review packet outside the candidate. Record hashes for a working-tree snapshot and preserve its relevant code context. Give both reviewers the same packet. Pause writers during review or use an isolated snapshot; if the candidate changes, refresh affected evidence and review before issuing a verdict. Reviewers may inspect code and write reports, but may not edit, stage, or commit the candidate. Use runtime read-only permissions when available; instructions alone do not enforce them.
+For a committed candidate, the base and candidate SHAs identify the review; give both reviewers those. For a working-tree candidate, capture the selected patch, new-file contents, and file hashes in a review packet under the task's `.scratch/` directory, give both reviewers the same packet, and pause writers or use an isolated snapshot; if the candidate changes, refresh affected evidence and review before issuing a verdict. Reviewers may inspect code and write reports, but may not edit, stage, or commit the candidate. Use runtime read-only permissions when available; instructions alone do not enforce them.
 
-Proceed when the base resolves, the selected changes are accounted for, and the packet identifies exactly what will be reviewed. An empty tracked diff is not an empty candidate when relevant new files exist.
+Proceed when the base resolves, the selected changes are accounted for, and exactly what will be reviewed is identified. An empty tracked diff is not an empty candidate when relevant new files exist.
 
 ### 2. Identify the spec source
 
@@ -34,7 +34,7 @@ Look for the originating spec, in this order:
 1. Requirements or a path supplied by the user or calling workflow, including accepted conversation requirements.
 2. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.), fetched through the resolved tracker policy.
 3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
-4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
+4. Otherwise, use the change's stated intent (PR description and commit messages) and say in the report that no spec was found. Ask the user only when they are present and the intent is unclear.
 
 ### 3. Identify the standards sources
 
@@ -51,17 +51,15 @@ Read [SMELL-BASELINE.md](SMELL-BASELINE.md) for the Standards pass and supply it
 
 **Standards sub-agent prompt** should include:
 
-- The review packet, exact base and candidate identity, comparison mode, and commit list where applicable.
+- The review packet for a working-tree review, exact base and candidate identity, comparison mode, and commit list where applicable.
 - The list of standards-source files you found in step 3, the baseline reference path or contents, with instructions to read and apply it.
 - The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
 
 **Spec sub-agent prompt** should include:
 
-- The same review packet and candidate identity, plus verification commands, outcomes, and any continuation record relevant to this handoff.
-- The path or fetched contents of the spec.
-- The brief: "Report requirements that are missing, partial, or incorrectly implemented; unrequested behavior; and unresolved assumptions that change correctness. Assess whether verification actually discriminates the required outcome and applies to this candidate, including preserved regression coverage. For a work transfer, check that evidence and the next action are usable. Cite the governing requirement and concrete code or evidence for each finding. Distinguish an observed defect from missing evidence. Under 400 words."
-
-If the spec is missing, skip the Spec sub-agent and note this in the final report.
+- The same candidate identity (and packet, for a working-tree review), plus verification commands, outcomes, and any continuation record relevant to this handoff.
+- The path or fetched contents of the spec, or the stated intent when there is none.
+- The brief: "Report requirements that are missing, partial, or incorrectly implemented; bugs, such as broken edge cases, error handling, or regressions in existing behavior; unrequested behavior; and unresolved assumptions that change correctness. Assess whether verification actually discriminates the required outcome and applies to this candidate, including preserved regression coverage. For a work transfer, check that evidence and the next action are usable. Cite the governing requirement and concrete code or evidence for each finding. Distinguish an observed defect from missing evidence. Under 400 words."
 
 ### 5. Aggregate
 
