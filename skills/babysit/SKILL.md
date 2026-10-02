@@ -69,6 +69,10 @@ The project's whole GitHub repository is this thread's work; another thread may 
 
 **Ordering rule:** fixes that unblock the queue, `main` or Sandcastle first; then work that touches the running Epic's files, after that Epic; then work other items depend on; then the order that avoids rework (land what others build on, not what rewrites fresh code); first in, first out only as a tiebreak.
 
+## Reporting
+
+Write each message to the user as a short status update, not a log. Use at most five lines in plain words. Leave out internal terms (result classes, causes, record fields, log paths) unless the user asks for them. Start with what changed, then what's next, then a `Needs you:` line with the decision you need or `nothing`. Include the URL of every PR you mention. Full details stay in the state file.
+
 ## Guardrails
 
 - Run one issue at a time; babysit threads for different projects take turns on the one operator checkout.
