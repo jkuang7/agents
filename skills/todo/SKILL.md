@@ -1,46 +1,55 @@
 ---
 name: todo
-description: Collect a brain dump of tasks over several messages, then add them as Task rows in the Notion Objective database and plan each with the user so todo-run can run them AFK. Use when the user types /todo, says add these tasks, or pastes a list of things to do. Running them is todo-run.
+description: Collect a task dump, plan the tasks with the user, and capture them as checkboxes on one Notion Todo page. Use for /todo, “add these tasks,” or a pasted list. Running tasks is /todo-run.
 ---
 
 # Todo
 
-You do the reasoning while the user is here, so `todo-run` can run AFK without asking.
+Turn the dump into a durable, ready-to-run checklist. Do the planning while the user is present; do not start the tasks.
 
 ## Listen
 
-Answer each message with just "Got it." and collect it; read no code, run no tools and write nothing to Notion. A direct question gets a one-line answer. The dump ends when the user says go, done, ship it or your turn as a standalone message or a message's closing words, never inside task text such as "go to the bank"; a message that closes with go is acted on at once.
+For each message, reply only “Got it.” and collect it. Read no code, run no tools, and write nothing to Notion while collecting. Answer direct questions in one line. The dump ends when the user says “go,” “done,” “ship it,” or “your turn” as a standalone message or closing words. Do not mistake those words inside task text (for example, “go to the bank”) as the signal. A message ending in “go” means act on the dump immediately.
 
-## Write
+## Write and plan
 
-On go, take every user message since /todo (or since the first message, if the skill triggered without it) and after the last write, word for word and in order; later messages override earlier ones, including removing or changing a task. Write them to the store that the Store section of `/Volumes/T9/Dev/agents/skills/todo-run/SKILL.md` defines, keeping to its row scope and its missing-MCP rule. Don't run tasks; that is `todo-run`.
+On the signal, use all messages since `/todo` (or since the first message if invoked without `/todo`), in order. Later messages correct earlier ones. Merge repeated tasks while retaining their useful details, links, names, and constraints. Replies to planning questions are decisions, not new tasks.
 
-1. Split the dump into one task each: a short imperative Name keeping every detail the user gave (links, names, constraints). Merge repeats.
-2. Query the open Task rows (Status Backlog or In progress), plus Done or Blocked Task rows created today. Skip a task that means the same as one of them, even if worded differently.
-3. Create each remaining row with Type = Task, Archive = No, Status = Backlog, Due Date = today (local date). Route stays blank unless the user named a worker or tool for the task (Muse, Codex, the advisor); then copy their words. Leave Result blank.
+Keep one persistent Notion page titled **Todo** under Journal. Find and fetch the existing page before creating anything; never create a duplicate. If it does not exist, create it there. The page is the task store; do not create Objective database rows.
 
-## Plan
+Each task is one root checkbox, with its plan in a collapsible details block:
 
-Plan each new row, plus any open Task row without a complete `Plan` (a planning session that ended early); keep answers already recorded. For each, decide its goal, route (the Routing section of that file), needs, blockers and prerequisites. Recommend the simplest approach that meets the goal, on the cheapest route that does the job (the priorities in `/Volumes/T9/Dev/AGENTS.md`). Judgment-heavy planning (architecture, design, tradeoffs) follows the model-routing rule there and may go to the `advisor`. Look up what you can; ask the user only what the plan can't settle, and ask a question shared by several rows once. The user's replies here are answers, not a new dump.
+```markdown
+- [ ] Short imperative task name preserving the user's intent
+	<details>
+	<summary>Plan</summary>
+		Added: YYYY-MM-DD
+		Goal: One-line outcome
+		Done when: Checkable completion condition
+		Route: Worker/tool and why
+		After: prerequisite task names, or none
+		Decisions: User decisions and approved boundaries, or none
+	</details>
+```
 
-1. **Ask** in one numbered round, grouped by task and ordered so a question other answers depend on, or that unblocks the most work, comes first. Each question has a recommended simplest answer and a one-line reason, so the user may answer "defaults" or by number. No questions: skip to Record. Include what applies:
-   - for each task whose intent or done-criterion is genuinely unclear, every question needed to choose its approach
-   - logins, 2FA or credentials the user must supply or confirm
-   - pre-approval for each action that spends money or messages a person as the user
-   - multi-PR work: `todo-run` starts `specs`, or the user takes it to a `/babysit` thread
-   - screen tasks (Muse, ChatGPT, computer use) share one screen: may they run while the user is away from the Mac
-   - a user-written Route that conflicts with the task
-2. **Follow up** only on answers that change what else must be asked, in as few rounds as possible, never repeating a question. Re-plan any row an answer changes.
-3. **Record** on each row, in its page body, a `Plan` section with these lines; a row is ready when all five are filled:
+Use the user's local date for Added. Preserve supplied source links in the task's details. Keep the exact requested work; do not execute it during `/todo`.
 
-   ```
-   Goal: <one line>
-   Done when: <checkable criterion>
-   Route: <worker> — <one-line reason>
-   After: <names of rows that must finish first, or none>
-   Decisions: <each answer, including approvals and screen permission, or none>
-   ```
+Check the existing Todo page before adding tasks. Skip duplicates among open checkboxes and tasks completed today. Merge useful new details into an existing matching open item without erasing prior decisions. Do not remove completed items.
+
+Plan every new task and any existing open task that lacks a complete plan. Decide the goal, checkable finish, route, prerequisites, and boundaries. Use workspace model-routing preferences for judgment-heavy choices. Research facts that can be settled cheaply; ask only about decisions the evidence cannot settle.
+
+Ask in one numbered round, grouped by task and ordered so dependent answers come later. Include only questions that matter: unclear intent or finish criteria, credentials or login the user must provide, approval before spending or messaging as the user, whether screen tasks may run while the user is away, and any user-written route that conflicts with the task. For multi-issue coding work ask whether `/todo-run` should start `/specs` and finish with “next: /babysit”. State the recommended answer and why. Follow up only when an answer changes another necessary question.
+
+Once planning is resolved, write all five plan lines in each task's details block:
+
+- **Goal:** intended outcome.
+- **Done when:** checkable completion.
+- **Route:** correct worker/tool and reason; route work by the current workspace routing preferences. A Claude product/artifact is the subject, not a request to use Claude as worker.
+- **After:** prerequisite task names or `none`.
+- **Decisions:** answers, approvals, and limits, or `none`.
+
+Only update the affected task blocks. Preserve unrelated page content and concurrent edits. If the Notion connector is unavailable, do not silently use a different store; report that the checklist could not be written.
 
 ## Report
 
-Reply in one or two lines: the count and titles added and planned, any skipped as duplicates, and any still unplanned with why. Then leave this mode; a later go handles only tasks given since this write, plus unplanned rows.
+Reply in one or two lines with the count and titles added and planned, duplicates skipped, and any item still unplanned with its reason. Leave task execution to `/todo-run`.

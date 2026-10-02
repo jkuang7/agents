@@ -1,50 +1,53 @@
 ---
 name: todo-run
-description: Run the planned Task rows in the Notion Objective database AFK until none remain, never asking. Use for todo-run, run my todos, or work the task list. Capturing and planning tasks is todo.
+description: Run planned checkbox tasks on the Notion Todo page, tracking completion and blockers there. Use for /todo-run, “run my todos,” or “work the task list.” Capture and plan tasks with /todo.
 ---
 
 # Todo run
 
-You route and track; workers do the work. `todo` already planned the rows with the user; you run them AFK and never stop to ask. Notion is the only state: hold none, poll nothing, and loop only over what a query returns. Create no rows; only `todo` does.
+Run planned tasks AFK until none remain. The Notion **Todo** page is the sole task store. Do not create Objective database rows or copy tasks to another tracker.
 
-## Store
+## Find the queue
 
-`todo` and `todo-run` share this store. It is the Notion database "Objective" under Journal, used through the Notion MCP. Find it by search and confirm its data source has a Type select with Task, Docs and Active and text properties Route and Result; if none or several match, stop and tell the user. Never create a database. Docs and Active rows live there too, so touch only rows with Type = Task and Archive = No.
+Find and fetch the existing **Todo** page under Journal. Do not create a duplicate if it is missing; report that the queue page was not found. Read the page content and process only root-level task checkboxes. Preserve all other content.
 
-No Notion MCP: stop. Tell the user: in Codex, `codex mcp add notion --url https://mcp.notion.com/mcp` then `codex mcp login notion`; in Claude Code, connect the Notion connector.
+Run only one `/todo-run` session at a time. The running marker is not an atomic lock, so concurrent runs could duplicate work.
 
-## Checks
+State is stored in each checkbox and its details block:
 
-- **Status lacks Done or Blocked:** fetch the data source schema first. If either option is missing, stop before claiming anything and tell the user to add it by hand in Notion.
-- Run one `todo-run` at a time. Any row already In progress at start was left by a dead run.
+- `- [ ]` with no blocked status: ready or waiting on prerequisites.
+- `Status: running`: claimed by a run that may have stopped; inspect its details and continue without repeating recorded side effects.
+- `Status: blocked — reason`: unchecked and paused. Leave it blocked; continue with other runnable tasks. The user retries it by deleting that status line.
+- `- [x]` plus `Result YYYY-MM-DD: ...`: complete. Keep it on the page.
 
-## Loop
+Each task's collapsible details should contain Added, Goal, Done when, Route, After, and Decisions. The root checkbox title identifies the task. Do not require or consult an Objective database schema.
 
-1. **Query** open rows: Status Backlog or In progress. Ignore Maybe, Done and Blocked. None: report and stop. Read each page body's `Plan` section (Goal, Done when, Route, After, Decisions; `todo` records it).
-2. **Unplanned row** (any of the five `Plan` lines missing or empty, such as a row added straight in Notion): fill only the missing lines yourself, applying the ambiguity rule below; never overwrite recorded lines. If it needs a user decision, Block it with `needs todo planning:` and the question.
-3. **Order:** a row runs only after the rows in its `After` line are Done. If one ended Blocked, or can't be found, or the `After` lines form a cycle, Block this row with the reason.
-4. **Claim:** right before starting a row, re-read it; skip it unless its Status is Backlog, or it was In progress at start. Set Status = In progress. For a reclaimed In progress row, read its page body and Result first and continue from there; never repeat a side effect it records.
-5. **Run** it by its `Plan`. A non-empty Route property, written by the user, overrides the plan's route; the guard below still applies.
-6. **Finish** every claimed row, never leaving it In progress:
-   - Done, only when its `Done when` is met: Result of at most three lines; anything longer goes in the page body. Not met after the retry: Blocked with what is missing.
-   - Blocked: Result is one line giving the reason. Prefix `needs you:` when the user must act.
-7. **Re-query** for Status Backlog only (rows added mid-run). In progress rows now are this run's own. Repeat from step 2 until no row is runnable; a row still waiting on its `After` rows then is Blocked with the reason.
+## Run the queue
 
-**Ambiguity:** if one reading is clearly likeliest and acting on it is reversible, act on it and name the reading in Result; otherwise Block. Anything unforeseen: Block the row with a one-line reason and carry on with the rest. A failed worker gets one retry; then Block with the error. Blocked rows stay Blocked; the user sets one back to Backlog to retry it.
+1. Read all task blocks and their plan lines. For an unplanned task, fill only missing plan lines using workspace instructions and available evidence. If a user decision is needed, mark it blocked with `Status: blocked — needs you: <question>`.
+2. Respect each `After` dependency. Run only after prerequisite checkboxes are complete. If a prerequisite is blocked, missing, or part of a cycle, mark this task blocked with the reason.
+3. Before starting a task, re-read its block. If it remains unchecked and unblocked, set `Status: running` before doing work. If it is already checked or blocked, skip it.
+4. Follow its plan and route using current workspace routing preferences. A user-specified route in the task's Decisions or Route line takes precedence where compatible with higher-level routing and authorization. If a task describes a product (for example, a Claude artifact), that alone does not select its maker as the worker.
+5. On completion, check the box and add a one-line `Result YYYY-MM-DD: ...` inside its details only when Done when is met. Put longer findings in the linked source page or a relevant artifact and summarize/link it in Result. If completion is not met after one retry, leave unchecked and replace running with `Status: blocked — <reason>`.
+6. After a blocker, continue with independent runnable tasks. Re-fetch the page before each edit and update only the task block being changed, preserving concurrent edits and other task blocks. Re-scan the page after finishing a batch so newly added tasks are considered.
 
-Spending money or messaging a person as the user needs a pre-approval for that action in the row's `Decisions`; without one, Block with `needs you:`. <!-- drop this line to lift the money/message guard -->
-
-**Report** in a few lines: each done row, then each blocked row with what it needs.
+If an ambiguity has one clearly likeliest and reversible reading, proceed and record that reading in Result. Otherwise block with the specific question. Never leave work marked running when stopping. If an unplanned external side effect is needed, block the task and ask for the required decision instead of doing it. Spending money or messaging someone as the user requires explicit approval in Decisions. Do not treat read-only inspection, research, or drafting as approval to send or purchase.
 
 ## Routing
 
-Judgment calls (architecture, design choices, tradeoffs, interface changes) follow the model-routing rule in `/Volumes/T9/Dev/AGENTS.md`: the `advisor` agent (Opus) decides. From Codex: `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"`.
+Use the current routing table in `/Volumes/T9/Dev/repos/agent-hub/router/preferences.md` and the workspace `AGENTS.md` as authoritative. In particular:
 
-Route everything else by `/Volumes/T9/Dev/repos/agent-hub/router/preferences.md`; where its table differs from this list, the table wins, but judgment calls still go to the advisor:
+- **Web research, shopping comparisons, and email/Gmail:** Muse (free app). Use current sources and cite them in the result.
+- **Reddit or community opinion:** ChatGPT web.
+- **Signed-in screen inspection or computer use:** Codex computer use. Muse, ChatGPT and computer use share one screen; run these sequentially and only when the task's Decisions allow use while the user is away.
+- **Code changes and engineering investigations:** Codex, following the target repository's `AGENTS.md` and model/worker routing.
+- **Architecture, design tradeoffs, or unclear technical direction:** advisor (Opus) for the decision, then route decided work as its instructions require.
+- **Claude as an explicitly requested worker/model:** only through the user-approved route and its required tap. Mentioning Claude as the subject does not request Claude as worker.
 
-- **Web research, shopping or comparison, anything email or Gmail:** Muse. **Reddit or community opinion:** ChatGPT. Drive them as the agent hub does: a Codex computer-use session in the signed-in Zen browser following `/Volumes/T9/Dev/repos/agent-hub/workers/relay-prompt.md`, read and draft only. If you can't run that session, or it returns `BLOCKED`, Block with `needs you:`.
-- **Computer use** (unsubscribing, filling forms): Codex computer use.
-- **Code fixes and features:** a Codex subagent on gpt-6.1-sol at medium effort, briefed with the repo and the task; it follows that repo's AGENTS.md. **Multi-PR work:** if `Decisions` says start `specs`, run it and finish Done with Result naming the Epic and "next: /babysit"; if it says `/babysit`, or nothing, finish Blocked with `needs you: run specs, then /babysit`.
-- **Quick lookups:** do them yourself.
+Run one screen-based task at a time. Independent non-screen tasks may run in parallel when the tools and environment support it. If a required route is unavailable, block the task with the reason and continue with the others.
 
-Muse, ChatGPT and computer use share one screen: run them one at a time, and only if the row's `Decisions` allows it while the user is away; otherwise Block with `needs you: screen task`. Run up to about three other tasks in parallel, claiming each before it starts.
+For multi-issue coding work, follow the task's recorded decision: if the user approved starting `/specs`, complete it and report the Epic with “next: /babysit”; if the user chose `/babysit`, hand off there; if no path was approved, block and request planning rather than inventing a multi-issue workflow.
+
+## Report
+
+Report completed tasks first, then blocked tasks and what each needs. Include source or artifact links for longer results. If the queue has no runnable tasks, say so and stop.
