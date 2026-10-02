@@ -19,7 +19,7 @@ Route from the user's outcome and current evidence. Reuse sufficient existing de
 
 ## Delivery
 
-Use `to-spec` when settled intent needs a durable contract; it hands an Epic to `to-tickets` for independent delivery slices. In a repository that runs Sandcastle, published specs go to `sandcastle-run-epic`, and a changed requirement on a selected issue goes to `sandcastle-change-request`. Otherwise `implement` produces a verified candidate; `tdd` owns its test-first method. `code-review` independently assesses the candidate and returns findings to the implementation owner. Use `submit-for-review` for requested publication and `accept-pr` for acceptance or merge. Prepared tickets need no automatic retriage.
+Use `to-spec` when settled intent needs a durable contract; it hands an Epic to `to-tickets` for independent delivery slices. In a repository that runs Sandcastle, published specs go to `babysit`, and a changed requirement on a selected issue goes to `sandcastle-change-request`. Otherwise `implement` produces a verified candidate; `tdd` owns its test-first method. `code-review` independently assesses the candidate and returns findings to the implementation owner. Use `submit-for-review` for requested publication and `accept-pr` for acceptance or merge. Prepared tickets need no automatic retriage.
 
 ## Other entry points
 
