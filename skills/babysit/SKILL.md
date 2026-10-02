@@ -41,7 +41,7 @@ Then continue from there, not fresh.
 
 **Spec concerns:** in a `ready` or `blocked` child's `review-*.log`, read only the reviewer's verdict message (the `agent_message` containing `<review>`) and keep its lines starting `Spec concern:`; the phrase elsewhere in the log gives false hits. The advisor triages each: valid and in scope goes through `sandcastle-change-request`, valid but out of scope becomes a follow-up issue, invalid gets one line saying why. For a `ready` child, post them with their triage as one PR comment. They never block a merge.
 
-**Spec blocks:** the record's `reason` lists every conflict, its `question` only the first. The advisor resolves all of them in one amendment (through `sandcastle-change-request` for a started child), then run the README's on-demand preflight on the amended body and rerun when it reports none. A moved-path block (`old → new` pairs) is a clarification: update the paths and rerun.
+**Spec blocks:** the advisor resolves them through `sandcastle-change-request`, which owns resolving every conflict and the preflight, then rerun. A moved-path block (`old → new` pairs) is a clarification: update the paths and rerun.
 
 ## When something breaks
 
