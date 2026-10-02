@@ -23,7 +23,7 @@ Follow [the issue lifecycle](../submit-for-review/references/ISSUE-LIFECYCLE.md)
 
 ## Clean up
 
-Unless the user asked to keep them:
+Start only after step 3 confirms the merge, in separate commands from the merge, never chained with `;`: a refused or failed merge leaves the branch, worktrees and checkout exactly as they were. Unless the user asked to keep them:
 
 - Delete the PR's remote head branch when it's in the PR's own repository and no other open PR targets it.
 - If the primary checkout is on the head branch, switch it to the target branch first.
