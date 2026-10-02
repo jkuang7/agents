@@ -45,7 +45,7 @@ Then continue from there, not fresh.
 
 ## When something breaks
 
-Every judgment goes to the advisor: problems from the table, spec concerns, spec blocks and new work. Handle the table's other rows yourself. A problem's brief holds the result record or merge refusal, the run's log directory, the state file, and the question. For a merge refusal, it reads the refusal text first; if the refusal came after the merge (`git pull` or `npm ci` failed), it checks the PR state before anyone reruns. It judges by the engineering priorities in `/Volumes/T9/Dev/AGENTS.md` (robustness, then efficiency including token cost, then low upkeep) and the precedents in the state file, and answers with one of:
+Every judgment goes to the advisor: problems from the table, spec concerns and spec blocks. Handle the table's other rows yourself. A problem's brief holds the result record or merge refusal, the run's log directory, the state file, and the question. For a merge refusal, it reads the refusal text first; if the refusal came after the merge (`git pull` or `npm ci` failed), it checks the PR state before anyone reruns. It judges by the engineering priorities in `/Volumes/T9/Dev/AGENTS.md` (robustness, then efficiency including token cost, then low upkeep) and the precedents in the state file, and answers with one of:
 
 - `linear`: one obvious fix. Do it without asking.
 - `shape`: several workable designs. Take the one with the least machinery and record the choice in the state file. Never ask the user to choose lean vs full; add machinery only after a real failure shows the lean design is unreliable.
@@ -54,7 +54,7 @@ Every judgment goes to the advisor: problems from the table, spec concerns, spec
 Fix code only through these paths, one attempt per issue and cause; the same failure after a fix goes to the user:
 
 - **A ready child's CI fails because of the child, after the one CI-job rerun:** a `worker` commits the smallest fix, from the CI log, on the child branch as a descendant of the reviewed head, a `reviewer` approves it, CI goes green, and merge with `--accept-head <sha>`.
-- **`main` is red, or Sandcastle has a defect:** the advisor writes a focused issue (`to-spec`, checked by a fresh `reviewer`), it runs standalone through Sandcastle and merges through `merge-green`, then the queue resumes. If Sandcastle can't run it, a `worker` makes a hotfix PR in `.worktrees/`, a `reviewer` approves it, and it merges through `merge-green`.
+- **`main` is red, or Sandcastle has a defect:** the advisor writes a focused issue (`specs`, checked by a fresh `reviewer`), it runs standalone through Sandcastle and merges through `merge-green`, then the queue resumes. If Sandcastle can't run it, a `worker` makes a hotfix PR in `.worktrees/`, a `reviewer` approves it, and it merges through `merge-green`.
 - **A flaky test:** rerun once and record its signature in the state file; the same signature again is a `main` fix.
 
 **Running from Codex:** Codex runs the loop's commands and sends every judgment to the advisor with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"` from `<O>`, asking the advisor to carry out a `linear` or `shape` fix itself (specs in its own session, code through `worker` and `reviewer`) and report what it did. The reply's first line must be `linear`, `shape` or `unclear`; anything else counts as `unclear`. Codex never writes specs or code and never chooses between options. A Claude session starts the `advisor` agent instead; an Opus session decides itself.
@@ -63,8 +63,8 @@ Fix code only through these paths, one attempt per issue and cause; the same fai
 
 The project's whole GitHub repository is this thread's work; another thread may add specs, Epics or sub-issues at any time. Between runs, never mid-run:
 
-- Take each `## Inbox` line and each issue created since `Last drain` that isn't queued, labelled `not-ready`, recorded as closed or not planned, or still a non-spec. The advisor writes or classifies it: a single issue (`to-spec`), an Epic (`to-spec` then `to-tickets`), or new children of a queued Epic (`to-tickets`), each spec checked by a fresh `reviewer`. Questions go to the user only when the direction is `unclear`.
-- Place it in `## Queue` with a one-line reason, by the ordering rule. Clear the Inbox line and update `Last drain`.
+- Take each open issue that isn't queued, labelled `not-ready`, recorded as closed or not planned, or a non-spec, whenever it was created: an Epic loses `not-ready` only once its children are published. Apart from the fix issues under **When something breaks**, this thread writes no specs: a separate `specs` thread publishes them, and an `## Inbox` line is answered by telling the user to run `specs` with it.
+- Place it in `## Queue` with a one-line reason, by the ordering rule. Update `Last drain`.
 - A new sub-issue of a queued Epic runs on that Epic's next run in GitHub's order. If it belongs earlier, move it among the unstarted children: `gh api -X PATCH repos/<owner>/<repo>/issues/<epic>/sub_issues/priority -F sub_issue_id=<id> -F before_id=<id>` (ids from `gh api repos/<owner>/<repo>/issues/<n> -q .id`). Never move a started child.
 
 **Ordering rule:** fixes that unblock the queue, `main` or Sandcastle first; then work that touches the running Epic's files, after that Epic; then work other items depend on; then the order that avoids rework (land what others build on, not what rewrites fresh code); first in, first out only as a tiebreak.

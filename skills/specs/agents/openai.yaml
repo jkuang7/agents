@@ -1,5 +1,5 @@
 interface:
-  display_name: "To Spec"
+  display_name: "Specs"
   short_description: "Route intent into reviewable delivery specs"
 policy:
   allow_implicit_invocation: true
