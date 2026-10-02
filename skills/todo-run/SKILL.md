@@ -5,11 +5,16 @@ description: Run the planned Task rows in the Notion Objective database AFK unti
 
 # Todo run
 
-You route and track; workers do the work. `todo` already planned the rows with the user; you run them AFK and never stop to ask. Notion is the only state: hold none, poll nothing, and loop only over what a query returns. Use the Notion MCP on data source `collection://1b37b752-4055-8097-8011-000b41a46d67` ("Objective"). It also holds Docs and Active rows: read and change only rows with Type = Task and Archive = No, and never create a database or rows.
+You route and track; workers do the work. `todo` already planned the rows with the user; you run them AFK and never stop to ask. Notion is the only state: hold none, poll nothing, and loop only over what a query returns. Create no rows; only `todo` does.
+
+## Store
+
+`todo` and `todo-run` share this store. It is the Notion database "Objective" under Journal, used through the Notion MCP. Find it by search and confirm its data source has a Type select with Task, Docs and Active and text properties Route and Result; if none or several match, stop and tell the user. Never create a database. Docs and Active rows live there too, so touch only rows with Type = Task and Archive = No.
+
+No Notion MCP: stop. Tell the user: in Codex, `codex mcp add notion --url https://mcp.notion.com/mcp` then `codex mcp login notion`; in Claude Code, connect the Notion connector.
 
 ## Checks
 
-- **No Notion MCP:** stop. Tell the user: in Codex, `codex mcp add notion --url https://mcp.notion.com/mcp` then `codex mcp login notion`; in Claude Code, connect the Notion connector.
 - **Status lacks Done or Blocked:** fetch the data source schema first. If either option is missing, stop before claiming anything and tell the user to add it by hand in Notion.
 - Run one `todo-run` at a time. Any row already In progress at start was left by a dead run.
 
