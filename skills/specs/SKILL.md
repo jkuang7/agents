@@ -1,12 +1,20 @@
 ---
-name: to-spec
-description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic issue with a linked review PR. Use when the user asks for a spec or names to-spec."
+name: specs
+description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic with child tickets, asking the human only when the direction is unclear. Use when the user asks for a spec or names specs or to-spec."
 model: opus
 ---
 
-# To spec
+# Specs
 
-Write the smallest spec that solves the real problem. Every requirement costs effort to build, review, and maintain.
+Write the smallest spec that solves the real problem. Every requirement costs effort to build, review and maintain. Run end to end without waiting: understand, spec, review, publish, and for an Epic, `to-tickets`.
+
+**Decisions:** A decision is any choice this skill or `to-tickets` would otherwise put to the human. Decide it yourself (a Sonnet session asks the `advisor`) and sort it:
+
+- **linear:** one obvious answer. Apply it.
+- **shape:** several workable answers. Take the one with the least machinery.
+- **unclear:** the goal or product behavior is ambiguous, you aren't confident, or the answer would drop a confirmed guarantee, need auth or credentials, add a paid service, or be hard to reverse. Stop, send a push notification (PushNotification), and ask the human with AskUserQuestion, recommended option first.
+
+What the human said is confirmed; a linear or shape decision counts as confirmed from then on. After publishing, post every linear and shape decision as one **decisions comment** on the parent issue (the single issue, or the Epic), one line each with its reason, so the human can review it afterwards.
 
 ## 1. Understand the problem
 
@@ -33,7 +41,7 @@ Within a tier, put the larger gain first. A prerequisite goes just before the wo
 
 **Safe to merge:** Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it.
 
-Show the goal, your understanding of the problem, the proposed fix (beside the human's idea when they differ, with your recommendation), and the route. Wait for the human to confirm before drafting.
+Show the goal, your understanding of the problem, the proposed fix (beside the human's idea when they differ, with your recommendation), and the route as one decision, then draft without waiting unless it is unclear.
 
 ## 3. Write the spec
 
@@ -57,9 +65,9 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 - **Failures:** Cover a failure only if it can happen and would block progress, corrupt data, report a wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Handle each by the first option that works: make it impossible by design (one representation per fact), else stop with a clear error, else recover automatically, only when stopping has hurt or the goal requires it; do not design retry or recovery machinery the goal does not need.
 - **Rules:** For each rule that sorts cases into outcomes (retry or stop, accept or reject), give a realistic example of each outcome and at least one realistic case the rule must not cover, such as "Transient: a dropped connection. Not transient: expired auth, a 404." Without a counterexample, a wrong rule is built exactly and passes every review.
 - **Saved results:** For each new piece of saved state, cached result, or recorded decision, name every input that invalidates it and every path that reuses it (a fresh run, a resume, a replay), and say in `## Failures` what happens on a crash before and after it is written, on a rerun, and when its inputs change mid-run. A result keyed on only some of its inputs goes stale silently.
-- **Blockers:** If the confirmed goal cannot be met as stated, stop and bring the human a smaller or alternative proposal. Do not add infrastructure or drop a confirmed guarantee yourself.
-- **Someone else's draft:** Tell the human what you removed and why in your reply or a PR comment, never in the spec, which workers read as binding.
-- **Size:** Aim for under about 4,000 characters and five acceptance criteria. Explain if you go over; if staying under would change the confirmed route, ask first.
+- **Blockers:** If the confirmed goal cannot be met as stated, a smaller or alternative proposal is an unclear decision. Do not add infrastructure or drop a confirmed guarantee yourself.
+- **Someone else's draft:** Tell the human what you removed and why in the decisions comment, never in the spec, which workers read as binding.
+- **Size:** Aim for under about 4,000 characters and five acceptance criteria. Explain if you go over; if staying under would change the confirmed route, that is a decision.
 
 ## 4. Review
 
@@ -67,16 +75,18 @@ Start a fresh reviewer in a new context (in Claude, the `reviewer` agent) with t
 
 Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks the spec against every rule in sections 2 and 3.
 
-**Review loop** (`to-tickets` uses it too): For each rule in the work under review, the reviewer tries to find a realistic case where the rule gives the wrong answer. It returns every important finding it can support, most important first. Prefer fixing each by removing or narrowing a requirement. If a fix would change the agreed understanding, fix, or route, or drop a confirmed guarantee, ask the human instead; otherwise revise for all findings. After each pass that changed a requirement or the design, start a new reviewer on the full work under review. Stop when a pass finds only wording or test tightening; apply it.
+**Review loop** (`to-tickets` uses it too): For each rule in the work under review, the reviewer tries to find a realistic case where the rule gives the wrong answer. It returns every important finding it can support, most important first. Prefer fixing each by removing or narrowing a requirement. If a fix would change the agreed understanding, fix, or route, that is a decision, and dropping a confirmed guarantee is always unclear; otherwise revise for all findings. After each pass that changed a requirement or the design, start a new reviewer on the full work under review. Stop when a pass finds only wording or test tightening; apply it.
 
-**Design smell:** Sort each finding. A **robustness** fix tightens existing behavior (a missing failure case, a test, a wording gap); apply it. A **decision** fix needs a new rule, mode, cap, or exception, a guard for another guard, or a choice by the human. If a pass has a decision fix, or most findings trace to one capability, stop the loop and bring the human **one recommended cut**: less power for that capability, or one approval point instead of a set of rules. State what it gives up and how often, from evidence; do not offer a menu. Also stop for the human when a fix needs their decision or review stops converging (a fixed finding returns, or a pass finds at least as many requirement- or design-level problems as the last); show the work, your revisions, and the open findings.
+**Design smell:** Sort each finding. A **robustness** fix tightens existing behavior (a missing failure case, a test, a wording gap); apply it. A **decision** fix needs a new rule, mode, cap, or exception, a guard for another guard, or a choice by the human. If a pass has a decision fix, or most findings trace to one capability, stop the loop and choose **one cut**: less power for that capability, or one approval point instead of a set of rules. Record what it gives up and how often, from evidence. Take it as a shape decision and rerun review; a cut that drops a confirmed guarantee is unclear. Review that stops converging (a fixed finding returns, or a pass finds at least as many requirement- or design-level problems as the last) is unclear: show the human the work, your revisions, and the open findings.
 
 ## 5. Publish
 
 Follow the repository's instructions and tracker policy.
 
-- **Single PR:** Do not wait for approval. Create one issue with the spec as its body and no sub-issues, and end with the link; the human reviews and edits it there. Publishing does not start Sandcastle.
-- **New Epic:** Do not wait for another approval after review. Create the Epic issue with the parent spec as its body; it is the only copy of the spec. Create a `spec/<short-name>` branch from the latest `main` with one empty commit and open a **draft Epic spec PR** whose body links the Epic issue, and comment the PR link on the issue. End with both links. The human edits the spec in the issue and approves it in the PR. Do not publish child issues or start Sandcastle until that approval; then use `to-tickets`, which closes the spec PR after publishing. Each child issue is the binding spec; the parent is context.
-- **Existing Epic:** Confirm the Epic, then use `to-tickets` to add the child issue from the confirmed need.
+- **Single PR:** Create one issue with the spec as its body and no sub-issues, and end with the link. The human reviews it afterwards via the decisions comment; once queued, changes go through `sandcastle-change-request`.
+- **New Epic:** Create the Epic issue with the parent spec as its body and the `not-ready` label (create it if missing) so a runner skips it until it has children; it is the only copy of the spec. Then use `to-tickets` on it in this session, which removes the label, and end with the Epic link and its children. Each child issue is the binding spec; the parent is context.
+- **Existing Epic:** Choosing the Epic is a decision; then use `to-tickets` to add the child issue from the confirmed need.
+
+Publishing never starts Sandcastle; a separate `babysit` thread picks up published issues.
 
 Do not modify Sandcastle under this skill.

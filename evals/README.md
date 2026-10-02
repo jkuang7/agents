@@ -2,14 +2,12 @@
 
 This directory keeps compact cases for observed, consequential skill failures:
 
-- `spec-scope/` checks that `to-spec` selects the smallest complete outcome
+- `spec-scope/` checks that `specs` selects the smallest complete outcome
   without weakening correctness, inventing recovery machinery, adding new
   state that existing evidence already covers, or specifying evidence that
   cannot demonstrate the human's actual objective. It also checks that
-  `to-spec` looks for the cause in existing evidence before specifying new
+  `specs` looks for the cause in existing evidence before specifying new
   measurement.
-- `epic-spec-review/` checks that a new Epic's spec lives in a GitHub issue
-  with a linked draft PR for human review before native subissues are published.
 - `vertical-slices/` checks that `to-tickets` produces coherent workflow slices
   and keeps proof-only external gates out of implementation tickets.
 - `acceptance-ignored-files/` checks that acceptance cleanup preserves unique

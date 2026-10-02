@@ -14,7 +14,7 @@ The child issue's title and body are its whole binding spec; comments and the pa
 A child has started once it has run history, a recorded candidate or a block. Before amending a started child, ask: would the implementer have to build something the original spec didn't ask for?
 
 - **Clarification (no):** amend. Examples: naming an existing test as an exception, fixing wording, resolving a contradiction without changing what the child must do, updating moved paths.
-- **New behavior (yes):** don't amend; add it as a follow-up child or issue through `to-tickets` or `to-spec`, so the started child finishes with its original scope. New behavior is a new requirement, a new acceptance criterion or a new case to handle. One follow-up can hold every gap a later review finds.
+- **New behavior (yes):** don't amend; add it as a follow-up child or issue through `to-tickets` or `specs`, so the started child finishes with its original scope. New behavior is a new requirement, a new acceptance criterion or a new case to handle. One follow-up can hold every gap a later review finds.
 - **Third amendment of any kind** to the same started child: the spec likely wasn't ready; re-review the whole child before amending, and ask the user only if its direction is unclear.
 
 Record each amendment to a started child as one comment on it, saying what changed and which kind it is. Those comments are the count.
