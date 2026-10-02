@@ -2,6 +2,7 @@
 name: specs
 description: "Understand the problem, find the simplest change that fixes its root cause, and publish it as a single-PR issue or an Epic with child tickets, asking the human only when the direction is unclear. Use when the user asks for a spec or names specs or to-spec."
 model: opus
+effort: medium
 ---
 
 # Specs

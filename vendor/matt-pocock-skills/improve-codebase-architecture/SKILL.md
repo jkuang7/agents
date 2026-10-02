@@ -3,6 +3,7 @@ name: improve-codebase-architecture
 description: Delegate a codebase architecture scan and HTML report to a subagent, return the file, then grill through whichever opportunity you pick.
 disable-model-invocation: true
 model: opus
+effort: medium
 ---
 
 # Improve Codebase Architecture

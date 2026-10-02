@@ -2,6 +2,7 @@
 name: to-tickets
 description: "Break an accepted parent spec into small behavioral subissues, each delivered as its own mergeable PR toward the parent outcome; also re-split an existing Epic's unstarted children or add one child to it. Use when the user asks to write or split tickets or sub-issues, or names to-tickets."
 model: opus
+effort: medium
 ---
 
 # To tickets
