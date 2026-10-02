@@ -75,6 +75,7 @@ The project's whole GitHub repository is this thread's work; another thread may 
 - Merge only Sandcastle's own child PRs, only when green, through `merge-green`, one at a time, while no controller runs.
 - Never hand-edit a child branch. The one exception is the child-CI fix above: one worker commit, reviewer-approved, merged with `--accept-head`. Any other new head stops the next run with `drift`.
 - Write no code yourself; code goes through the fix paths.
+- Link every PR the queue produces (child, fix and hotfix PRs) as soon as it exists: call `link_pull_request` with its URL when that tool is available, and give the URL whenever you report it.
 - Record every rerun in the state file (issue, class, cause; a CI-job rerun counts), plus the current issue and queue order, so a new session continues from state.
 
 ## Commands
