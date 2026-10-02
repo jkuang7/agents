@@ -41,7 +41,7 @@ Within a tier, put the larger gain first. A prerequisite goes just before the wo
 
 **Safe to merge:** Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it.
 
-Show the goal, your understanding of the problem, the proposed fix (beside the human's idea when they differ, with your recommendation), and the route as one decision, then draft without waiting unless it is unclear.
+Show the goal, your understanding of the problem, the fix (next to the human's idea when they differ, with your recommendation), and the route as one decision, then draft without waiting unless it is unclear.
 
 ## 3. Write the spec
 
@@ -81,12 +81,10 @@ Its first question: **is there a much simpler change that fixes the same root ca
 
 ## 5. Publish
 
-Follow the repository's instructions and tracker policy.
+Follow the repository's instructions and tracker policy. Publish several items in work order, each with its own decisions comment.
 
 - **Single PR:** Create one issue with the spec as its body and no sub-issues, and end with the link. The human reviews it afterwards via the decisions comment; once queued, changes go through `sandcastle-change-request`.
-- **New Epic:** Create the Epic issue with the parent spec as its body and the `not-ready` label (create it if missing) so a runner skips it until it has children; it is the only copy of the spec. Then use `to-tickets` on it in this session, which removes the label, and end with the Epic link and its children. Each child issue is the binding spec; the parent is context.
+- **New Epic:** Create the Epic issue with the parent spec as its body and the `not-ready` label (create it if missing) so a runner skips it until it has children; it is the spec's only copy. Then run `to-tickets` on it now, which removes the label, and end with all links. Each child issue is the binding spec; the parent is context.
 - **Existing Epic:** Choosing the Epic is a decision; then use `to-tickets` to add the child issue from the confirmed need.
 
-Publishing never starts Sandcastle; a separate `babysit` thread picks up published issues.
-
-Do not modify Sandcastle under this skill.
+Publishing never starts or modifies Sandcastle; a separate `babysit` thread runs published issues.
