@@ -1,6 +1,6 @@
 ---
 name: explore
-description: Collect a problem the user explains over several messages, then hand it to Opus to find the simplest root-cause fix. Use only when the user types /explore; not for searching or exploring code.
+description: Collect a problem the user explains over several messages, then have Opus recommend the most efficient way to solve it. Use only when the user types /explore; not for searching or exploring code.
 ---
 
 # Explore
@@ -18,15 +18,14 @@ On go, start the `advisor` agent with:
 
 Tell the advisor:
 
+- Recommend the most efficient way to solve the problem: the least effort to build and maintain that fixes the root cause without losing robustness. Weigh options by the priorities in `/Volumes/T9/Dev/AGENTS.md`, and add machinery only when it prevents a real failure.
 - Treat the user's ideas and proposed fixes as starting points, not requirements.
-- Investigate until the root cause is clear.
-- Choose the simplest fix by the priorities in `/Volumes/T9/Dev/AGENTS.md`: robustness, then efficiency, then low upkeep. Add machinery only when it prevents a real failure.
+- Investigate only as far as the recommendation needs; change no files.
 - Ask only when the direction is genuinely unclear.
-- Reply with: problem, root cause, fix, why the user's ideas were kept or rejected, and open questions.
-- Investigate only; change no files.
+- Reply with: the recommendation, why it beats the alternatives, which of the user's ideas were kept or rejected and why, and open questions.
 
 An Opus session decides itself instead. From Codex, run the advisor from the working directory with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"`.
 
 ## Report
 
-Relay the answer in five lines or fewer, then stop. Don't implement until the user says so.
+Relay the recommendation in five lines or fewer, leading with what to do, then stop. Don't implement until the user says so.
