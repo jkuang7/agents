@@ -23,6 +23,9 @@ Tell the advisor:
 - Choose the simplest fix by the priorities in `/Volumes/T9/Dev/AGENTS.md`: robustness, then efficiency, then low upkeep. Add machinery only when it prevents a real failure.
 - Ask only when the direction is genuinely unclear.
 - Reply with: problem, root cause, fix, why the user's ideas were kept or rejected, and open questions.
+- Investigate only; change no files.
+
+An Opus session decides itself instead. From Codex, run the advisor from the working directory with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"`.
 
 ## Report
 
