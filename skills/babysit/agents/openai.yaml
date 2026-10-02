@@ -1,0 +1,4 @@
+interface:
+  display_name: "Babysit"
+  short_description: "Babysit a Sandcastle issue or queue AFK"
+  default_prompt: "Use $babysit to run this Sandcastle issue, or work through the queue as its caller."
