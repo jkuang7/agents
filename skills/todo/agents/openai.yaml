@@ -1,0 +1,4 @@
+interface:
+  display_name: "Todo"
+  short_description: "Collect a brain dump, then add and plan Notion Task rows on go"
+  default_prompt: "Use $todo to collect my tasks; on go, add them as Task rows in the Notion Objective database and plan each with me."
