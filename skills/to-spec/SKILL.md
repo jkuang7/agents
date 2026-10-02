@@ -13,7 +13,7 @@ Write the smallest spec that solves the real problem. Every requirement costs ef
 - **Goal:** State what the human is trying to achieve, including tradeoffs such as cost against quality. Behind a requested solution or measurement, find the problem; a suggested mechanism is a hypothesis until they confirm it.
 - **Root cause:** Before designing anything, work out the bottleneck, the constraints, and what makes this hard, from evidence (logs, data, prior runs, code, tracker history) read at its original source. Theory without evidence is not understanding. For a new feature, understand the constraints and the existing capabilities to build on.
 - **Investigate now:** If existing evidence can answer a question, analyze it now. Never spec an analysis tool, report, or telemetry to find a cause; propose minimal new recording only when existing evidence cannot reveal it. Say what you could not establish instead of adding speculative requirements.
-- **Simplest fix:** Prefer an existing capability, an established practice, or a small direct change; build more only when the problem needs it. Name the evidence that will show whether the fix worked.
+- **Simplest fix:** Treat the human's proposed solution as a starting point, not the answer. Find the simplest fix that is easiest to maintain: fewest moving parts, least new state, reuse or delete before building; prefer an existing capability, an established practice, or a small direct change. It must still meet every confirmed goal and guarantee and stay correct. Compare it with the human's idea, which stays the default unless yours is clearly simpler for the same problem; then recommend yours and say what it gives up. Name the evidence that will show whether the fix worked.
 
 ## 2. Choose the route
 
@@ -33,7 +33,7 @@ Within a tier, put the larger gain first. A prerequisite goes just before the wo
 
 **Safe to merge:** Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it.
 
-Show the goal, your understanding of the problem, the proposed fix, and the route. Wait for the human to confirm before drafting.
+Show the goal, your understanding of the problem, the proposed fix (beside the human's idea when they differ, with your recommendation), and the route. Wait for the human to confirm before drafting.
 
 ## 3. Write the spec
 
