@@ -46,7 +46,7 @@ Show the goal, your understanding of the problem, the fix (next to the human's i
 
 ## 3. Write the spec
 
-Add a requirement only if the fix fails without it. Describe observable outcomes unless the mechanism is the fix. Leave modules, interfaces, and design direction to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
+Add a requirement only if the fix fails without it. Describe observable outcomes unless the mechanism is the fix. Leave modules, interfaces and design to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
 
 A single-PR spec and an Epic parent use these sections in this order; children use the `to-tickets` format. Omit an empty optional section; add no others.
 

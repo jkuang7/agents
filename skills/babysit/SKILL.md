@@ -57,7 +57,7 @@ Fix code only through these paths, one attempt per issue and cause; the same fai
 - **`main` is red, or Sandcastle has a defect:** the advisor writes a focused issue (`specs`, checked by a fresh `reviewer`), it runs standalone through Sandcastle and merges through `merge-green`, then the queue resumes. If Sandcastle can't run it, a `worker` makes a hotfix PR in `.worktrees/`, a `reviewer` approves it, and it merges through `merge-green`.
 - **A flaky test:** rerun once and record its signature in the state file; the same signature again is a `main` fix.
 
-**Running from Codex:** Codex runs the loop's commands and sends every judgment to the advisor with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"` from `<O>`, asking the advisor to carry out a `linear` or `shape` fix itself (specs in its own session, code through `worker` and `reviewer`) and report what it did. The reply's first line must be `linear`, `shape` or `unclear`; anything else counts as `unclear`. Codex never writes specs or code and never chooses between options. Codex can't be woken by a background task, so run every watcher and CI wait in the foreground and wait. A Claude session starts the `advisor` agent instead; an Opus session decides itself.
+**Running from Codex:** Codex runs the loop's commands and sends every judgment to the advisor with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"` from `<O>`, asking the advisor to carry out a `linear` or `shape` fix itself (specs in its own session, code through `worker` and `reviewer`) and report what it did. The reply's first line must be `linear`, `shape` or `unclear`; anything else counts as `unclear`. Codex never writes specs or code or chooses options. Codex can't wake on background tasks, so wait in the foreground. A Claude session starts the `advisor` agent instead; an Opus session decides itself.
 
 ## New work
 
@@ -71,7 +71,7 @@ The project's whole GitHub repository is this thread's work; another thread may 
 
 ## Reporting
 
-Write each message to the user as a short status update, not a log. Use at most five lines in plain words. Leave out internal terms (result classes, causes, record fields, log paths) unless the user asks for them. Start with what changed, then what's next, then a `Needs you:` line with the decision you need or `nothing`. Include the URL of every PR you mention. Full details stay in the state file.
+Write each message as a short status update, at most five lines, in plain words. Leave out internal terms (result classes, causes, record fields, log paths) unless asked. Start with what changed, then what's next, then a `Needs you:` line with the decision you need or `nothing`. Include the URL of every PR you mention. Full details stay in the state file.
 
 ## Guardrails
 
