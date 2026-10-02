@@ -28,11 +28,11 @@ Then continue from there, not fresh.
 1. Start the next queued issue (an Epic runs by its own number, children in sub-issue order) and watch for its exit.
 2. Act on its result record (table below). For every `ready` or `blocked` child, also read its spec concerns.
 3. Between runs, take in new work (below).
-4. Repeat from step 1. When the queue is empty, run the idle watcher; when it fires, go to step 3.
+4. Repeat from step 1. Once the queue is empty and no issues are open, run **Cleanup** (Commands), update the state file and stop with nothing running: report the queue done; `/babysit` resumes.
 
 | Result | Action |
 |---|---|
-| `ready`, with a PR | Run `gh pr checks <pr> --watch` in the background, then merge (`merge-green` decides pass or fail), then rerun the same issue. If merge refuses because checks failed, rerun the failed CI jobs once and try again; a second failure is a problem, normally the child-CI fix path. |
+| `ready`, with a PR | Run `gh pr checks <pr> --watch` in `<P>` in the background, then merge (`merge-green` decides pass or fail), then rerun the same issue. If merge refuses because checks failed, rerun the failed CI jobs once and try again; a second failure is a problem, normally the child-CI fix path. |
 | `complete` | Close the Epic, then start the next queued issue. |
 | `blocked`, class `transient` or `fixable`, or cause `environment` or `self-change` | Clear only what is safe (install a missing tool inside the project, remove your own scratch files from the operator checkout), then rerun once. The same class and cause again is a problem. Auth, access, and other files in the operator checkout go to the user. |
 | `blocked` on a spec conflict | See spec blocks below. |
@@ -90,7 +90,7 @@ Run from `<O>`. `Q` stands for `<P>/.scratch/queue-orchestration`, written out i
 - **Start:** `mkdir -p Q && (nohup npm --silent start -- <n> >> Q/controller-<n>.out 2>&1 < /dev/null & echo $! > Q/controller-<n>.pid)`. After about 20 seconds, check the process is alive and the output shows the run started. A run with nothing new to do (replayed decision, `ready` before its merge, `complete`) exits within seconds: read its result instead of reporting a failed start.
 - **Result:** `grep '^{"status"' Q/controller-<n>.out | tail -1`.
 - **Exit watcher** (background; restart it if it times out while the process lives): `while kill -0 $(cat Q/controller-<n>.pid) 2>/dev/null; do sleep 30; done; grep '^{"status"' Q/controller-<n>.out | tail -1`
-- **Idle watcher** (background): `until [ "$(gh issue list -R <owner>/<repo> --search "created:><last drain>" --json number -q length)" != 0 ]; do sleep 1800; done`
 - **Attach** (for the user): `cd <O> && npm start -- <n> --attach`, plus `--target <P>`.
-- **Merge:** `node scripts/merge-green.mjs <pr> [--accept-head <sha>]` in `<O>` (`<sha>`: the full 40-character lowercase PR head): checks CI on the PR head, runs the merge gate, merges, syncs `main`; refuses while a controller runs. It doesn't support another project yet, so there a ready PR stops that queue until it does.
+- **Merge:** `node scripts/merge-green.mjs <pr> [--accept-head <sha>]` in `<O>`, plus `--target <P>` for another project (`<sha>`: full 40-character lowercase PR head): checks CI on the PR head, runs the merge gate (Sandcastle only), merges, syncs `<P>`'s `main`; refuses while a controller runs.
 - **Preflight:** see the README's preflight section.
+- **Cleanup** (no controller running): delete merged child branches: `git -C <P> fetch -q --prune origin; for b in $(git -C <P> branch -r --list 'origin/sandcastle/*' | sed 's|^ *origin/||'); do [ "$(gh pr list -R <owner>/<repo> --head $b --state merged --json number -q length)" = 1 ] && git -C <P> push -q origin --delete $b; done`. Remove leftover `.worktrees/preflight-*` (`git -C <P> worktree remove --force`) and finished issues' spec and scratch dirs in `<O>/.scratch/`; keep the state file and controller output. Report removals in one line.
