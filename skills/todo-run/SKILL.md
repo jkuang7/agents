@@ -9,7 +9,7 @@ Run planned tasks AFK until none remain. One **Todo** Task page in Objective is 
 
 ## Find the queue
 
-Find and fetch the existing non-archived Task named **Todo** in the Objective database under Journal. If it is missing, stop and report that the queue page was not found; /todo owns creating it. If multiple non-archived Todo Tasks exist, stop and report the ambiguity. Read its page content and process only root-level task checkboxes. Preserve all other content.
+Find and fetch the existing non-archived Task named **Todo** in the Objective database under Journal. If the container cannot be resolved uniquely, stop and report that /todo must repair it. Read its page content and process only root-level task checkboxes. Preserve all other content.
 
 Run only one `/todo-run` session at a time. The running marker is not an atomic lock, so concurrent runs could duplicate work.
 
