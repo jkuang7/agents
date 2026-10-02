@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Collect a task dump, plan the tasks with the user, and capture them as checkboxes on one Notion Todo page. Use for /todo, “add these tasks,” or a pasted list. Running tasks is /todo-run.
+description: Collect a task dump, plan the tasks with the user, and capture them as checkboxes on the Todo page in Objective’s Backlog. Use for /todo, “add these tasks,” or a pasted list. Running tasks is /todo-run.
 ---
 
 # Todo
@@ -15,7 +15,7 @@ For each message, reply only “Got it.” and collect it. Read no code, run no 
 
 On the signal, use all messages since `/todo` (or since the first message if invoked without `/todo`), in order. Later messages correct earlier ones. Merge repeated tasks while retaining their useful details, links, names, and constraints. Replies to planning questions are decisions, not new tasks.
 
-Keep one persistent Notion page titled **Todo** under Journal. Find and fetch the existing page before creating anything; never create a duplicate. If it does not exist, create it there. The page is the task store; do not create Objective database rows.
+Keep one persistent Notion Task page named **Todo** in the **Objective** database under Journal. This is the single checklist container shown in the Backlog view; individual dump items are checkboxes inside its page body, not separate database rows. Find and fetch the existing non-archived Todo Task before creating anything. If none exists, create one in Objective with Type = Task, Archive = No, and Status = Backlog. If multiple non-archived Todo Tasks exist, stop and report the ambiguity instead of choosing or creating another. Never create a separate Journal page or duplicate Todo container. When adding open tasks to an existing Done or Blocked container, set its Status back to Backlog. Confirm the data source has the Type, Archive, and Status properties and the required status options; if not, stop before writing.
 
 Each task is one root checkbox, with its plan in a collapsible details block:
 
@@ -34,7 +34,7 @@ Each task is one root checkbox, with its plan in a collapsible details block:
 
 Use the user's local date for Added. Preserve supplied source links in the task's details. Keep the exact requested work; do not execute it during `/todo`.
 
-Check the existing Todo page before adding tasks. Skip duplicates among open checkboxes and tasks completed today. Merge useful new details into an existing matching open item without erasing prior decisions. Do not remove completed items.
+Check the existing Todo page before adding tasks. Skip duplicates among open checkboxes and tasks completed today. Merge useful new details into an existing matching open item without erasing prior decisions. Do not remove completed items. Keep the Todo container's Archive property set to No while it holds active checklist items.
 
 Plan every new task and any existing open task that lacks a complete plan. Decide the goal, checkable finish, route, prerequisites, and boundaries. Use workspace model-routing preferences for judgment-heavy choices. Research facts that can be settled cheaply; ask only about decisions the evidence cannot settle.
 
