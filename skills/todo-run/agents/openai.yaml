@@ -1,4 +1,4 @@
 interface:
   display_name: "Todo Run"
-  short_description: "Run planned Notion Task rows AFK until none remain"
-  default_prompt: "Use $todo-run to run the planned Task rows in the Notion Objective database AFK."
+  short_description: "Run planned checkboxes on my Notion Todo page"
+  default_prompt: "Use $todo-run to run planned tasks from my Notion Todo page AFK."
