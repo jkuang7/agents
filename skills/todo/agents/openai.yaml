@@ -1,4 +1,4 @@
 interface:
   display_name: "Todo"
-  short_description: "Collect tasks, then plan them as checkboxes on one Notion page"
-  default_prompt: "Use $todo to collect my tasks; on go, add and plan them on my Notion Todo page."
+  short_description: "Collect and plan checkboxes on Objective’s Todo page"
+  default_prompt: "Use $todo to collect tasks; on go, add and plan them on the Todo page in Objective’s Backlog."

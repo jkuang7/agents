@@ -1,4 +1,4 @@
 interface:
   display_name: "Todo Run"
-  short_description: "Run planned checkboxes on my Notion Todo page"
-  default_prompt: "Use $todo-run to run planned tasks from my Notion Todo page AFK."
+  short_description: "Run planned checkboxes on Objective’s Todo page"
+  default_prompt: "Use $todo-run to run planned tasks from the Todo page in Objective’s Backlog AFK."
