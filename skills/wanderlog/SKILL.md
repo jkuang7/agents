@@ -41,7 +41,7 @@ The brief is the only trip-specific part. Take it from the user's message. If th
 - One main anchor plus at most one optional stop per half-day.
 - 5–6 active hours.
 - A seated break every 75–90 minutes.
-- One reserved meal per day.
+- One reserved meal per day by default. Don't add a second reservation, and never remove a confirmed one.
 - Early dinner, around 4:30–5:30 PM.
 - The group stays together; never split it.
 - The least flexible eater sets the floor. Someone who needs cooked food means cooked options at every meal; a single-cuisine plan that excludes them has failed.
@@ -66,9 +66,13 @@ The brief is the only trip-specific part. Take it from the user's message. If th
 3. **Stale ⏳ text** contradicting a real confirmation ("awaiting confirmation" left after it confirmed)?
 4. **A "settled / paid / arranged" claim without evidence?** Logistics described as done that were never booked.
 5. **A pick presented as decided** without Jian's explicit yes?
-6. **Day notes reference the master bookings list, never duplicate it.** One source of truth; remove doubled wording.
+6. **The day's BOOKING STATUS line matches MASTER CONFIRMED BOOKINGS exactly** (time, party, payment, reference), and the same booking isn't restated in the day's other blocks. Remove doubled wording; never let two copies disagree.
 7. **Whitespace or run-together text** in notes? Clean it without touching content, order, times, prices or statuses.
 8. **Right date and right segment?** Solo-day edits don't belong on family days, and the reverse. Check which segment the brief assigns each date.
+9. **Route and numbered list agree on every stop?** Look for stops in the list that the route omits, and backups listed as if they were scheduled.
+
+## House style
+`style.md` has the trip's note and stop-card formats and the planning principles behind it. Read it before writing any note or stop, and match it: copy the trip's own wording pattern for the same kind of item.
 
 ## Workflow
 1. Read the shared link (read-only) for current state.
