@@ -19,13 +19,13 @@ Orient before acting:
 
 1. Read the state file if it exists: `## Authority`, `## Queue`, `## Inbox`, `Last drain`, and recorded reruns.
 2. Check live state: a running controller ("Already running?"), open child PRs, and whether `main` matches `origin/main` in `<P>` and `<O>`.
-3. Reconcile `## Queue` with GitHub: drop closed issues; add open Epics and standalone specs not yet queued, skipping `not-ready`, not-planned and non-spec issues, placed by the ordering rule. Without a state file, create one with `## Authority`, `## Queue`, `## Inbox` and `Last drain` (now).
+3. Reconcile `## Queue` with GitHub: drop closed issues; add open Epics and standalone specs not yet queued, skipping not-planned and non-spec issues and `not-ready` ones whose reason (New work) still holds, placed by the ordering rule. Without a state file, create one with `## Authority`, `## Queue`, `## Inbox` and `Last drain` (now).
 
 Then continue from there, not fresh.
 
 ## The loop
 
-1. Start the next queued issue (an Epic runs by its own number, children in sub-issue order) and watch for its exit.
+1. Start the next queued issue (an Epic runs by its own number, children in sub-issue order) and arm the **Exit watcher** in the same turn as every Start, including reruns after a merge. Never end a turn with a controller running and no watcher: that stalls the AFK loop. When the watcher reports, continue the loop at once without waiting for the user; end a turn only on `unclear`, an empty queue, or a stop in Guardrails.
 2. Act on its result record (table below). For every `ready` or `blocked` child, also read its spec concerns.
 3. Between runs, take in new work (below).
 4. Repeat from step 1. Once the queue is empty and no issues are open, run **Cleanup** (Commands), update the state file and stop with nothing running: report the queue done; `/babysit` resumes.
@@ -63,7 +63,7 @@ Fix code only through these paths, one attempt per issue and cause; the same fai
 
 The project's whole GitHub repository is this thread's work; another thread may add specs, Epics or sub-issues at any time. Between runs, never mid-run:
 
-- Take each open issue that isn't queued, labelled `not-ready`, recorded as closed or not planned, or a non-spec, whenever it was created: an Epic loses `not-ready` only once its children are published. Apart from the fix issues under **When something breaks**, this thread writes no specs: a separate `specs` thread publishes them, and an `## Inbox` line is answered by telling the user to run `specs` with it.
+- Take each open issue that isn't queued, labelled `not-ready`, recorded as closed or not planned, or a non-spec, whenever it was created: a `not-ready` issue is read for its reason (body and comments): when the reason is a blocker (another issue or Epic that must merge first) and that blocker is closed and the children are published, remove the label and queue it; when the blocker is still open, queue it behind the blocker and run the blocker first; when specs are unfinished or the reason is unclear, skip it and ask. Apart from the fix issues under **When something breaks**, this thread writes no specs: a separate `specs` thread publishes them, and an `## Inbox` line is answered by telling the user to run `specs` with it.
 - Place it in `## Queue` with a one-line reason, by the ordering rule. Update `Last drain`.
 - A new sub-issue of a queued Epic runs on that Epic's next run in GitHub's order. If it belongs earlier, move it among the unstarted children: `gh api -X PATCH repos/<owner>/<repo>/issues/<epic>/sub_issues/priority -F sub_issue_id=<id> -F before_id=<id>` (ids from `gh api repos/<owner>/<repo>/issues/<n> -q .id`). Never move a started child.
 
@@ -90,7 +90,7 @@ Run from `<O>`. `Q` stands for `<P>/.scratch/queue-orchestration`, written out i
 - **Start:** `mkdir -p Q && (nohup npm --silent start -- <n> >> Q/controller-<n>.out 2>&1 < /dev/null & echo $! > Q/controller-<n>.pid)`. After about 20 seconds, check the process is alive and the output shows the run started. A run with nothing new to do (replayed decision, `ready` before its merge, `complete`) exits within seconds: read its result instead of reporting a failed start.
 - **Result:** `grep '^{"status"' Q/controller-<n>.out | tail -1`.
 - **Exit watcher** (background; restart it if it times out while the process lives): `while kill -0 $(cat Q/controller-<n>.pid) 2>/dev/null; do sleep 30; done; grep '^{"status"' Q/controller-<n>.out | tail -1`
-- **Attach** (for the user): `cd <O> && npm start -- <n> --attach`, plus `--target <P>`.
+- **Attach** (for the user): one paste-ready line with paths filled in. When `npm start -- --help` lists the number-less `--attach`, give `cd <O> && npm start -- --attach --target <P>` (drop `--target` when `<P>` is `<O>`); it follows every run of the project and exits when no issues are open. Otherwise give `cd <O> && npm start -- <n> --attach`, plus `--target <P>`. Print it once at Start and again in the final report.
 - **Merge:** `node scripts/merge-green.mjs <pr> [--accept-head <sha>]` in `<O>`, plus `--target <P>` for another project (`<sha>`: full 40-character lowercase PR head): checks CI on the PR head, runs the merge gate (Sandcastle only), merges, syncs `<P>`'s `main`; refuses while a controller runs.
 - **Preflight:** see the README's preflight section.
 - **Cleanup** (no controller running): delete merged child branches: `git -C <P> fetch -q --prune origin; for b in $(git -C <P> branch -r --list 'origin/sandcastle/*' | sed 's|^ *origin/||'); do [ "$(gh pr list -R <owner>/<repo> --head $b --state merged --json number -q length)" = 1 ] && git -C <P> push -q origin --delete $b; done`. Remove leftover `.worktrees/preflight-*` (`git -C <P> worktree remove --force`) and finished issues' spec and scratch dirs in `<O>/.scratch/`; keep the state file and controller output. Report removals in one line.
