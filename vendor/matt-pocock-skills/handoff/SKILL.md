@@ -13,7 +13,8 @@ The user will copy your handoff, clear the conversation, and paste it as the fir
 Compact by relevance, not by recency or completeness. Usually that means the remaining work: spend the handoff on what is left to do, and give completed work and settled decisions as little space as possible: one line each, only when the remaining work depends on them. Before writing, name the next task or tasks (the user's focus if given, else the remaining work), then keep only what that session needs to act on it. For each candidate item ask: would the next session act differently without it? If not, drop it.
 
 - Always keep the user's values, philosophies and working preferences when they could shape the next session's choices (for example robustness over speed, lean over machinery, how they want to be updated). They are context even when no task mentions them.
-- Drop finished sub-tasks, superseded plans, dead ends with no lasting lesson, earlier topics unrelated to the next task, tool output, and the story of how conclusions were reached. State the result, not the path.
+- Always keep resume state: working directory, branch, HEAD, owned uncommitted changes, and the next action, with commands as one-line results.
+- Drop finished sub-tasks, superseded plans, dead ends with no lasting lesson, earlier topics unrelated to the next task, raw tool output, and the story of how conclusions were reached. State the result, not the path.
 - Keep a finished item only as a one-line fact when later work depends on it (a merged PR's effect, a decision others build on).
 - When in doubt, cut. Prefer a narrower handoff: leave out anything that does not help the next thread, even if it was important in this one. The new session can read live state, specs and the record for the rest.
 - A longer conversation does not earn a longer handoff. Length follows what the next task needs; a small next step gets a short handoff.
