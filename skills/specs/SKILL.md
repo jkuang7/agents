@@ -70,6 +70,7 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 - **Blockers:** If the confirmed goal cannot be met as stated, a smaller or alternative proposal is an unclear decision; never add infrastructure or drop a confirmed guarantee yourself.
 - **Someone else's draft:** Say what you removed and why in the decisions comment, never in the spec, which workers read as binding.
 - **Size:** Aim for under about 4,000 characters and five acceptance criteria for the core spec; this excludes what other rules here require (real-world check, existing-test list, consumers, saved results).
+- **Architecture (Epics):** An Epic parent's `## Goal` ends with one line, `Architecture: extend` or `Architecture: reshape`, followed by the intent in words: which responsibilities need one home, and why. Use `extend` unless building on the current layout would force copied helpers or code in the wrong module. A new app or subsystem is `reshape`. Name no modules or files; the reshape slice picks them and records them in the target repository's `AGENTS.md` code map. A reshape that is large or hard to reverse is an unclear decision.
 
 ## 4. Review
 
