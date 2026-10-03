@@ -18,10 +18,10 @@ Invoking `/babysit` authorizes merging the project's green Sandcastle child PRs,
 Orient before acting:
 
 1. Read the state file if it exists: `## Authority`, `## Queue`, `## Inbox`, `Last drain`, and recorded reruns.
-2. Check live state: a running controller ("Already running?"), open child PRs, and whether `main` matches `origin/main` in `<P>` and `<O>`. When a controller is running and you are resuming it, start the exit watcher on its existing PID. When `specs` invoked you and a controller or babysitter is already running, stop with a one-line note and no question; that babysitter picks up the new issues between runs.
+2. Check live state: a running controller ("Already running?"), open child PRs, and whether `main` matches `origin/main` in `<P>` and `<O>`. Resuming a controller: start the exit watcher on its PID. Invoked by `specs` with one running: stop, one-line note.
 3. Reconcile `## Queue` with GitHub: drop closed issues; add open Epics and standalone specs not yet queued, skipping `not-ready`, not-planned and non-spec issues, placed by the ordering rule. Without a state file, create one with `## Authority`, `## Queue`, `## Inbox` and `Last drain` (now).
 
-Then continue from there, not fresh.
+Continue from there.
 
 ## The loop
 
@@ -63,7 +63,7 @@ Fix code only through these paths, one attempt per issue and cause; the same fai
 
 ## New work
 
-The project's whole GitHub repository is this thread's work; others may add work at any time. Between runs, never mid-run:
+The project's whole GitHub repository is this thread's work; others may add work any time. Between runs only:
 
 - Take each open issue that isn't queued, labelled `not-ready`, recorded as closed or not planned, or a non-spec, whenever it was created: an Epic loses `not-ready` only once its children are published. Apart from the fix issues under **When something breaks**, this thread writes no specs: `specs` publishes them, and an `## Inbox` line is answered by telling the user to run `specs` with it.
 - Place it in `## Queue` with a one-line reason, by the ordering rule. Update `Last drain`.
@@ -81,12 +81,12 @@ Write each message as a status update of at most five plain lines, without inter
 - Merge only Sandcastle's own child PRs, only when green, through `merge-green`, one at a time, while no controller runs.
 - Never hand-edit a child branch. The one exception is the child-CI fix above: one worker commit, reviewer-approved, merged with `--accept-head`. Any other new head stops the next run with `drift`.
 - Write no code yourself; code goes through the fix paths.
-- Link every PR the queue produces (child, fix, hotfix) as soon as it exists: call `link_pull_request` with its URL when available.
+- Link every PR the queue produces as soon as it exists: call `link_pull_request` with its URL when available.
 - Record every rerun (issue, class, cause; a CI-job rerun counts), the current issue and the queue order in the state file.
 
 ## Commands
 
-Run from `<O>`. `Q` stands for `<P>/.scratch/queue-orchestration`, written out in full; `<n>` is the issue, `<pr>` the child PR. Each shell starts fresh, so every command is self-contained.
+Run from `<O>`. `Q` stands for `<P>/.scratch/queue-orchestration`, written out in full; `<n>` is the issue, `<pr>` the child PR. Each shell starts fresh; commands are self-contained.
 
 - **Already running?** If `kill -0 $(cat Q/controller-<n>.pid 2>/dev/null) 2>/dev/null` succeeds, don't launch; report it and give the attach command.
 - **Start:** `mkdir -p Q && (nohup npm --silent start -- <n> >> Q/controller-<n>.out 2>&1 < /dev/null & echo $! > Q/controller-<n>.pid)`. After about 20 seconds, check the process is alive and the run started. A run with nothing new to do (replayed decision, `ready` before its merge, `complete`) exits within seconds: read its result instead of reporting a failed start.
