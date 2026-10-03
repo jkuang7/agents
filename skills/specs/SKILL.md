@@ -91,4 +91,4 @@ Follow the repository's instructions and tracker policy. Publish several items i
 - **New Epic:** Create the Epic issue with the parent spec as its body and the `not-ready` label (create it if missing) so a runner skips it until it has children; it is the spec's only copy. Then run `to-tickets` on it now, which removes the label, and end with all links. Each child issue is the binding spec; the parent is context.
 - **Existing Epic:** Choosing the Epic is a decision; then use `to-tickets` to add the child issue from the confirmed need.
 
-Publishing never starts Sandcastle; a separate `babysit` thread runs published issues.
+After publishing, invoke `/babysit` for the repository in this same thread so the published issues run without a separate handoff.

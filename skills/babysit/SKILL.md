@@ -18,7 +18,7 @@ Invoking `/babysit` authorizes merging the project's green Sandcastle child PRs,
 Orient before acting:
 
 1. Read the state file if it exists: `## Authority`, `## Queue`, `## Inbox`, `Last drain`, and recorded reruns.
-2. Check live state: a running controller ("Already running?"), open child PRs, and whether `main` matches `origin/main` in `<P>` and `<O>`.
+2. Check live state: a running controller ("Already running?"), open child PRs, and whether `main` matches `origin/main` in `<P>` and `<O>`. When a controller is running and you are resuming it, start the exit watcher on its existing PID. When `specs` invoked you and a controller or babysitter is already running, stop with a one-line note and no question; that babysitter picks up the new issues between runs.
 3. Reconcile `## Queue` with GitHub: drop closed issues; add open Epics and standalone specs not yet queued, skipping `not-ready`, not-planned and non-spec issues, placed by the ordering rule. Without a state file, create one with `## Authority`, `## Queue`, `## Inbox` and `Last drain` (now).
 
 Then continue from there, not fresh.
@@ -65,7 +65,7 @@ Fix code only through these paths, one attempt per issue and cause; the same fai
 
 The project's whole GitHub repository is this thread's work; others may add work at any time. Between runs, never mid-run:
 
-- Take each open issue that isn't queued, labelled `not-ready`, recorded as closed or not planned, or a non-spec, whenever it was created: an Epic loses `not-ready` only once its children are published. Apart from the fix issues under **When something breaks**, this thread writes no specs: a separate `specs` thread publishes them, and an `## Inbox` line is answered by telling the user to run `specs` with it.
+- Take each open issue that isn't queued, labelled `not-ready`, recorded as closed or not planned, or a non-spec, whenever it was created: an Epic loses `not-ready` only once its children are published. Apart from the fix issues under **When something breaks**, this thread writes no specs: `specs` publishes them, and an `## Inbox` line is answered by telling the user to run `specs` with it.
 - Place it in `## Queue` with a one-line reason, by the ordering rule. Update `Last drain`.
 - A new sub-issue of a queued Epic runs on that Epic's next run in GitHub's order. If it belongs earlier, move it among the unstarted children: `gh api -X PATCH repos/<owner>/<repo>/issues/<epic>/sub_issues/priority -F sub_issue_id=<id> -F before_id=<id>` (ids from `gh api repos/<owner>/<repo>/issues/<n> -q .id`). Never move a started child.
 

@@ -11,7 +11,11 @@ Run planned tasks AFK until none remain. One **Todo** Task page in Objective is 
 
 Find and fetch the existing non-archived Task named **Todo** in the Objective database under Journal. If the container cannot be resolved uniquely, stop and report that /todo must repair it. Read its page content and process only root-level task checkboxes. Preserve all other content.
 
-Run only one `/todo-run` session at a time. The running marker is not an atomic lock, so concurrent runs could duplicate work.
+Run only one `/todo-run` session at a time. Before touching tasks, claim `/Volumes/T9/Dev/.scratch/todo-run/runner.pid`, which holds this session's PID (`$PPID` in the Bash tool is the claude session process) and its start time (`ps -o lstart= -p $PPID`):
+
+- Create it atomically: `mkdir -p /Volumes/T9/Dev/.scratch/todo-run && set -o noclobber && echo "$PPID $(ps -o lstart= -p $PPID)" > /Volumes/T9/Dev/.scratch/todo-run/runner.pid`.
+- If the file exists and that PID is alive with the same start time, stop with a one-line note naming the holder; do not ask the user.
+- If that PID is dead or its start time differs, delete the file, create it as above and continue.
 
 State is stored in each checkbox and its details block:
 
@@ -31,7 +35,7 @@ Each task's collapsible details should contain Added, Goal, Done when, Route, Af
 5. On completion, check the box and add a one-line `Result YYYY-MM-DD: ...` inside its details only when Done when is met. Put longer findings in the linked source page or a relevant artifact and summarize/link it in Result. If completion is not met after one retry, leave unchecked and replace running with `Status: blocked — <reason>`.
 6. After a blocker, continue with independent runnable tasks. Re-fetch the page before each edit and update only the task block being changed, preserving concurrent edits and other task blocks. Re-scan the page after finishing a batch so newly added tasks are considered. Reconcile the container Status from the checkbox states before stopping: Done if all are checked; Blocked if every unchecked item is blocked; Backlog if unchecked work remains and none is running.
 
-If an ambiguity has one clearly likeliest and reversible reading, proceed and record that reading in Result. Otherwise block with the specific question. Never leave work marked running when stopping. If an unplanned external side effect is needed, block the task and ask for the required decision instead of doing it. Spending money or messaging someone as the user requires explicit approval in Decisions. Do not treat read-only inspection, research, or drafting as approval to send or purchase.
+If an ambiguity has one clearly likeliest and reversible reading, proceed and record that reading in Result. Otherwise block with the specific question. Never leave work marked running when stopping, and remove `runner.pid` (only if it holds this session's PID). If an unplanned external side effect is needed, block the task and ask for the required decision instead of doing it. Spending money or messaging someone as the user requires explicit approval in Decisions. Do not treat read-only inspection, research, or drafting as approval to send or purchase.
 
 ## Routing
 
