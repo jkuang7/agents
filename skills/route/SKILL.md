@@ -5,9 +5,9 @@ description: Who does a piece of work, which model, agent, reviewer or tool, and
 
 # Route
 
-The only place routing is written; Claude Code always loads it (`~/.claude/rules/route.md`). Elsewhere, point here instead of restating it.
+The only place routing is written; Claude Code always loads it (`~/.claude/rules/route.md`), and Codex gets it in `~/.codex/AGENTS.md`, both set up by `bin/deploy`. Elsewhere, point here instead of restating it.
 
-**Updating:** `/route <change>` edits this file (`/Volumes/T9/Dev/agents/skills/route/SKILL.md`), moves any routing found restated elsewhere into it, and finishes through a PR. `/route` alone summarizes the current routes.
+**Updating:** `/route <change>` edits this file (`/Volumes/T9/Dev/agents/skills/route/SKILL.md`), moves any routing found restated elsewhere into it, and finishes through a PR, then runs `bin/deploy` so Codex's copy matches. `/route` alone summarizes the current routes.
 
 ## Models and agents
 

@@ -117,5 +117,34 @@ class DeployTests(unittest.TestCase):
         self.assertEqual(self.run_deploy("--check").returncode, 0)
 
 
+    def test_codex_agents_file_carries_workspace_rules_and_route(self):
+        (self.root / "AGENTS.md").write_text("# Workspace rules\n")
+        route = self.repository / "skills/route"
+        route.mkdir(parents=True)
+        (route / "SKILL.md").write_text(
+            "---\nname: route\ndescription: Test.\n---\n\n# Route body\n"
+        )
+        codex_agents = self.runtime_roots["CODEX_HOME"] / "AGENTS.md"
+        codex_agents.parent.mkdir(parents=True)
+        codex_agents.symlink_to(self.root / "AGENTS.md")
+
+        self.assertEqual(self.run_deploy("--check").returncode, 1)
+        result = self.run_deploy()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        text = codex_agents.read_text()
+        self.assertFalse(codex_agents.is_symlink())
+        self.assertIn("# Workspace rules", text)
+        self.assertIn("# Route body", text)
+        self.assertNotIn("description: Test.", text)
+        self.assertEqual(self.run_deploy("--check").returncode, 0)
+
+        (route / "SKILL.md").write_text("---\nname: route\n---\n# Changed\n")
+        self.assertEqual(self.run_deploy("--check").returncode, 1)
+
+        codex_agents.write_text("hand written\n")
+        self.assertEqual(self.run_deploy().returncode, 1)
+        self.assertEqual(codex_agents.read_text(), "hand written\n")
+
+
 if __name__ == "__main__":
     unittest.main()
