@@ -26,7 +26,7 @@ What the human said is confirmed; a linear or shape decision counts as confirmed
 
 ## 2. Choose the route
 
-- **Single PR:** one focused change of about 350 changed lines or less (counted as `to-tickets` counts them).
+- **Single PR:** one focused change of about 150 changed lines or less, counted as `to-tickets` counts them (test code excluded); anything larger becomes an Epic.
 - **Existing Epic:** fits that Epic's goal as one more child PR; otherwise use a separate Epic.
 - **New Epic:** too large for one PR, delivered as several child issues toward one goal, each its own PR. This skill writes the parent; `to-tickets` writes the children.
 - **Multiple Epics:** only when the goals are separate. Do not nest Epics.
