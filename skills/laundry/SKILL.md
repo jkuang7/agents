@@ -6,8 +6,7 @@ description: Book a one-time standard laundry pickup and return on laundromatpic
 # Laundry booking
 
 ## Runtime
-- Required: Codex on GPT-6.1-Sol at high reasoning effort, driving the user's local, signed-in Zen browser with computer use (`cua_repl`).
-- A skill cannot set the model, the effort level or the browser. If the session differs from this requirement or you can't tell, pause browser work, report accurately what is running or that it is unknown, and ask the user to choose an appropriate session. Never claim the runtime changed and never invent a setting.
+- Required: the browser setup in the `route` skill, in the user's signed-in Zen browser. A skill cannot set the model, the effort level or the browser.
 - If computer use in Zen is unavailable, say so and stop. Never fall back to another browser or the site's booking APIs.
 - You may use calendar connectors, but only to read availability. Never edit any calendar.
 
