@@ -30,6 +30,7 @@ The only place routing is written; Claude Code always loads it (`~/.claude/rules
 | Reddit or community opinion | ChatGPT web |
 | Signed-in screen inspection, computer use, any browser step | Codex computer use (below) |
 | Code changes and engineering investigations | Codex, following the target repository's AGENTS.md and the sections above |
+| Creating, editing, updating or deleting a skill | Sonnet 5.5 (`claude-sonnet-5-5`), following `/Volumes/T9/Dev/docs/agents/skills.md`; from Codex: `claude -p --model sonnet --permission-mode bypassPermissions "<brief>"` |
 | Architecture, design tradeoffs, unclear technical direction | `advisor`, then route the decided work |
 | A Sandcastle Epic or issue to run or resume | `/babysit` |
 | Claude as the worker | only when the user explicitly asks, through the approved route and its required tap |
