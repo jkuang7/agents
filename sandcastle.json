@@ -1,0 +1,1 @@
+{"test":["python3","-m","unittest","evals/test_skills.py","evals/test_deploy.py","evals/test_wizard.py"]}
