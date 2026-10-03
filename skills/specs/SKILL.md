@@ -7,7 +7,7 @@ effort: medium
 
 # Specs
 
-Write the smallest spec that solves the real problem; each requirement costs build, review and upkeep. Run end to end: understand, spec, review, publish, and for an Epic, `to-tickets`.
+Write the smallest spec that solves the real problem; each requirement costs build, review and upkeep. Run end to end: understand, spec, review, publish, and for an Epic, `to-tickets`, then `/babysit`.
 
 **Decisions:** A decision is any choice this skill or `to-tickets` would otherwise put to the human. Decide it yourself (escalating as the `route` skill says) and sort it:
 
@@ -61,17 +61,15 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 
 - **Readability:** Plain sentences, no jargon, a short label per numbered item.
 - **Wording:** State a requirement's reason when it isn't obvious, so the implementer can handle uncovered cases.
-- **Absolute claims:** A goal or requirement saying "always", "every", "never", "whatever" or "any" must either list the paths it covers as acceptance cases (such as exit paths × kinds of leftover state) or state what is out of scope and why; otherwise narrow it. The review rejects one with neither.
-- **Rules, not examples:** When acceptance comes from a known failure, state the rule it breaks, give the failure as one example, list the paths the rule covers, and require a test for each. Listed cases are read as complete.
+- **Rules, not examples:** A goal or requirement saying "always", "every", "never", "whatever" or "any" must list the paths it covers as acceptance cases (such as exit paths × kinds of leftover state) or state what is out of scope and why; otherwise narrow it. The review rejects one with neither. When acceptance comes from a known failure, state the rule it breaks, give the failure as one example, list the paths the rule covers, and require a test for each; listed cases are read as complete. For a rule that sorts cases into outcomes (retry or stop, accept or reject), give a realistic example of each outcome and one realistic counterexample it must not cover, such as "Transient: a dropped connection. Not transient: expired auth, a 404." Without a counterexample, a wrong rule is built exactly and passes review.
 - **Acceptance criteria:** Prove behavior with fast, deterministic tests at the fastest level that catches the regression: unit for a rule, integration through the real entry point when the risk is in how parts fit, end-to-end only when it spans the whole system.
 - **Existing tests:** for each acceptance criterion that changes behavior, search the existing tests for assertions of the behavior it replaces, and for tests whose setup relies on it, such as a removed flag or a skipped step. Name every hit in the acceptance text ("Existing tests pass with assertions unchanged, except: …", with the new expectation), and name a family of variants (parametrized or cached cases) by file and pattern. An implementer told to keep tests unchanged stops when one contradicts the spec, which costs a full implementation.
 - **Failures:** Cover a failure only if it can happen and would block progress, corrupt data, report a wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Handle each by the first option that works: make it impossible by design (one representation per fact), else stop with a clear error, else recover automatically, only when stopping has hurt or the goal requires it.
-- **Rules:** For each rule that sorts cases into outcomes (retry or stop, accept or reject), give a realistic example of each outcome and one realistic case the rule must not cover, such as "Transient: a dropped connection. Not transient: expired auth, a 404." Without a counterexample, a wrong rule is built exactly and passes review.
 - **Consumers:** When a requirement changes a shared file, result shape, or loop, list every consumer of it (or state that you checked and found none else) and the change's behavior on each failure and retry path.
 - **Saved results:** For each new piece of saved state, cached result, or recorded decision, name every input that invalidates it and every path that reuses it (fresh run, resume, replay), and say in `## Failures` what happens on a crash before and after it is written, on a rerun, and when its inputs change mid-run. A result keyed on only some inputs goes stale silently.
 - **Blockers:** If the confirmed goal cannot be met as stated, a smaller or alternative proposal is an unclear decision; never add infrastructure or drop a confirmed guarantee yourself.
 - **Someone else's draft:** Say what you removed and why in the decisions comment, never in the spec, which workers read as binding.
-- **Size:** Aim for under about 4,000 characters and five acceptance criteria.
+- **Size:** Aim for under about 4,000 characters and five acceptance criteria for the core spec; this excludes what other rules here require (real-world check, existing-test list, consumers, saved results).
 
 ## 4. Review
 
