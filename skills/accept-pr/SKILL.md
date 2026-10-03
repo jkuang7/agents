@@ -14,6 +14,7 @@ The merge is authorized by the user's request, or by workspace or repository ins
 ## Merge
 
 1. Read the PR's head SHA, target branch and checks. Wait for required checks. Stop if one fails, or if the PR needs conflict resolution or another change; prepare and verify that change separately, then start again.
+   If the PR integrated a base branch and resolved a conflict by dropping one side's changes, its merge commit message and description must name each dropped change (commit or PR), say why dropping it is safe, and say whether its tests were kept, and its final review must have examined the dropped side. Stop if any is missing.
 2. Merge with the repository's usual strategy and the host's head guard (`gh pr merge <pr> --match-head-commit <sha>`), so a head that moved after you checked it is refused. Never bypass branch protection.
 3. Confirm that the host reports the PR merged. A queued or local merge isn't done.
 

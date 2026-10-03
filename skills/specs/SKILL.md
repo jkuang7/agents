@@ -7,7 +7,7 @@ effort: medium
 
 # Specs
 
-Write the smallest spec that solves the real problem. Every requirement costs effort to build, review and maintain. Run end to end without waiting: understand, spec, review, publish, and for an Epic, `to-tickets`.
+Write the smallest spec that solves the real problem; every requirement costs effort to build, review and maintain. Run end to end: understand, spec, review, publish, and for an Epic, `to-tickets`.
 
 **Decisions:** A decision is any choice this skill or `to-tickets` would otherwise put to the human. Decide it yourself (a Sonnet session asks the `advisor`) and sort it:
 
@@ -20,7 +20,7 @@ What the human said is confirmed; a linear or shape decision counts as confirmed
 ## 1. Understand the problem
 
 - **Goal:** State what the human is trying to achieve, including tradeoffs such as cost against quality. Behind a requested solution or measurement, find the problem; a suggested mechanism is a hypothesis until they confirm it.
-- **Root cause:** Before designing anything, work out the bottleneck, the constraints, and what makes this hard, from evidence (logs, data, prior runs, code, tracker history) read at its original source. Theory without evidence is not understanding. For a new feature, understand the constraints and the existing capabilities to build on.
+- **Root cause:** Before designing anything, work out the bottleneck, the constraints, and what makes this hard, from evidence (logs, data, prior runs, code, tracker history) read at its original source. For a new feature, understand the constraints and the existing capabilities to build on.
 - **Investigate now:** If existing evidence can answer a question, analyze it now. Never spec an analysis tool, report, or telemetry to find a cause; propose minimal new recording only when existing evidence cannot reveal it. Say what you could not establish instead of adding speculative requirements.
 - **Simplest fix:** Treat the human's proposed solution as a starting point, not the answer. Find the simplest fix that is easiest to maintain: fewest moving parts, least new state, reuse or delete before building; prefer an existing capability, an established practice, or a small direct change. It must still meet every confirmed goal and guarantee and stay correct. Compare it with the human's idea, which stays the default unless yours is clearly simpler for the same problem; then recommend yours and say what it gives up. Name the evidence that will show whether the fix worked.
 
@@ -38,15 +38,15 @@ What the human said is confirmed; a linear or shape decision counts as confirmed
 3. **Compounding gains:** changes that make every later run faster or less error-prone, such as cleanup that lets agents read less.
 4. **New features and high-risk work:** last, because they take longest to prove.
 
-Within a tier, put the larger gain first. A prerequisite goes just before the work that needs it, whatever its tier. Number an Epic's requirements in this order, and show each item's tier with the route.
+Within a tier, larger gain first; a prerequisite goes just before the work needing it. Number an Epic's requirements in this order, and show each item's tier with the route.
 
 **Safe to merge:** Every PR must be safe to merge on its own, even if no later issue in its Epic happens: existing behavior preserved, touched behavior complete, no half-finished user flow. When a flow cannot be finished within one PR, keep its incomplete part unreachable until the issue that completes it.
 
-Show the goal, your understanding of the problem, the fix (next to the human's idea when they differ, with your recommendation), and the route as one decision, then draft without waiting unless it is unclear.
+Show the goal, problem understanding, fix (beside the human's idea when they differ, with your recommendation) and route as one decision, then draft unless it is unclear.
 
 ## 3. Write the spec
 
-Add a requirement only if the fix fails without it. Describe observable outcomes unless the mechanism is the fix. Leave modules, interfaces and design to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
+Add a requirement only if the fix fails without it. Describe observable outcomes unless the mechanism is the fix; leave design to `to-tickets` and implementation. Never trade correctness for brevity. Use the repository's `CONTEXT.md` vocabulary and respect its ADRs.
 
 A single-PR spec and an Epic parent use these sections in this order; children use the `to-tickets` format. Omit an empty optional section; add no others.
 
@@ -59,12 +59,13 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 7. `## Open questions` (optional): only where an implementer would otherwise invent product behavior, each with a recommended answer.
 8. `## Out of scope`: what a reasonable implementer might otherwise do.
 
-- **Readability:** Write for a human reviewer: plain sentences, no jargon, a shared lead-in once above a list, a short label on each numbered item.
+- **Readability:** Write for a human reviewer: plain sentences, no jargon, a short label on each numbered item.
 - **Wording:** State a requirement's reason when it isn't obvious, so the implementer can handle uncovered cases; implementers stop on wrong wording rather than override it. Use "always", "never" or "only" only when any exception would be a defect.
 - **Acceptance criteria:** Prove behavior with fast, deterministic tests at the fastest level that catches the regression: unit for a rule, integration through the real entry point when the risk is in how parts fit, end-to-end only when it spans the whole system. Keep a truly needed slow or external check narrow.
 - **Existing tests:** for each acceptance criterion that changes behavior, search the existing tests for assertions of the behavior it replaces, and for tests whose setup relies on it, such as a removed flag or a skipped step. Name every hit in the acceptance text ("Existing tests pass with assertions unchanged, except: …", with the new expectation), and name a family of variants (parametrized or cached cases) by file and pattern. An implementer told to keep tests unchanged stops when one contradicts the spec, which costs a full implementation.
 - **Failures:** Cover a failure only if it can happen and would block progress, corrupt data, report a wrong result, break existing behavior, or make a merge unsafe. For unattended work, say when it continues, when it stops for a human, that failed work cannot advance, and where it restarts. Handle each by the first option that works: make it impossible by design (one representation per fact), else stop with a clear error, else recover automatically, only when stopping has hurt or the goal requires it; do not design retry or recovery machinery the goal does not need.
 - **Rules:** For each rule that sorts cases into outcomes (retry or stop, accept or reject), give a realistic example of each outcome and at least one realistic case the rule must not cover, such as "Transient: a dropped connection. Not transient: expired auth, a 404." Without a counterexample, a wrong rule is built exactly and passes every review.
+- **Consumers:** When a requirement changes a shared file, result shape, or loop, list every consumer of it (or state that you checked and found no others) and the change's behavior on each failure and retry path. Workers treat the list as complete.
 - **Saved results:** For each new piece of saved state, cached result, or recorded decision, name every input that invalidates it and every path that reuses it (a fresh run, a resume, a replay), and say in `## Failures` what happens on a crash before and after it is written, on a rerun, and when its inputs change mid-run. A result keyed on only some of its inputs goes stale silently.
 - **Blockers:** If the confirmed goal cannot be met as stated, a smaller or alternative proposal is an unclear decision. Do not add infrastructure or drop a confirmed guarantee yourself.
 - **Someone else's draft:** Tell the human what you removed and why in the decisions comment, never in the spec, which workers read as binding.
@@ -72,11 +73,11 @@ A single-PR spec and an Epic parent use these sections in this order; children u
 
 ## 4. Review
 
-Start a fresh reviewer in a new context (in Claude, the `reviewer` agent) with the goal, the confirmed guarantees, the agreed understanding and route, and the full spec; suggested mechanisms are not binding. It may check facts against their sources.
+Start a fresh reviewer in a new context (in Claude, the `reviewer` agent) with the goal, the confirmed guarantees, the agreed understanding and route, and the full spec; suggested mechanisms are not binding.
 
 Its first question: **is there a much simpler change that fixes the same root cause?** Then it checks the spec against every rule in sections 2 and 3.
 
-**Review loop** (`to-tickets` uses it too): For each rule in the work under review, the reviewer tries to find a realistic case where the rule gives the wrong answer. It returns every important finding it can support, most important first. Prefer fixing each by removing or narrowing a requirement. If a fix would change the agreed understanding, fix, or route, that is a decision, and dropping a confirmed guarantee is always unclear; otherwise revise for all findings. After each pass that changed a requirement or the design, start a new reviewer on the full work under review. Stop when a pass finds only wording or test tightening; apply it.
+**Review loop** (`to-tickets` uses it too): For each rule in the work under review, the reviewer tries to find a realistic case where the rule gives the wrong answer. It returns every important finding it can support, most important first. Prefer removing or narrowing a requirement. If a fix would change the agreed understanding, fix, or route, that is a decision, and dropping a confirmed guarantee is always unclear; otherwise revise for all findings. After each pass that changed a requirement or the design, start a new reviewer on the full work under review. Stop when a pass finds only wording or test tightening; apply it.
 
 **Design smell:** Sort each finding. A **robustness** fix tightens existing behavior (a missing failure case, a test, a wording gap); apply it. A **decision** fix needs a new rule, mode, cap, or exception, a guard for another guard, or a choice by the human. If a pass has a decision fix, or most findings trace to one capability, stop the loop and choose **one cut**: less power for that capability, or one approval point instead of a set of rules. Record what it gives up and how often, from evidence. Take it as a shape decision and rerun review; a cut that drops a confirmed guarantee is unclear. Review that stops converging (a fixed finding returns, or a pass finds at least as many requirement- or design-level problems as the last) is unclear: show the human the work, your revisions, and the open findings.
 
