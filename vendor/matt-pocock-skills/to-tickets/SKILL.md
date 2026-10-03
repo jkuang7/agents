@@ -42,7 +42,7 @@ Use sections that earn their place:
 - Genuine prerequisites.
 - Design direction, when warranted.
 
-Apply `specs`'s **Existing tests** rule to each ticket's acceptance. Carry into each ticket the parent's counterexamples and failure behavior for the rules and saved results that slice owns, and apply `specs`'s **Rules** and **Saved results** guidance to any the slice introduces.
+Apply `specs`'s **Existing tests** and **Consumers** rules to each ticket's acceptance. Carry into each ticket the parent's counterexamples and failure behavior for the rules and saved results that slice owns, and apply `specs`'s **Rules** and **Saved results** guidance to any the slice introduces.
 
 Add design direction only when the existing code suggests one that would make the slice easier to test, maintain, or reason about: a seam to test through, a deep module that hides complexity behind a small interface, an adapter at a boundary the slice must fake in tests, or a pattern the codebase already uses. Include a structure only when it earns its place in this slice. Use `codebase-design` vocabulary. State it as a recommendation with its reason; the implementer may depart from it when implementation evidence supports a better approach. Acceptance stays behavioral: never make a recommended structure an acceptance criterion.
 
