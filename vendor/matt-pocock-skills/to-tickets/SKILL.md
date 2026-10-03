@@ -19,7 +19,7 @@ Every slice meets `specs`'s **Safe to merge** rule, even if no later slice happe
 
 **Size:** size each slice for one fresh session and one reviewable PR. Estimate changed lines as additions plus deletions, excluding test code, generated files, lockfiles, and snapshots. Aim for about 150; at about 250, look for a natural behavioral split. Line count is a signal, never the reason to split: keep a coherent slice whole when splitting it would only create scaffolding, and split a small slice when it spans several state machines or responsibilities. Coherent behavior, observable acceptance, and a stable verification boundary come before size. State each slice's estimate.
 
-Keep slices vertical. Foundation, abstraction, infrastructure, or cleanup work earns a ticket only when it independently makes required behavior work. Combine concerns only when they cannot be implemented or proven independently.
+Keep slices vertical. Foundation, abstraction, infrastructure, or cleanup work earns a ticket only when it independently makes required behavior work, or when the parent says `Architecture: reshape`. In that case the first slice moves code to the intended homes, or scaffolds them for a new app, with behavior unchanged. Its acceptance is that existing tests pass with assertions unchanged and the `AGENTS.md` code map lists one home for each responsibility the parent names. Later slices carry no layout. Combine concerns only when they cannot be implemented or proven independently.
 
 Consider splitting at a distinct verification boundary, especially when one role changes a candidate and another verifies that exact result. Split when it produces useful behavior or materially reduces reasoning complexity; keep small extensions of the same proof path together.
 
