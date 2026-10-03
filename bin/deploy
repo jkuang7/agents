@@ -143,6 +143,25 @@ for source in "$claude_agents_source"/*.md; do
   fi
 done
 
+# Claude Code always loads user rules, so routing needs no skill trigger.
+route_source="$agents_root/skills/route/SKILL.md"
+route_target="${CLAUDE_HOME:-$HOME/.claude}/rules/route.md"
+if [[ -f "$route_source" ]]; then
+  if [[ -L "$route_target" && "$(readlink "$route_target")" == "$route_source" ]]; then
+    say "ok      $route_target"
+  elif [[ -e "$route_target" || -L "$route_target" ]]; then
+    say "CONFLICT $route_target"
+    problems=$((problems + 1))
+  elif $check_only; then
+    say "MISSING $route_target"
+    problems=$((problems + 1))
+  else
+    mkdir -p "$(dirname "$route_target")"
+    ln -s "$route_source" "$route_target"
+    say "linked  $route_target"
+  fi
+fi
+
 if (( problems )); then
   printf 'deploy: %d issue(s)\n' "$problems" >&2
   exit 1
