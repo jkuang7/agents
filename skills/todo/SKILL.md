@@ -5,7 +5,7 @@ description: Collect a task dump, plan the tasks with the user, and capture them
 
 # Todo
 
-Turn the dump into a durable, ready-to-run checklist. Do the planning while the user is present; do not start the tasks.
+Turn the dump into a durable, ready-to-run checklist. Do the planning while the user is present; the tasks run only through `/todo-run` after the report.
 
 ## Listen
 
@@ -54,4 +54,4 @@ Only update the affected task blocks. Preserve unrelated page content and concur
 
 ## Report
 
-Reply in one or two lines with the count and titles added and planned, duplicates skipped, and any item still unplanned with its reason. Leave task execution to `/todo-run`.
+Reply in one or two lines with the count and titles added and planned, duplicates skipped, and any item still unplanned with its reason. Then invoke `/todo-run` in this same thread to run them; skip it when nothing is runnable.
