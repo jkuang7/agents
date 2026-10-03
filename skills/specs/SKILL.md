@@ -9,7 +9,7 @@ effort: medium
 
 Write the smallest spec that solves the real problem; each requirement costs build, review and upkeep. Run end to end: understand, spec, review, publish, and for an Epic, `to-tickets`.
 
-**Decisions:** A decision is any choice this skill or `to-tickets` would otherwise put to the human. Decide it yourself (a Sonnet session asks the `advisor`) and sort it:
+**Decisions:** A decision is any choice this skill or `to-tickets` would otherwise put to the human. Decide it yourself (escalating as the `route` skill says) and sort it:
 
 - **linear:** one obvious answer. Apply it.
 - **shape:** several workable answers. Take the one with the least machinery.

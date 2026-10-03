@@ -38,7 +38,7 @@ Use the user's local date for Added. Preserve supplied source links in the task'
 
 Check the existing Todo page before adding tasks. Skip duplicates among open checkboxes and tasks completed today. Merge useful new details into an existing matching open item without erasing prior decisions. Do not remove completed items. Keep the Todo container's Archive property set to No while it holds active checklist items.
 
-Plan every new dump task and every older task the user explicitly selected for migration. Do not plan or modify unrelated open Objective rows. Decide the goal, checkable finish, route, prerequisites, and boundaries. Use workspace model-routing preferences for judgment-heavy choices. Research facts that can be settled cheaply; ask only about decisions the evidence cannot settle.
+Plan every new dump task and every older task the user explicitly selected for migration. Do not plan or modify unrelated open Objective rows. Decide the goal, checkable finish, route, prerequisites, and boundaries. Route each task and escalate judgment with the `route` skill. Research facts that can be settled cheaply; ask only about decisions the evidence cannot settle.
 
 Ask in one numbered round, grouped by task and ordered so dependent answers come later. Include only questions that matter: unclear intent or finish criteria, credentials or login the user must provide, approval before spending or messaging as the user, whether screen tasks may run while the user is away, and any user-written route that conflicts with the task. For multi-issue coding work ask whether `/todo-run` should start `/specs` and finish with “next: /babysit”. State the recommended answer and why. Follow up only when an answer changes another necessary question.
 
@@ -46,7 +46,7 @@ Once planning is resolved, write all five plan lines in each task's details bloc
 
 - **Goal:** intended outcome.
 - **Done when:** checkable completion.
-- **Route:** correct worker/tool and reason; route work by the current workspace routing preferences. A Claude product/artifact is the subject, not a request to use Claude as worker.
+- **Route:** worker/tool and reason, chosen with the `route` skill.
 - **After:** prerequisite task names or `none`.
 - **Decisions:** answers, approvals, and limits, or `none`.
 

@@ -1,6 +1,6 @@
 ---
 name: worker-high
-description: The worker at high effort, for retrying decided work after a review rejection. Use only when AGENTS.md says to retry on worker-high.
+description: The worker at high effort, for retrying decided work after a review rejection. Use only when the route skill says to retry on worker-high.
 model: sonnet
 effort: high
 ---

@@ -7,7 +7,7 @@ description: Babysit one project's Sandcastle work AFK until its queue is done, 
 
 You are the AFK babysitter for one project. Sandcastle does the work: each run delivers at most one child PR of an issue, then exits with a result record. You keep the queue moving: start runs, merge green PRs, rerun, pick up new work, and fix what breaks. Ask the user only when direction is unclear.
 
-Roles: Sandcastle implements and reviews; you run the loop; the `advisor` (Opus) judges; `worker` and `reviewer` (Sonnet) write and check code. Sandcastle's README and `--help` own its commands, results, budgets and recovery; read them once per session and after `main` changes; they win over this skill. Sandcastle refuses a second controller, recovers stale locks, fails closed on spec edits and replays decisions; don't re-check those.
+Roles: Sandcastle implements and reviews; you run the loop; the `advisor` judges; `worker` and `reviewer` write and check code, each as the `route` skill assigns. Sandcastle's README and `--help` own its commands, results, budgets and recovery; read them once per session and after `main` changes; they win over this skill. Sandcastle refuses a second controller, recovers stale locks, fails closed on spec edits and replays decisions; don't re-check those.
 
 ## Start
 
@@ -59,7 +59,7 @@ Fix code only through these paths, one attempt per issue and cause; the same fai
 - **`main` is red, or Sandcastle has a defect:** the advisor writes a focused issue (`specs`, checked by a fresh `reviewer`), it runs standalone through Sandcastle and merges through `merge-green`, then the queue resumes. If Sandcastle can't run it, a `worker` makes a hotfix PR in `.worktrees/`, a `reviewer` approves it, and it merges through `merge-green`.
 - **A flaky test:** rerun once and record its signature in the state file; the same signature again is a `main` fix.
 
-**Running from Codex:** Codex runs the loop's commands and sends every judgment to the advisor with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"` from `<O>`, asking the advisor to carry out a `linear` or `shape` fix itself (specs in its own session, code through `worker` and `reviewer`) and report what it did. The reply's first line must be `linear`, `shape` or `unclear`; anything else counts as `unclear`. Codex never writes specs or code or chooses options. Codex can't wake on background tasks, so wait in the foreground. A Claude session starts the `advisor` agent instead; an Opus session decides itself.
+**Running from Codex:** Codex runs the loop's commands and sends every judgment to the advisor by the `route` skill's Codex route from `<O>`, asking the advisor to carry out a `linear` or `shape` fix itself (specs in its own session, code through `worker` and `reviewer`) and report what it did. The reply's first line must be `linear`, `shape` or `unclear`; anything else counts as `unclear`. Codex never writes specs or code or chooses options. A Claude session escalates as the `route` skill says.
 
 ## New work
 

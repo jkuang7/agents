@@ -1,6 +1,6 @@
 ---
 name: advisor
-description: Opus judgment for architecture, design, tradeoffs and consequential decisions. Use when the model routing rule in AGENTS.md says to escalate.
+description: Opus judgment for architecture, design, tradeoffs and consequential decisions. Use when the route skill says to escalate.
 model: opus
 effort: medium
 ---

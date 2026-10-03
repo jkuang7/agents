@@ -24,10 +24,10 @@ Each task's collapsible details should contain Added, Goal, Done when, Route, Af
 
 ## Run the queue
 
-1. Read all task blocks and their plan lines. For an unplanned task, fill only missing plan lines using workspace instructions and available evidence. If a user decision is needed, mark it blocked with `Status: blocked — needs you: <question>`.
+1. Read all task blocks and their plan lines. For an unplanned task, fill only missing plan lines using workspace instructions, the `route` skill and available evidence. If a user decision is needed, mark it blocked with `Status: blocked — needs you: <question>`.
 2. Respect each `After` dependency. Run only after prerequisite checkboxes are complete. If a prerequisite is blocked, missing, or part of a cycle, mark this task blocked with the reason.
 3. Before starting a task, re-read its block. If it remains unchecked and unblocked, set `Status: running` in that block and set the Todo container's database Status to In progress before doing work. If it is already checked or blocked, skip it.
-4. Follow its plan and route using current workspace routing preferences. A user-specified route in the task's Decisions or Route line takes precedence where compatible with higher-level routing and authorization. If a task describes a product (for example, a Claude artifact), that alone does not select its maker as the worker.
+4. Follow its plan and route. A user-specified route in the task's Decisions or Route line takes precedence where compatible with the `route` skill and authorization.
 5. On completion, check the box and add a one-line `Result YYYY-MM-DD: ...` inside its details only when Done when is met. Put longer findings in the linked source page or a relevant artifact and summarize/link it in Result. If completion is not met after one retry, leave unchecked and replace running with `Status: blocked — <reason>`.
 6. After a blocker, continue with independent runnable tasks. Re-fetch the page before each edit and update only the task block being changed, preserving concurrent edits and other task blocks. Re-scan the page after finishing a batch so newly added tasks are considered. Reconcile the container Status from the checkbox states before stopping: Done if all are checked; Blocked if every unchecked item is blocked; Backlog if unchecked work remains and none is running.
 
@@ -35,16 +35,7 @@ If an ambiguity has one clearly likeliest and reversible reading, proceed and re
 
 ## Routing
 
-Use the current routing table in `/Volumes/T9/Dev/repos/agent-hub/router/preferences.md` and the workspace `AGENTS.md` as authoritative. In particular:
-
-- **Web research, shopping comparisons, and email/Gmail:** Muse (free app). Use current sources and cite them in the result.
-- **Reddit or community opinion:** ChatGPT web.
-- **Signed-in screen inspection or computer use:** Codex computer use. Muse, ChatGPT and computer use share one screen; run these sequentially and only when the task's Decisions allow use while the user is away.
-- **Code changes and engineering investigations:** Codex, following the target repository's `AGENTS.md` and model/worker routing.
-- **Architecture, design tradeoffs, or unclear technical direction:** advisor (Opus) for the decision, then route decided work as its instructions require.
-- **Claude as an explicitly requested worker/model:** only through the user-approved route and its required tap. Mentioning Claude as the subject does not request Claude as worker.
-
-Run one screen-based task at a time. Independent non-screen tasks may run in parallel when the tools and environment support it. If a required route is unavailable, block the task with the reason and continue with the others.
+Route each task with the `route` skill. After a task blocks on an unavailable route, continue with the others. Independent non-screen tasks may run in parallel when the tools and environment support it.
 
 For multi-issue coding work, follow the task's recorded decision: if the user approved starting `/specs`, complete it and report the Epic with “next: /babysit”; if the user chose `/babysit`, hand off there; if no path was approved, block and request planning rather than inventing a multi-issue workflow.
 

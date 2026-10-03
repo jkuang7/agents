@@ -1,6 +1,6 @@
 ---
 name: explore
-description: Collect a problem the user explains over several messages, then have Opus recommend the most efficient way to solve it. Use only when the user types /explore; not for searching or exploring code.
+description: Collect a problem the user explains over several messages, then have the advisor recommend the most efficient way to solve it. Use only when the user types /explore; not for searching or exploring code.
 ---
 
 # Explore
@@ -24,7 +24,7 @@ Tell the advisor:
 - Ask only when the direction is genuinely unclear.
 - Reply with: the recommendation, why it beats the alternatives, which of the user's ideas were kept or rejected and why, and open questions.
 
-An Opus session decides itself instead. From Codex, run the advisor from the working directory with `claude -p --agent advisor --model opus --permission-mode bypassPermissions "<brief>"`.
+An Opus session decides itself instead; from Codex, reach the advisor as the `route` skill says.
 
 ## Report
 
