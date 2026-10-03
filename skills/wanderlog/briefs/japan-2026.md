@@ -14,6 +14,6 @@
   - Nov 22 Mugitoro 12:30 (TableCheck HHCX9A)
   - Nov 22 Hitsumabushi 4:30 (Tabelog TKXVGK4D2A)
   - Nov 24 teamLab 10:00 (prepaid)
-  - Nov 27 Maikoya 12:00/2:30 (order #2929330, prepaid)
-  - Nov 28 Hanaikada 11:00 + bath 2:00 (res #17269)
+  - Nov 27 Maikoya 12:00/2:30 (order 2929330, prepaid)
+  - Nov 28 Hanaikada 11:00 + bath 2:00 (res 17269)
 - **Known lookalikes:** "Trip to Tokyo and Taiwan" (Nov 2025 wedding trip, with Hsinchu/Taipei stops). Never edit.
