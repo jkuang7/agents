@@ -1,11 +1,13 @@
 ---
 name: route
-description: Who does a piece of work, which model, agent, reviewer or tool. Use before starting a subagent, escalating a decision, running a code review or audit, routing a /todo or /todo-run task, or doing browser or screen work.
+description: Who does a piece of work, which model, agent, reviewer or tool, and how to change that. Use for /route to view or update routing, and before starting a subagent, escalating a decision, running a code review or audit, routing a /todo or /todo-run task, or doing browser or screen work.
 ---
 
 # Route
 
 The only place routing is written; Claude Code always loads it (`~/.claude/rules/route.md`). Elsewhere, point here instead of restating it.
+
+**Updating:** `/route <change>` edits this file (`/Volumes/T9/Dev/agents/skills/route/SKILL.md`), moves any routing found restated elsewhere into it, and finishes through a PR. `/route` alone summarizes the current routes.
 
 ## Models and agents
 
