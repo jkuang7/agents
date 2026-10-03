@@ -15,6 +15,9 @@ This directory keeps compact cases for observed, consequential skill failures:
 - `acceptance-conversation-target/` checks that a bare acceptance invocation can
   use an unambiguous submission handoff without treating skill-edit requests or
   unsubmitted local changes as merge authorization.
+- `epic-spec-review/` checks that the spec review returns a finding for an
+  unbounded absolute claim ("whatever the scripts do") and for acceptance that
+  lists examples instead of the rule.
 - `make_fixture.py` generates four disposable repository cases for working-tree
   review, regression-test retirement, stale continuation evidence, and routing.
   Their expected behavior is in `generated-expected.md`.
